@@ -1,0 +1,6 @@
+@AirsoftBattlefieldManagementSystemAPI_HostAddress = http://localhost:5079
+
+GET {{AirsoftBattlefieldManagementSystemAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
