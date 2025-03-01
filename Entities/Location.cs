@@ -2,10 +2,11 @@
 {
     public class Location
     {
-        public int LocationID { get; set; }
+        public int LocationId { get; set; }
         public decimal Longitude { get; set; }
         public decimal Latitude { get; set; }
         public Int16 Accuracy { get; set; }
         public Int16 Bearing { get; set; }
+        public DateTime Time { get; set; }
 }
 }

@@ -2,7 +2,7 @@
 {
     public class Account
     {
-        public int AccountID { get; set; }
+        public int AccountId { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
     }

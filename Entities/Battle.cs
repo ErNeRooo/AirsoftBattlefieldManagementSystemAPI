@@ -2,8 +2,10 @@
 {
     public class Battle
     {
-        public int BattleID { get; set; }
-        public int TeamId { get; set; }
+        public int BattleId { get; set; }
         public bool IsActive { get; set; }
+
+        public int RoomId { get; set; }
+        public virtual Room Room { get; set; }
     }
 }

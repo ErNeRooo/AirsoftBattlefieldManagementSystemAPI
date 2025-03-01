@@ -2,10 +2,11 @@
 {
     public class Team
     {
-        public int TeamID { get; set; }
+        public int TeamId { get; set; }
         public string Name { get; set; }
-        public int BattleID { get; set; }
+        public int RoomId { get; set; }
 
-        public virtual Battle Battle { get; set; }
+        public virtual Room Room { get; set; }
+        public virtual List<Player> Players { get; set; }
     }
 }
