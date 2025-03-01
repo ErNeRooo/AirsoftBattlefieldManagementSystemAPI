@@ -8,7 +8,7 @@
 
         public int TeamId { get; set; }
         public virtual Team Team { get; set; }
-        public int AccountId { get; set; }
+        public int? AccountId { get; set; }
         public virtual Account Account { get; set; }
 
         public virtual List<PlayerLocation> PlayerLocations { get; set; }
