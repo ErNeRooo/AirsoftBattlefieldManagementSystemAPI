@@ -5,8 +5,8 @@ services:
       context: .
       target: dev
     volumes:
-      - .:/app:cached
-      - ~/.nuget/packages:/root/.nuget/packages:ro 
+      - ./:/app
+      - /app/obj
     ports:
       - 8080:8080
     environment:
