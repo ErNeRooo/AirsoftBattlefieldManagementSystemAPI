@@ -32,10 +32,15 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
             return Ok(playerDto);
         }
 
-        [HttpPost("id/{id}")]
-        public ActionResult<string> PostPlayer(int id)
+        [HttpPost("")]
+        public ActionResult<string> PostPlayer([FromBody] CreatePlayerDto playerDto)
         {
-            return Created();
+            var player = _mapper.Map<Player>(playerDto);
+
+            _dbContext.Players.Add(player);
+            _dbContext.SaveChanges();
+
+            return Created($"/player/{player.PlayerId}", null);
         }
 
         [HttpPut("id/{id}")]
