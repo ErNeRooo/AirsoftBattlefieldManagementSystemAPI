@@ -1,12 +1,12 @@
-﻿namespace AirsoftBattlefieldManagementSystemAPI.Entities
+﻿namespace AirsoftBattlefieldManagementSystemAPI.Models.Entities
 {
     public class Location
     {
         public int LocationId { get; set; }
         public decimal Longitude { get; set; }
         public decimal Latitude { get; set; }
-        public Int16 Accuracy { get; set; }
-        public Int16 Bearing { get; set; }
+        public short Accuracy { get; set; }
+        public short Bearing { get; set; }
         public DateTime Time { get; set; }
-}
+    }
 }

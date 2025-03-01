@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace AirsoftBattlefieldManagementSystemAPI.Entities
+namespace AirsoftBattlefieldManagementSystemAPI.Models.Entities
 {
     public class BmsDbContext : DbContext
     {
-        private string connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+        private string _connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
 
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Battle> Battles { get; set; }
@@ -39,7 +39,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Entities
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=localhost,1433;Database=AirsoftBattleManagementSystem;User Id=SA;Password=K0ciaki!;Encrypt=False;");
+            optionsBuilder.UseSqlServer("Server=database,1433;Database=AirsoftBattleManagementSystem;User Id=SA;Password=K0ciaki!;Encrypt=False;");
         }
     }
 }

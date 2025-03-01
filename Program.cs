@@ -1,3 +1,6 @@
+using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
+using AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles;
+using AutoMapper;
 
 namespace AirsoftBattlefieldManagementSystemAPI
 {
@@ -7,15 +10,20 @@ namespace AirsoftBattlefieldManagementSystemAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
             builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
+            builder.Services.AddDbContext<BmsDbContext>();
+            builder.Services.AddSingleton<IMapper>(sp =>
+            {
+                var config = new MapperConfiguration(cfg =>
+                {
+                    cfg.AddProfile<PlayerMappingProfile>();
+                });
+                return config.CreateMapper();
+            });
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();

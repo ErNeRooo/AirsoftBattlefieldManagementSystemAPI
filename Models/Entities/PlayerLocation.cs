@@ -1,8 +1,8 @@
-﻿namespace AirsoftBattlefieldManagementSystemAPI.Entities
+﻿namespace AirsoftBattlefieldManagementSystemAPI.Models.Entities
 {
-    public class Kill
+    public class PlayerLocation
     {
-        public int KillId { get; set; }
+        public int PlayerLocationId { get; set; }
 
         public int PlayerId { get; set; }
         public virtual Player Player { get; set; }

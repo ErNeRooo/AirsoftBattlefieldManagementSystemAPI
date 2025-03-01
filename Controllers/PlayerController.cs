@@ -1,3 +1,6 @@
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos;
+using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Controllers
@@ -6,17 +9,27 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
     [Route("[controller]")]
     public class PlayerController : ControllerBase
     {
+        private readonly BmsDbContext _dbContext;
         private readonly ILogger<PlayerController> _logger;
+        private readonly IMapper _mapper;
 
-        public PlayerController(ILogger<PlayerController> logger)
+        public PlayerController(ILogger<PlayerController> logger, BmsDbContext dbContext, IMapper mapper)
         {
+            _dbContext = dbContext;
             _logger = logger;
+            _mapper = mapper;
         }
 
         [HttpGet("id/{id}")]
-        public ActionResult<string> GetPlayer(int id)
+        public ActionResult<PlayerDto> GetPlayer(int id)
         {
-            return Ok($"player {id}");
+            Player player = _dbContext.Players.FirstOrDefault(p => p.PlayerId == id);
+
+            if (player == null) return NotFound("Player not found");
+
+            PlayerDto playerDto = _mapper.Map<PlayerDto>(player);
+
+            return Ok(playerDto);
         }
 
         [HttpPost("id/{id}")]

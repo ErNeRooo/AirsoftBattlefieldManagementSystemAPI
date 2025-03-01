@@ -1,4 +1,4 @@
-﻿namespace AirsoftBattlefieldManagementSystemAPI.Entities
+﻿namespace AirsoftBattlefieldManagementSystemAPI.Models.Entities
 {
     public class Account
     {
