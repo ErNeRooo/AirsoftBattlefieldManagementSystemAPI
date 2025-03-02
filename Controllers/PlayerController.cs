@@ -1,5 +1,6 @@
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
+using AirsoftBattlefieldManagementSystemAPI.Services;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,27 +8,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class PlayerController : ControllerBase
+    public class PlayerController(ILogger<PlayerController> logger, IPlayerService playerService) : ControllerBase
     {
-        private readonly BmsDbContext _dbContext;
-        private readonly ILogger<PlayerController> _logger;
-        private readonly IMapper _mapper;
-
-        public PlayerController(ILogger<PlayerController> logger, BmsDbContext dbContext, IMapper mapper)
-        {
-            _dbContext = dbContext;
-            _logger = logger;
-            _mapper = mapper;
-        }
-
         [HttpGet("id/{id}")]
-        public ActionResult<PlayerDto> GetPlayer(int id)
+        public ActionResult<PlayerDto> GetPlayerById(int id)
         {
-            Player player = _dbContext.Players.FirstOrDefault(p => p.PlayerId == id);
+            PlayerDto playerDto = playerService.GetById(id);
 
-            if (player == null) return NotFound("Player not found");
-
-            PlayerDto playerDto = _mapper.Map<PlayerDto>(player);
+            if (playerDto == null) return NotFound("Player not found");
 
             return Ok(playerDto);
         }
@@ -40,12 +28,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            var player = _mapper.Map<Player>(playerDto);
+            int playerId = playerService.Create(playerDto);
 
-            _dbContext.Players.Add(player);
-            _dbContext.SaveChanges();
-
-            return Created($"/player/{player.PlayerId}", null);
+            return Created($"/player/{playerId}", null);
         }
 
         [HttpPut("id/{id}")]
