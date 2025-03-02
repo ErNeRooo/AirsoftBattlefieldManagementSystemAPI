@@ -2,7 +2,7 @@
 
 namespace AirsoftBattlefieldManagementSystemAPI.Models.Entities
 {
-    public class BmsDbContext : DbContext
+    public class BattleManagementSystemDbContext : DbContext, IBattleManagementSystemDbContext
     {
         private string _connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
 

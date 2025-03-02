@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Migrations
 {
-    [DbContext(typeof(BmsDbContext))]
+    [DbContext(typeof(BattleManagementSystemDbContext))]
     [Migration("20250226185038_init")]
     partial class init
     {

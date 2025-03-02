@@ -1,12 +1,13 @@
-﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos;
-using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
+﻿using AirsoftBattlefieldManagementSystemAPI.Models;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using System.Numerics;
+using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services
 {
-    public class PlayerService(BmsDbContext dbContext, IMapper mapper) : IPlayerService
+    public class PlayerService(IBattleManagementSystemDbContext dbContext, IMapper mapper) : IPlayerService
     {
         public PlayerDto? GetById(int id)
         {

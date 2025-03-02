@@ -1,3 +1,4 @@
+using AirsoftBattlefieldManagementSystemAPI.Models;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles;
 using AirsoftBattlefieldManagementSystemAPI.Services;
@@ -13,7 +14,7 @@ namespace AirsoftBattlefieldManagementSystemAPI
 
             builder.Services.AddControllers();
             builder.Services.AddOpenApi();
-            builder.Services.AddDbContext<BmsDbContext>();
+            builder.Services.AddDbContext<IBattleManagementSystemDbContext, BattleManagementSystemDbContext>();
             builder.Services.AddSingleton<IMapper>(sp =>
             {
                 var config = new MapperConfiguration(cfg =>

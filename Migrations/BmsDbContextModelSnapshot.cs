@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Migrations
 {
-    [DbContext(typeof(BmsDbContext))]
+    [DbContext(typeof(BattleManagementSystemDbContext))]
     partial class BmsDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
