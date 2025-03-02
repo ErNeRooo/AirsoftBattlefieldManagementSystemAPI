@@ -22,12 +22,14 @@ namespace AirsoftBattlefieldManagementSystemAPI
                     cfg.AddProfile<PlayerMappingProfile>();
                     cfg.AddProfile<RoomMappingProfile>();
                     cfg.AddProfile<TeamMappingProfile>();
+                    cfg.AddProfile<BattleMappingProfile>();
                 });
                 return config.CreateMapper();
             });
             builder.Services.AddScoped<IPlayerService, PlayerService>();
             builder.Services.AddScoped<IRoomService, RoomService>();
             builder.Services.AddScoped<ITeamService, TeamService>();
+            builder.Services.AddScoped<IBattleService, BattleService>();
 
             var app = builder.Build();
 

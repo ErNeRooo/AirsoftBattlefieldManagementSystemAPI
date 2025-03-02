@@ -1,0 +1,54 @@
+﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos;
+using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
+using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+
+namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
+{
+    public class BattleService(IMapper mapper, IBattleManagementSystemDbContext dbContext) : IBattleService
+    {
+        public BattleDto? GetById(int id)
+        {
+            Battle? battle = dbContext.Battle.FirstOrDefault(t => t.BattleId == id);
+
+            if (battle is null) return null;
+
+            BattleDto battleDto = mapper.Map<BattleDto>(battle);
+
+            return battleDto;
+        }
+
+        public int Create(CreateBattleDto battleDto)
+        {
+            Battle battle = mapper.Map<Battle>(battleDto);
+            dbContext.Battle.Add(battle);
+            dbContext.SaveChanges();
+            return battle.BattleId;
+        }
+
+        public bool Update(int id, UpdateBattleDto battleDto)
+        {
+            Battle? previousBattle = dbContext.Battle.FirstOrDefault(t => t.BattleId == id);
+
+            if (previousBattle is null) return false;
+
+            mapper.Map(battleDto, previousBattle);
+            dbContext.Battle.Update(previousBattle);
+            dbContext.SaveChanges();
+            return true;
+        }
+
+        public bool DeleteById(int id)
+        {
+            Battle? battle = dbContext.Battle.FirstOrDefault(t => t.BattleId == id);
+
+            if (battle is null) return false;
+
+            dbContext.Battle.Remove(battle);
+            dbContext.SaveChanges();
+
+            return true;
+        }
+    }
+}
