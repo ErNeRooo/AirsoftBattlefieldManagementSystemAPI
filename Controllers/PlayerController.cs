@@ -35,6 +35,11 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [HttpPost("")]
         public ActionResult<string> PostPlayer([FromBody] CreatePlayerDto playerDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var player = _mapper.Map<Player>(playerDto);
 
             _dbContext.Players.Add(player);

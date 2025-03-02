@@ -1,9 +1,15 @@
-﻿namespace AirsoftBattlefieldManagementSystemAPI.Models.Dtos
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace AirsoftBattlefieldManagementSystemAPI.Models.Dtos
 {
     public class CreatePlayerDto
     {
-        public string Name { get; set; }
-        public bool IsDead { get; set; }
-        public int TeamId { get; set; }
+        [Required]
+        [MaxLength(20)]
+        public string? Name { get; set; }
+
+        public bool IsDead { get; set; } = false;
+        [Required]
+        public int? TeamId { get; set; }
     }
 }
