@@ -34,17 +34,26 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpPut("id/{id}")]
-        public ActionResult<string> PutPlayer(int id)
+        public ActionResult<string> PutPlayer(int id, [FromBody] UpdatePlayerDto playerDto)
         {
-            return Ok($"put {id}");
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            bool isUpdateSuccessful = playerService.Update(id, playerDto);
+
+            if (isUpdateSuccessful) return Ok();
+
+            return NotFound();
         }
 
         [HttpDelete("id/{id}")]
         public ActionResult<string> DeletePlayer(int id)
         {
-            bool isDeleted = playerService.DeleteById(id);
+            bool isDeleteSuccessful = playerService.DeleteById(id);
 
-            if (isDeleted) return NoContent();
+            if (isDeleteSuccessful) return NoContent();
 
             return NotFound();
         }

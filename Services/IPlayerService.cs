@@ -6,6 +6,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services
     {
         public PlayerDto? GetById(int id);
         public int Create(CreatePlayerDto playerDto);
+        public bool Update(int id, UpdatePlayerDto playerDto);
         public bool DeleteById(int id);
     }
 }

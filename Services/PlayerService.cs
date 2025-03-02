@@ -30,6 +30,19 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services
             return player.PlayerId;
         }
 
+        public bool Update(int id, UpdatePlayerDto playerDto)
+        {
+            Player? previousPlayer = dbContext.Players.FirstOrDefault(p => p.PlayerId == id);
+
+            if(previousPlayer is null) return false;
+
+            mapper.Map(playerDto, previousPlayer);
+            dbContext.Players.Update(previousPlayer);
+            dbContext.SaveChanges();
+
+            return true;
+        }
+
         public bool DeleteById(int id)
         {
             var player = dbContext.Players.FirstOrDefault(p => p.PlayerId == id);
