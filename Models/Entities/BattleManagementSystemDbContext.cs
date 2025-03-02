@@ -6,13 +6,15 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Entities
     {
         private string _connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
 
-        public DbSet<Account> Accounts { get; set; }
-        public DbSet<Battle> Battles { get; set; }
-        public DbSet<Kill> Kills { get; set; }
-        public DbSet<Location> Locations { get; set; }
-        public DbSet<Player> Players { get; set; }
-        public DbSet<PlayerLocation> PlayerLocations { get; set; }
-        public DbSet<Team> Teams { get; set; }
+        public DbSet<Account> Account { get; set; }
+        public DbSet<Battle> Battle { get; set; }
+        public DbSet<Kill> Kill { get; set; }
+        public DbSet<Death> Death { get; set; }
+        public DbSet<Location> Location { get; set; }
+        public DbSet<Player> Player { get; set; }
+        public DbSet<PlayerLocation> PlayerLocation { get; set; }
+        public DbSet<Team> Team { get; set; }
+        public DbSet<Room> Room { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

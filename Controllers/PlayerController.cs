@@ -1,6 +1,6 @@
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
-using AirsoftBattlefieldManagementSystemAPI.Services;
+using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 

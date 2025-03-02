@@ -1,6 +1,6 @@
 ﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos;
 
-namespace AirsoftBattlefieldManagementSystemAPI.Services
+namespace AirsoftBattlefieldManagementSystemAPI.Services.Abstractions
 {
     public interface IPlayerService
     {

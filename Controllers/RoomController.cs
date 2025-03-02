@@ -1,40 +1,53 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos;
+using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class RoomController : ControllerBase
+    public class RoomController(ILogger<RoomController> logger, IRoomService roomService) : ControllerBase
     {
-        private readonly ILogger<RoomController> _logger;
-
-        public RoomController(ILogger<RoomController> logger)
-        {
-            _logger = logger;
-        }
-
         [HttpGet("id/{id}")]
-        public ActionResult<string> GetRoom(int id)
+        public ActionResult<RoomDto> GetRoom(int id)
         {
-            return Ok($"Room {id}");
+            RoomDto? roomDto = roomService.GetById(id);
+
+            if (roomDto is null) return NotFound();
+
+            return Ok(roomDto);
         }
 
-        [HttpPost("id/{id}")]
-        public ActionResult<string> PostRoom(int id)
+        [HttpPost("")]
+        public ActionResult<string> PostRoom([FromBody] CreateRoomDto roomDto)
         {
-            return Created();
+            if (!ModelState.IsValid) return BadRequest();
+
+            int roomId = roomService.Create(roomDto);
+
+            return Created($"/room/id/{roomId}", null);
         }
 
         [HttpPut("id/{id}")]
-        public ActionResult<string> PutRoom(int id)
+        public ActionResult<string> PutRoom(int id, [FromBody] UpdateRoomDto roomDto)
         {
-            return Ok($"put {id}");
+            if (!ModelState.IsValid) return BadRequest();
+
+            bool isSuccessful = roomService.Update(id, roomDto);
+
+            if(isSuccessful) return Ok();
+
+            return NotFound();
         }
 
         [HttpDelete("id/{id}")]
         public ActionResult<string> DeleteRoom(int id)
         {
-            return NoContent();
+            bool isSuccessful = roomService.DeleteById(id);
+
+            if (isSuccessful) return NoContent();
+
+            return NotFound();
         }
     }
 }

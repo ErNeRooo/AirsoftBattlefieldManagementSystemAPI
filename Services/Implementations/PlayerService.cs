@@ -4,16 +4,17 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using System.Numerics;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
+using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
 
-namespace AirsoftBattlefieldManagementSystemAPI.Services
+namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 {
     public class PlayerService(IBattleManagementSystemDbContext dbContext, IMapper mapper) : IPlayerService
     {
         public PlayerDto? GetById(int id)
         {
-            Player? player = dbContext.Players.FirstOrDefault(p => p.PlayerId == id);
+            Player? player = dbContext.Player.FirstOrDefault(p => p.PlayerId == id);
 
-            if(player is null) return null;
+            if (player is null) return null;
 
             PlayerDto playerDto = mapper.Map<PlayerDto>(player);
 
@@ -24,7 +25,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services
         {
             var player = mapper.Map<Player>(playerDto);
 
-            dbContext.Players.Add(player);
+            dbContext.Player.Add(player);
             dbContext.SaveChanges();
 
             return player.PlayerId;
@@ -32,12 +33,12 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services
 
         public bool Update(int id, UpdatePlayerDto playerDto)
         {
-            Player? previousPlayer = dbContext.Players.FirstOrDefault(p => p.PlayerId == id);
+            Player? previousPlayer = dbContext.Player.FirstOrDefault(p => p.PlayerId == id);
 
-            if(previousPlayer is null) return false;
+            if (previousPlayer is null) return false;
 
             mapper.Map(playerDto, previousPlayer);
-            dbContext.Players.Update(previousPlayer);
+            dbContext.Player.Update(previousPlayer);
             dbContext.SaveChanges();
 
             return true;
@@ -45,11 +46,11 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services
 
         public bool DeleteById(int id)
         {
-            var player = dbContext.Players.FirstOrDefault(p => p.PlayerId == id);
+            var player = dbContext.Player.FirstOrDefault(p => p.PlayerId == id);
 
-            if(player is null) return false;
+            if (player is null) return false;
 
-            dbContext.Players.Remove(player);
+            dbContext.Player.Remove(player);
             dbContext.SaveChanges();
 
             return true;

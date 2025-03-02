@@ -2,7 +2,7 @@
 {
     public class Room
     {
-        public int Id { get; set; }
+        public int RoomId { get; set; }
         public string Name { get; set; }
 
         public virtual List<Battle> Battles { get; set; }

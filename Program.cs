@@ -1,7 +1,8 @@
 using AirsoftBattlefieldManagementSystemAPI.Models;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles;
-using AirsoftBattlefieldManagementSystemAPI.Services;
+using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
+using AirsoftBattlefieldManagementSystemAPI.Services.Implementations;
 using AutoMapper;
 
 namespace AirsoftBattlefieldManagementSystemAPI
@@ -20,10 +21,12 @@ namespace AirsoftBattlefieldManagementSystemAPI
                 var config = new MapperConfiguration(cfg =>
                 {
                     cfg.AddProfile<PlayerMappingProfile>();
+                    cfg.AddProfile<RoomMappingProfile>();
                 });
                 return config.CreateMapper();
             });
             builder.Services.AddScoped<IPlayerService, PlayerService>();
+            builder.Services.AddScoped<IRoomService, RoomService>();
 
             var app = builder.Build();
 
