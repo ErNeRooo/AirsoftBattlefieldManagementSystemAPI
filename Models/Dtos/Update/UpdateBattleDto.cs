@@ -1,4 +1,4 @@
-﻿namespace AirsoftBattlefieldManagementSystemAPI.Models.Dtos
+﻿namespace AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update
 {
     public class UpdateBattleDto
     {

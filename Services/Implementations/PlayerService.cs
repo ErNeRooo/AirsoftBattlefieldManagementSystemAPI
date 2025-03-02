@@ -1,10 +1,12 @@
 ﻿using AirsoftBattlefieldManagementSystemAPI.Models;
-using AirsoftBattlefieldManagementSystemAPI.Models.Dtos;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using System.Numerics;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 {

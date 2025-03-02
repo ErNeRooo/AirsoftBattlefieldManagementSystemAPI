@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AirsoftBattlefieldManagementSystemAPI.Models.Dtos
+namespace AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update
 {
-    public class CreateRoomDto
+    public class UpdateRoomDto
     {
         [Required]
         [MaxLength(20)]
