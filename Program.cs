@@ -23,6 +23,7 @@ namespace AirsoftBattlefieldManagementSystemAPI
                     cfg.AddProfile<RoomMappingProfile>();
                     cfg.AddProfile<TeamMappingProfile>();
                     cfg.AddProfile<BattleMappingProfile>();
+                    cfg.AddProfile<AccountMappingProfile>();
                 });
                 return config.CreateMapper();
             });
@@ -30,6 +31,7 @@ namespace AirsoftBattlefieldManagementSystemAPI
             builder.Services.AddScoped<IRoomService, RoomService>();
             builder.Services.AddScoped<ITeamService, TeamService>();
             builder.Services.AddScoped<IBattleService, BattleService>();
+            builder.Services.AddScoped<IAccountService, AccountService>();
 
             var app = builder.Build();
 
