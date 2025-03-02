@@ -42,7 +42,11 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [HttpDelete("id/{id}")]
         public ActionResult<string> DeletePlayer(int id)
         {
-            return NoContent();
+            bool isDeleted = playerService.DeleteById(id);
+
+            if (isDeleted) return NoContent();
+
+            return NotFound();
         }
 
     }

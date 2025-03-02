@@ -21,12 +21,24 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services
 
         public int Create(CreatePlayerDto playerDto)
         {
-             var player = mapper.Map<Player>(playerDto);
+            var player = mapper.Map<Player>(playerDto);
 
             dbContext.Players.Add(player);
             dbContext.SaveChanges();
 
             return player.PlayerId;
+        }
+
+        public bool DeleteById(int id)
+        {
+            var player = dbContext.Players.FirstOrDefault(p => p.PlayerId == id);
+
+            if(player is null) return false;
+
+            dbContext.Players.Remove(player);
+            dbContext.SaveChanges();
+
+            return true;
         }
     }
 }
