@@ -19,7 +19,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpPost("")]
-        public ActionResult<string> PostRoom([FromBody] CreateRoomDto roomDto)
+        public ActionResult PostRoom([FromBody] CreateRoomDto roomDto)
         {
             if (!ModelState.IsValid) return BadRequest();
 
@@ -29,7 +29,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpPut("id/{id}")]
-        public ActionResult<string> PutRoom(int id, [FromBody] UpdateRoomDto roomDto)
+        public ActionResult PutRoom(int id, [FromBody] UpdateRoomDto roomDto)
         {
             if (!ModelState.IsValid) return BadRequest();
 
@@ -41,7 +41,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpDelete("id/{id}")]
-        public ActionResult<string> DeleteRoom(int id)
+        public ActionResult DeleteRoom(int id)
         {
             bool isSuccessful = roomService.DeleteById(id);
 
