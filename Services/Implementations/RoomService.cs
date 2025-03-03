@@ -21,6 +21,11 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
         public int Create(CreateRoomDto roomDto)
         {
             Room room = mapper.Map<Room>(roomDto);
+
+            AvailableId id = dbContext.AvailableId.First();
+            room.RoomId = id.Id;
+            dbContext.AvailableId.Remove(id);
+
             dbContext.Room.Add(room);
             dbContext.SaveChanges();
 
@@ -46,6 +51,10 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 
             if (room is null) return false;
 
+            var availableId = new AvailableId();
+            availableId.Id = id;
+
+            dbContext.AvailableId.Add(availableId);
             dbContext.Room.Remove(room);
             dbContext.SaveChanges();
 

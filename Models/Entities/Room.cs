@@ -3,7 +3,7 @@
     public class Room
     {
         public int RoomId { get; set; }
-        public string Name { get; set; }
+        public int MaxPlayers { get; set; }
 
         public virtual List<Battle> Battles { get; set; }
         public virtual List<Team> Teams { get; set; }

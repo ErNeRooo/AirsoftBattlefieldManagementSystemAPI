@@ -1,17 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Models.Entities
 {
-    public class BattleManagementSystemDbContext : DbContext, IBattleManagementSystemDbContext
+    public class BattleManagementSystemDbContext(DbContextOptions<BattleManagementSystemDbContext> options, IConfiguration configuration) : DbContext(options), IBattleManagementSystemDbContext
     {
-        private readonly IConfiguration _configuration;
-
-        public BattleManagementSystemDbContext(DbContextOptions<BattleManagementSystemDbContext> options, IConfiguration configuration)
-            : base(options)
-        {
-            _configuration = configuration;
-        }
-
         public DbSet<Account> Account { get; set; }
         public DbSet<Battle> Battle { get; set; }
         public DbSet<Kill> Kill { get; set; }
@@ -21,6 +16,13 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Entities
         public DbSet<PlayerLocation> PlayerLocation { get; set; }
         public DbSet<Team> Team { get; set; }
         public DbSet<Room> Room { get; set; }
+        public DbSet<AvailableId> AvailableId { get; set; }
+
+        public DatabaseFacade Database => base.Database;
+        public ChangeTracker ChangeTracker => base.ChangeTracker;
+        public DbContextId ContextId => base.ContextId;
+        public IModel Model => base.Model;
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -37,17 +39,22 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Entities
             modelBuilder
                 .Entity<Team>()
                 .Property(a => a.Name)
-                .HasMaxLength(20);
+                .HasMaxLength(60);
 
             modelBuilder
                 .Entity<Player>()
                 .Property(a => a.Name)
-                .HasMaxLength(20);
+                .HasMaxLength(40);
+
+            modelBuilder
+                .Entity<Battle>()
+                .Property(a => a.Name)
+                .HasMaxLength(60);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var connectionString = _configuration.GetConnectionString("DefaultConnection");
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
 
             if (string.IsNullOrEmpty(connectionString))
             {

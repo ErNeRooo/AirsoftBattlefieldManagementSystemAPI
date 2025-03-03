@@ -1,4 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Models.Entities
 {
@@ -13,8 +16,15 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Entities
         DbSet<PlayerLocation> PlayerLocation { get; set; }
         DbSet<Team> Team { get; set; }
         DbSet<Room> Room { get; set; }
+        DbSet<AvailableId> AvailableId { get; set; }
+
+        DatabaseFacade Database { get; }
+        ChangeTracker ChangeTracker { get; }
+        DbContextId ContextId { get; }
+        IModel Model { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+
         int SaveChanges();
     }
 }

@@ -3,7 +3,7 @@
     public class PlayerDto
     {
         public int PlayerId { get; set; }
-        public string Name { get; set; }
+        public int MaxPlayers { get; set; }
         public bool IsDead { get; set; }
     }
 }

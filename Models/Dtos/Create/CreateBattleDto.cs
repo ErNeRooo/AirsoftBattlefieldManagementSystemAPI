@@ -1,8 +1,13 @@
-﻿namespace AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create
 {
     public class CreateBattleDto
     {
-        public bool IsActive { get; set; }
+        [Required]
+        public string Name { get; set; }
+        public bool IsActive { get; set; } = false;
+        [Required]
         public int RoomId { get; set; }
     }
 }
