@@ -4,7 +4,13 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Entities
 {
     public class BattleManagementSystemDbContext : DbContext, IBattleManagementSystemDbContext
     {
-        private string _connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+        private readonly IConfiguration _configuration;
+
+        public BattleManagementSystemDbContext(DbContextOptions<BattleManagementSystemDbContext> options, IConfiguration configuration)
+            : base(options)
+        {
+            _configuration = configuration;
+        }
 
         public DbSet<Account> Account { get; set; }
         public DbSet<Battle> Battle { get; set; }
@@ -41,7 +47,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Entities
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=database,1433;Database=AirsoftBattleManagementSystem;User Id=SA;Password=K0ciaki!;Encrypt=False;");
+            var connectionString = _configuration.GetConnectionString("DefaultConnection");
+
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new Exception("Database connection string is missing.");
+            }
+
+            optionsBuilder.UseSqlServer(connectionString);
         }
     }
 }

@@ -10,7 +10,7 @@ services:
     ports:
       - 8080:8080
     environment:
-      DB_CONNECTION_STRING: "Server=database,1433;Database=AirsoftBattleManagementSystem;User Id=sa;Password=K0ciaki!;"
+      ConnectionStrings__DefaultConnection: "Server=database,1433;Database=AirsoftBattleManagementSystem;User Id=SA;Password=K0ciaki!;Encrypt=False;"
     depends_on:
       - database
       
@@ -21,7 +21,7 @@ services:
     ports:
       - 8080:8080
     environment:
-      DB_CONNECTION_STRING: "Server=database,1433;Database=AirsoftBattleManagementSystem;User Id=sa;Password=K0ciaki!;"
+      ConnectionStrings__DefaultConnection: "Server=database,1433;Database=AirsoftBattleManagementSystem;User Id=SA;Password=K0ciaki!;Encrypt=False;"
     depends_on:
       - database
 

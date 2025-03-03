@@ -3,6 +3,7 @@ using AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles;
 using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
 using AirsoftBattlefieldManagementSystemAPI.Services.Implementations;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace AirsoftBattlefieldManagementSystemAPI
 {
@@ -14,7 +15,10 @@ namespace AirsoftBattlefieldManagementSystemAPI
 
             builder.Services.AddControllers();
             builder.Services.AddOpenApi();
-            builder.Services.AddDbContext<IBattleManagementSystemDbContext, BattleManagementSystemDbContext>();
+            builder.Services.AddDbContext<IBattleManagementSystemDbContext, BattleManagementSystemDbContext>(
+                options =>
+                    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+                    );
             builder.Services.AddSingleton<IMapper>(sp =>
             {
                 var config = new MapperConfiguration(cfg =>
