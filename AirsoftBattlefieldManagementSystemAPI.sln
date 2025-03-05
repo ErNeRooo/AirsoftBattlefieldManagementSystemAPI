@@ -5,6 +5,10 @@ VisualStudioVersion = 17.12.35506.116 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirsoftBattlefieldManagementSystemAPI", "src\AirsoftBattlefieldManagementSystemAPI.csproj", "{75261D93-FF66-4C77-B3D7-90DAC63232B0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{03B6D29E-C74C-42C1-9F5C-38E5AF5339D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirsoftBattlefieldManagementSystemAPI.Tests", "tests\AirsoftBattlefieldManagementSystemAPI.Tests\AirsoftBattlefieldManagementSystemAPI.Tests.csproj", "{1DE26F48-3A70-4F42-8C53-2DE649BAEB1F}"
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -30,5 +34,20 @@ Global
 		{75261D93-FF66-4C77-B3D7-90DAC63232B0}.Release|x64.Build.0 = Release|Any CPU
 		{75261D93-FF66-4C77-B3D7-90DAC63232B0}.Release|x86.ActiveCfg = Release|Any CPU
 		{75261D93-FF66-4C77-B3D7-90DAC63232B0}.Release|x86.Build.0 = Release|Any CPU
+		{1DE26F48-3A70-4F42-8C53-2DE649BAEB1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DE26F48-3A70-4F42-8C53-2DE649BAEB1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DE26F48-3A70-4F42-8C53-2DE649BAEB1F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1DE26F48-3A70-4F42-8C53-2DE649BAEB1F}.Debug|x64.Build.0 = Debug|Any CPU
+		{1DE26F48-3A70-4F42-8C53-2DE649BAEB1F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1DE26F48-3A70-4F42-8C53-2DE649BAEB1F}.Debug|x86.Build.0 = Debug|Any CPU
+		{1DE26F48-3A70-4F42-8C53-2DE649BAEB1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DE26F48-3A70-4F42-8C53-2DE649BAEB1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DE26F48-3A70-4F42-8C53-2DE649BAEB1F}.Release|x64.ActiveCfg = Release|Any CPU
+		{1DE26F48-3A70-4F42-8C53-2DE649BAEB1F}.Release|x64.Build.0 = Release|Any CPU
+		{1DE26F48-3A70-4F42-8C53-2DE649BAEB1F}.Release|x86.ActiveCfg = Release|Any CPU
+		{1DE26F48-3A70-4F42-8C53-2DE649BAEB1F}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1DE26F48-3A70-4F42-8C53-2DE649BAEB1F} = {03B6D29E-C74C-42C1-9F5C-38E5AF5339D9}
 	EndGlobalSection
 EndGlobal
