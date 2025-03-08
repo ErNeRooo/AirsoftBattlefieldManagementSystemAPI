@@ -1,5 +1,6 @@
 ﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Services.Implementations;
 using AutoMapper;
@@ -32,6 +33,13 @@ public class AccountServiceTests
             .Returns((CreateAccountDto src) => new Account
             {
                 AccountId = 0,
+                Email = src.Email,
+                Password = src.Password
+            });
+        _mapper.Setup(m => m.Map(It.IsAny<UpdateAccountDto>(), It.IsAny<Account>()))
+            .Returns((UpdateAccountDto src, Account dest) => new Account
+            {
+                AccountId = dest.AccountId,
                 Email = src.Email,
                 Password = src.Password
             });
@@ -171,4 +179,100 @@ public class AccountServiceTests
         // assert
         _dbContext.Verify(m => m.SaveChanges(), Times.Once);
     }
+
+
+    public static IEnumerable<object[]> Update_ForExistingId_ReturnsTrue_Data()
+    {
+        yield return new object[]
+        {
+            1,
+            new UpdateAccountDto { Email = "haha@example.com", Password = "tori098" }
+        };
+        yield return new object[]
+        {
+            2,
+            new UpdateAccountDto { Email = "", Password = "" }
+        };
+    }
+
+    [Theory]
+    [MemberData(nameof(Update_ForExistingId_ReturnsTrue_Data))]
+    public void Update_ForExistingId_ReturnsTrue(int id, UpdateAccountDto accountDto)
+    {
+        // arrange
+        List<Account> accounts = GetAccounts().Keys.ToList();
+        Mock<DbSet<Account>> dbSet = GetMockDbSet(accounts.AsQueryable());
+
+        _dbContext.Setup(m => m.Account).Returns(dbSet.Object);
+
+        // act
+        var result = _accountService.Update(id, accountDto);
+
+        // assert
+        result.ShouldBe(true);
+    }
+
+    public static IEnumerable<object[]> Update_ForNotExistingId_ReturnsFalse_Data()
+    {
+        yield return new object[]
+        {
+            0,
+            new UpdateAccountDto { Email = "haha@example.com", Password = "tori098" }
+        };
+        yield return new object[]
+        {
+            3,
+            new UpdateAccountDto { Email = "", Password = "" }
+        };
+    }
+
+    [Theory]
+    [MemberData(nameof(Update_ForNotExistingId_ReturnsFalse_Data))]
+    public void Update_ForNotExistingId_ReturnsFalse(int id, UpdateAccountDto accountDto)
+    {
+        // arrange
+        List<Account> accounts = GetAccounts().Keys.ToList();
+        Mock<DbSet<Account>> dbSet = GetMockDbSet(accounts.AsQueryable());
+
+        _dbContext.Setup(m => m.Account).Returns(dbSet.Object);
+
+        // act
+        var result = _accountService.Update(id, accountDto);
+
+        // assert
+        result.ShouldBe(false);
+    }
+
+    [Fact]
+    public void Update_ShouldCallAddMethodOnce()
+    {
+        // arrange
+        List<Account> accounts = GetAccounts().Keys.ToList();
+        Mock<DbSet<Account>> dbSet = GetMockDbSet(accounts.AsQueryable());
+
+        _dbContext.Setup(m => m.Account).Returns(dbSet.Object);
+
+        // act
+        _accountService.Update(1, new UpdateAccountDto());
+
+        // assert
+        _dbContext.Verify(m => m.Account.Update(It.IsAny<Account>()), Times.Once);
+    }
+
+    [Fact]
+    public void Update_ShouldCallSaveChangesMethod()
+    {
+        // arrange
+        List<Account> accounts = GetAccounts().Keys.ToList();
+        Mock<DbSet<Account>> dbSet = GetMockDbSet(accounts.AsQueryable());
+
+        _dbContext.Setup(m => m.Account).Returns(dbSet.Object);
+
+        // act
+        _accountService.Update(1, new UpdateAccountDto());
+
+        // assert
+        _dbContext.Verify(m => m.SaveChanges(), Times.Once);
+    }
+
 }
