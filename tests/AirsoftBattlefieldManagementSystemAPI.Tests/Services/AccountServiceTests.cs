@@ -28,6 +28,13 @@ public class AccountServiceTests
                 Email = src.Email,
                 Password = src.Password
             });
+        _mapper.Setup(m => m.Map<Account>(It.IsAny<CreateAccountDto>()))
+            .Returns((CreateAccountDto src) => new Account
+            {
+                AccountId = 0,
+                Email = src.Email,
+                Password = src.Password
+            });
 
         _accountService = new AccountService(_mapper.Object, _dbContext.Object);
     }
@@ -94,5 +101,74 @@ public class AccountServiceTests
 
         // assert
         result.ShouldBeNull();
+    }
+
+    public static IEnumerable<object[]> Create_ForCreateAccountDto_ReturnsIdOfCreatedAccount_Data()
+    {
+        yield return new object[]
+        {
+            new CreateAccountDto { Email = "haha@example.com", Password = "tori098" }
+        };
+        yield return new object[]
+        {
+            new CreateAccountDto { Email = "", Password = "" }
+        };
+    }
+
+    [Theory]
+    [MemberData(nameof(Create_ForCreateAccountDto_ReturnsIdOfCreatedAccount_Data))]
+    public void Create_ForCreateAccountDto_ReturnsIdOfCreatedAccount(CreateAccountDto accountDto)
+    {
+        // arrange
+        List<Account> accounts = GetAccounts().Keys.ToList();
+        Mock<DbSet<Account>> dbSet = GetMockDbSet(accounts.AsQueryable());
+
+        _dbContext.Setup(m => m.Account).Returns(dbSet.Object);
+        _dbContext.Setup(m => m.Account.Add(It.IsAny<Account>())).Callback(
+            (Account account) =>
+            {
+                int id = accounts.Count + 1;
+
+                account.AccountId = id;
+                accounts.Add(account);
+            });
+
+        // act
+        var result = _accountService.Create(accountDto);
+
+        // assert
+        result.ShouldBe(accounts.Count);
+    }
+
+    [Fact]
+    public void Create_ShouldCallAddMethodOnce()
+    {
+        // arrange
+        List<Account> accounts = GetAccounts().Keys.ToList();
+        Mock<DbSet<Account>> dbSet = GetMockDbSet(accounts.AsQueryable());
+
+        _dbContext.Setup(m => m.Account).Returns(dbSet.Object);
+
+        // act
+        _accountService.Create(new CreateAccountDto());
+
+        // assert
+        _dbContext.Verify(m => m.Account.Add(It.IsAny<Account>()), Times.Once);
+    }
+
+    [Fact]
+    public void Create_ShouldCallSaveChangesMethod()
+    {
+        // arrange
+        List<Account> accounts = GetAccounts().Keys.ToList();
+        Mock<DbSet<Account>> dbSet = GetMockDbSet(accounts.AsQueryable());
+
+        _dbContext.Setup(m => m.Account).Returns(dbSet.Object);
+
+        // act
+        _accountService.Create(new CreateAccountDto());
+
+        // assert
+        _dbContext.Verify(m => m.SaveChanges(), Times.Once);
     }
 }
