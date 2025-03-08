@@ -244,7 +244,7 @@ public class AccountServiceTests
     }
 
     [Fact]
-    public void Update_ShouldCallAddMethodOnce()
+    public void Update_ShouldCallUpdateMethodOnce()
     {
         // arrange
         List<Account> accounts = GetAccounts().Keys.ToList();
@@ -270,6 +270,74 @@ public class AccountServiceTests
 
         // act
         _accountService.Update(1, new UpdateAccountDto());
+
+        // assert
+        _dbContext.Verify(m => m.SaveChanges(), Times.Once);
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    public void DeleteById_ForExistingId_ReturnsTrue(int id)
+    {
+        // arrange
+        List<Account> accounts = GetAccounts().Keys.ToList();
+        Mock<DbSet<Account>> dbSet = GetMockDbSet(accounts.AsQueryable());
+
+        _dbContext.Setup(m => m.Account).Returns(dbSet.Object);
+
+        // act
+        var result = _accountService.DeleteById(id);
+
+        // assert
+        result.ShouldBe(true);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(3)]
+    public void DeleteById_ForNotExistingId_ReturnsFalse(int id)
+    {
+        // arrange
+        List<Account> accounts = GetAccounts().Keys.ToList();
+        Mock<DbSet<Account>> dbSet = GetMockDbSet(accounts.AsQueryable());
+
+        _dbContext.Setup(m => m.Account).Returns(dbSet.Object);
+
+        // act
+        var result = _accountService.DeleteById(id);
+
+        // assert
+        result.ShouldBe(false);
+    }
+
+    [Fact]
+    public void DeleteById_ShouldCallRemoveMethodOnce()
+    {
+        // arrange
+        List<Account> accounts = GetAccounts().Keys.ToList();
+        Mock<DbSet<Account>> dbSet = GetMockDbSet(accounts.AsQueryable());
+
+        _dbContext.Setup(m => m.Account).Returns(dbSet.Object);
+
+        // act
+        _accountService.DeleteById(1);
+
+        // assert
+        _dbContext.Verify(m => m.Account.Remove(It.IsAny<Account>()), Times.Once);
+    }
+
+    [Fact]
+    public void DeleteById_ShouldCallRemoveChangesMethod()
+    {
+        // arrange
+        List<Account> accounts = GetAccounts().Keys.ToList();
+        Mock<DbSet<Account>> dbSet = GetMockDbSet(accounts.AsQueryable());
+
+        _dbContext.Setup(m => m.Account).Returns(dbSet.Object);
+
+        // act
+        _accountService.DeleteById(1);
 
         // assert
         _dbContext.Verify(m => m.SaveChanges(), Times.Once);
