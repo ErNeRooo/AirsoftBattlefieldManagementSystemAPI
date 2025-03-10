@@ -16,6 +16,7 @@ public class AccountServiceTests
     private readonly Mock<IBattleManagementSystemDbContext> _dbContext;
     private readonly Mock<IMapper> _mapper;
     private readonly AccountService _accountService;
+    private readonly Dictionary<Account, AccountDto> _accountsToDtos;
 
     public AccountServiceTests()
     {
@@ -45,22 +46,8 @@ public class AccountServiceTests
             });
 
         _accountService = new AccountService(_mapper.Object, _dbContext.Object);
-    }
 
-    private Mock<DbSet<Account>> GetMockDbSet(IQueryable<Account> accounts)
-    {
-        var dbSet = new Mock<DbSet<Account>>();
-        dbSet.As<IQueryable<Account>>().Setup(m => m.Provider).Returns(accounts.Provider);
-        dbSet.As<IQueryable<Account>>().Setup(m => m.Expression).Returns(accounts.Expression);
-        dbSet.As<IQueryable<Account>>().Setup(m => m.ElementType).Returns(accounts.ElementType);
-        dbSet.As<IQueryable<Account>>().Setup(m => m.GetEnumerator()).Returns(accounts.GetEnumerator());
-
-        return dbSet;
-    }
-
-    private Dictionary<Account, AccountDto> GetAccounts()
-    {
-        return new Dictionary<Account, AccountDto>
+        _accountsToDtos = new Dictionary<Account, AccountDto>
         {
             {
                 new Account { AccountId = 1, Email = "some.email@gmail.com", Password = "inu123" },
@@ -73,16 +60,29 @@ public class AccountServiceTests
         };
     }
 
+    private DbSet<Account> GetDbSet(IQueryable<Account> accounts)
+    {
+        var dbSetMock = new Mock<DbSet<Account>>();
+        var accountsMock = dbSetMock.As<IQueryable<Account>>();
+
+        accountsMock.Setup(m => m.Provider).Returns(accounts.Provider);
+        accountsMock.Setup(m => m.Expression).Returns(accounts.Expression);
+        accountsMock.Setup(m => m.ElementType).Returns(accounts.ElementType);
+        accountsMock.Setup(m => m.GetEnumerator()).Returns(accounts.GetEnumerator());
+
+        return dbSetMock.Object;
+    }
+
     [Theory]
     [InlineData(1, "some.email@gmail.com", "inu123")]
     [InlineData(2, "hellomum@gmail.com", "neko321")]
     public void GetById_ForExistingId_ReturnsCorrectAccountDto(int id, string email, string password)
     {
         // arrange
-        IQueryable<Account> accounts = GetAccounts().Keys.AsQueryable();
-        Mock<DbSet<Account>> dbSet = GetMockDbSet(accounts);
+        IQueryable<Account> accounts = _accountsToDtos.Keys.AsQueryable();
+        DbSet<Account> dbSet = GetDbSet(accounts);
 
-        _dbContext.Setup(m => m.Account).Returns(dbSet.Object);
+        _dbContext.Setup(m => m.Account).Returns(dbSet);
 
         // act
         var result = _accountService.GetById(id);
@@ -99,10 +99,10 @@ public class AccountServiceTests
     public void GetById_ForNonExistingId_ReturnsNull(int id)
     {
         // arrange
-        IQueryable<Account> accounts = GetAccounts().Keys.AsQueryable();
-        Mock<DbSet<Account>> dbSet = GetMockDbSet(accounts);
+        IQueryable<Account> accounts = _accountsToDtos.Keys.AsQueryable();
+        DbSet<Account> dbSet = GetDbSet(accounts);
 
-        _dbContext.Setup(m => m.Account).Returns(dbSet.Object);
+        _dbContext.Setup(m => m.Account).Returns(dbSet);
 
         // act
         var result = _accountService.GetById(id);
@@ -128,10 +128,10 @@ public class AccountServiceTests
     public void Create_ForCreateAccountDto_ReturnsIdOfCreatedAccount(CreateAccountDto accountDto)
     {
         // arrange
-        List<Account> accounts = GetAccounts().Keys.ToList();
-        Mock<DbSet<Account>> dbSet = GetMockDbSet(accounts.AsQueryable());
+        List<Account> accounts = _accountsToDtos.Keys.ToList();
+        DbSet<Account> dbSet = GetDbSet(accounts.AsQueryable());
 
-        _dbContext.Setup(m => m.Account).Returns(dbSet.Object);
+        _dbContext.Setup(m => m.Account).Returns(dbSet);
         _dbContext.Setup(m => m.Account.Add(It.IsAny<Account>())).Callback(
             (Account account) =>
             {
@@ -152,10 +152,10 @@ public class AccountServiceTests
     public void Create_ShouldCallAddMethodOnce()
     {
         // arrange
-        List<Account> accounts = GetAccounts().Keys.ToList();
-        Mock<DbSet<Account>> dbSet = GetMockDbSet(accounts.AsQueryable());
+        List<Account> accounts = _accountsToDtos.Keys.ToList();
+        DbSet<Account> dbSet = GetDbSet(accounts.AsQueryable());
 
-        _dbContext.Setup(m => m.Account).Returns(dbSet.Object);
+        _dbContext.Setup(m => m.Account).Returns(dbSet);
 
         // act
         _accountService.Create(new CreateAccountDto());
@@ -168,10 +168,10 @@ public class AccountServiceTests
     public void Create_ShouldCallSaveChangesMethod()
     {
         // arrange
-        List<Account> accounts = GetAccounts().Keys.ToList();
-        Mock<DbSet<Account>> dbSet = GetMockDbSet(accounts.AsQueryable());
+        List<Account> accounts = _accountsToDtos.Keys.ToList();
+        DbSet<Account> dbSet = GetDbSet(accounts.AsQueryable());
 
-        _dbContext.Setup(m => m.Account).Returns(dbSet.Object);
+        _dbContext.Setup(m => m.Account).Returns(dbSet);
 
         // act
         _accountService.Create(new CreateAccountDto());
@@ -200,10 +200,10 @@ public class AccountServiceTests
     public void Update_ForExistingId_ReturnsTrue(int id, UpdateAccountDto accountDto)
     {
         // arrange
-        List<Account> accounts = GetAccounts().Keys.ToList();
-        Mock<DbSet<Account>> dbSet = GetMockDbSet(accounts.AsQueryable());
+        List<Account> accounts = _accountsToDtos.Keys.ToList();
+        DbSet<Account> dbSet = GetDbSet(accounts.AsQueryable());
 
-        _dbContext.Setup(m => m.Account).Returns(dbSet.Object);
+        _dbContext.Setup(m => m.Account).Returns(dbSet);
 
         // act
         var result = _accountService.Update(id, accountDto);
@@ -231,10 +231,10 @@ public class AccountServiceTests
     public void Update_ForNotExistingId_ReturnsFalse(int id, UpdateAccountDto accountDto)
     {
         // arrange
-        List<Account> accounts = GetAccounts().Keys.ToList();
-        Mock<DbSet<Account>> dbSet = GetMockDbSet(accounts.AsQueryable());
+        List<Account> accounts = _accountsToDtos.Keys.ToList();
+        DbSet<Account> dbSet = GetDbSet(accounts.AsQueryable());
 
-        _dbContext.Setup(m => m.Account).Returns(dbSet.Object);
+        _dbContext.Setup(m => m.Account).Returns(dbSet);
 
         // act
         var result = _accountService.Update(id, accountDto);
@@ -247,10 +247,10 @@ public class AccountServiceTests
     public void Update_ShouldCallUpdateMethodOnce()
     {
         // arrange
-        List<Account> accounts = GetAccounts().Keys.ToList();
-        Mock<DbSet<Account>> dbSet = GetMockDbSet(accounts.AsQueryable());
+        List<Account> accounts = _accountsToDtos.Keys.ToList();
+        DbSet<Account> dbSet = GetDbSet(accounts.AsQueryable());
 
-        _dbContext.Setup(m => m.Account).Returns(dbSet.Object);
+        _dbContext.Setup(m => m.Account).Returns(dbSet);
 
         // act
         _accountService.Update(1, new UpdateAccountDto());
@@ -263,10 +263,10 @@ public class AccountServiceTests
     public void Update_ShouldCallSaveChangesMethod()
     {
         // arrange
-        List<Account> accounts = GetAccounts().Keys.ToList();
-        Mock<DbSet<Account>> dbSet = GetMockDbSet(accounts.AsQueryable());
+        List<Account> accounts = _accountsToDtos.Keys.ToList();
+        DbSet<Account> dbSet = GetDbSet(accounts.AsQueryable());
 
-        _dbContext.Setup(m => m.Account).Returns(dbSet.Object);
+        _dbContext.Setup(m => m.Account).Returns(dbSet);
 
         // act
         _accountService.Update(1, new UpdateAccountDto());
@@ -281,10 +281,10 @@ public class AccountServiceTests
     public void DeleteById_ForExistingId_ReturnsTrue(int id)
     {
         // arrange
-        List<Account> accounts = GetAccounts().Keys.ToList();
-        Mock<DbSet<Account>> dbSet = GetMockDbSet(accounts.AsQueryable());
+        List<Account> accounts = _accountsToDtos.Keys.ToList();
+        DbSet<Account> dbSet = GetDbSet(accounts.AsQueryable());
 
-        _dbContext.Setup(m => m.Account).Returns(dbSet.Object);
+        _dbContext.Setup(m => m.Account).Returns(dbSet);
 
         // act
         var result = _accountService.DeleteById(id);
@@ -299,10 +299,10 @@ public class AccountServiceTests
     public void DeleteById_ForNotExistingId_ReturnsFalse(int id)
     {
         // arrange
-        List<Account> accounts = GetAccounts().Keys.ToList();
-        Mock<DbSet<Account>> dbSet = GetMockDbSet(accounts.AsQueryable());
+        List<Account> accounts = _accountsToDtos.Keys.ToList();
+        DbSet<Account> dbSet = GetDbSet(accounts.AsQueryable());
 
-        _dbContext.Setup(m => m.Account).Returns(dbSet.Object);
+        _dbContext.Setup(m => m.Account).Returns(dbSet);
 
         // act
         var result = _accountService.DeleteById(id);
@@ -315,10 +315,10 @@ public class AccountServiceTests
     public void DeleteById_ShouldCallRemoveMethodOnce()
     {
         // arrange
-        List<Account> accounts = GetAccounts().Keys.ToList();
-        Mock<DbSet<Account>> dbSet = GetMockDbSet(accounts.AsQueryable());
+        List<Account> accounts = _accountsToDtos.Keys.ToList();
+        DbSet<Account> dbSet = GetDbSet(accounts.AsQueryable());
 
-        _dbContext.Setup(m => m.Account).Returns(dbSet.Object);
+        _dbContext.Setup(m => m.Account).Returns(dbSet);
 
         // act
         _accountService.DeleteById(1);
@@ -331,10 +331,10 @@ public class AccountServiceTests
     public void DeleteById_ShouldCallRemoveChangesMethod()
     {
         // arrange
-        List<Account> accounts = GetAccounts().Keys.ToList();
-        Mock<DbSet<Account>> dbSet = GetMockDbSet(accounts.AsQueryable());
+        List<Account> accounts = _accountsToDtos.Keys.ToList();
+        DbSet<Account> dbSet = GetDbSet(accounts.AsQueryable());
 
-        _dbContext.Setup(m => m.Account).Returns(dbSet.Object);
+        _dbContext.Setup(m => m.Account).Returns(dbSet);
 
         // act
         _accountService.DeleteById(1);
