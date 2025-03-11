@@ -3,6 +3,6 @@
     public class RoomDto
     {
         public int RoomId { get; set; }
-        public string Name { get; set; }
+        public int MaxPlayers { get; set; }
     }
 }
