@@ -10,15 +10,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles
     {
         public LocationMappingProfile()
         {
-            CreateMap<Location, LocationDto>().ForMember(destinationMember: dest => dest.PlayerId,
-                memberOptions: opt => opt.MapFrom(
-                    (src, dest, destMember, context) =>
-                    {
-                        int? id = context.Items["playerId"] as int?;
-                        return id != null ? id : throw new Exception("PlayerId is required in mapping");
-                    }
-                    ));
-
             CreateMap<CreateLocationDto, PlayerLocation>().ForMember(
                 destinationMember: dest => dest.LocationId,
                 memberOptions: opt => opt.Ignore());

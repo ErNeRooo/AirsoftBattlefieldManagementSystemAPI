@@ -17,10 +17,16 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 
             if (location is null || playerLocation is null) return null;
 
-            LocationDto locationDto = mapper.Map<LocationDto>(location, opt =>
+            LocationDto locationDto = new LocationDto
             {
-                opt.Items["playerId"] = playerLocation.PlayerId;
-            });
+                PlayerId = playerLocation.PlayerId,
+                LocationId = location.LocationId,
+                Longitude = location.Longitude,
+                Latitude = location.Latitude,
+                Accuracy = location.Accuracy,
+                Bearing = location.Bearing,
+                Time = location.Time
+            };
 
             return locationDto;
         }
@@ -37,12 +43,18 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             var locations = dbContext.Location
                 .Where(l => locationIDs.Contains(l.LocationId)).ToList();
 
-            List<LocationDto> locationDtos = locations.Select(location =>
+            List<LocationDto> locationDtos = locations.Select(l =>
             {
-                return mapper.Map<LocationDto>(location, opt =>
+                return new LocationDto
                 {
-                    opt.Items["playerId"] = playerId;
-                });
+                    PlayerId = playerId,
+                    LocationId = l.LocationId,
+                    Longitude = l.Longitude,
+                    Latitude = l.Latitude,
+                    Accuracy = l.Accuracy,
+                    Bearing = l.Bearing,
+                    Time = l.Time
+                };
             }).ToList();
 
             return locationDtos;
