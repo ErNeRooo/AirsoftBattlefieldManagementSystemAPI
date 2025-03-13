@@ -49,7 +49,7 @@ namespace AirsoftBattlefieldManagementSystemAPI
             using (var scope = app.Services.CreateScope())
             {
                 var seeder = scope.ServiceProvider.GetRequiredService<AvailableIdSeeder>();
-                seeder.Seed();
+                //seeder.Seed();
             }
 
             if (app.Environment.IsDevelopment())

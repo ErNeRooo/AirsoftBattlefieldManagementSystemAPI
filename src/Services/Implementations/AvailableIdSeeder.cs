@@ -8,7 +8,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
     {
         public void Seed()
         {
-            if (dbContext.Database.CanConnect()) throw new Exception("Can't make it, THE DOOR STUCK!!!");
+            if (!dbContext.Database.CanConnect()) throw new Exception("Can't make it, THE DOOR STUCK!!!");
             
             if (dbContext.AvailableId.Any()) return;
                 

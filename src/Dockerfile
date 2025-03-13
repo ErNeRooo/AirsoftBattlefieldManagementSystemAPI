@@ -29,12 +29,13 @@ ENTRYPOINT ["dotnet", "AirsoftBattlefieldManagementSystemAPI.dll"]
 FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS dev
 WORKDIR /app
 
-COPY ["AirsoftBattlefieldManagementSystemAPI.sln", "./"]
-COPY ["AirsoftBattlefieldManagementSystemAPI.csproj", "./"]
+COPY ["./AirsoftBattlefieldManagementSystemAPI.sln", "./"]
+COPY ["src/AirsoftBattlefieldManagementSystemAPI.csproj", "./src/"]
+COPY ["tests/AirsoftBattlefieldManagementSystemAPI.Tests/AirsoftBattlefieldManagementSystemAPI.Tests.csproj", "tests/AirsoftBattlefieldManagementSystemAPI.Tests/"]
 
-RUN dotnet restore "AirsoftBattlefieldManagementSystemAPI.sln"
+RUN dotnet nuget locals all --clear && dotnet restore "AirsoftBattlefieldManagementSystemAPI.sln"
 
 COPY . .
 
 ENV DOTNET_USE_POLLING_FILE_WATCHER 1
-ENTRYPOINT ["dotnet", "watch", "run", "--no-launch-profile", "--urls=http://0.0.0.0:8080"]
+ENTRYPOINT ["dotnet", "watch", "run", "--no-launch-profile", "--urls=http://0.0.0.0:8080", "--project", "src/AirsoftBattlefieldManagementSystemAPI.csproj"]
