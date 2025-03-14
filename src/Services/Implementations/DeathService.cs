@@ -49,8 +49,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             Location location = mapper.Map<Location>(deathDto);
             dbContext.Location.Add(location);
 
-            dbContext.SaveChanges();
-
             Death death = new Death();
             death.LocationId = location.LocationId;
             death.PlayerId = playerId;
@@ -58,7 +56,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 
             dbContext.SaveChanges();
 
-            return location.LocationId;
+            return death.DeathId;
         }
 
         public bool Update(int id, UpdateDeathDto deathDto)
