@@ -22,7 +22,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
         private readonly Mock<IBattleManagementSystemDbContext> _dbContext;
         private readonly Mock<IMapper> _mapper;
         private readonly Dictionary<Room, RoomDto> _roomsToDtos;
-        private readonly List<AvailableId> _availableIds;
 
         public RoomServiceTests()
         {
@@ -52,11 +51,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
                     new Room() { RoomId = 2, MaxPlayers = 1000 },
                     new RoomDto() { RoomId = 2, MaxPlayers = 1000 }
                 }
-            };
-
-            _availableIds = new List<AvailableId>{
-                new AvailableId{Id = 3},
-                new AvailableId{Id = 4}
             };
         }
 
@@ -115,9 +109,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             // arrange
             List<Room> rooms = _roomsToDtos.Keys.ToList();
             DbSet<Room> roomDbSet = GetDbSet(rooms.AsQueryable());
-            DbSet<AvailableId> availableIdDbSet = GetDbSet(_availableIds.AsQueryable());
 
-            _dbContext.Setup(m => m.AvailableId).Returns(availableIdDbSet);
             _dbContext.Setup(m => m.Room).Returns(roomDbSet);
             _dbContext.Setup(m => m.Room.Add(It.IsAny<Room>())).Callback(
                 (Room room) =>
@@ -139,9 +131,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             // arrange
             List<Room> rooms = _roomsToDtos.Keys.ToList();
             DbSet<Room> dbSet = GetDbSet(rooms.AsQueryable());
-            DbSet<AvailableId> availableIdDbSet = GetDbSet(_availableIds.AsQueryable());
 
-            _dbContext.Setup(m => m.AvailableId).Returns(availableIdDbSet);
             _dbContext.Setup(m => m.Room).Returns(dbSet);
 
             // act
@@ -157,9 +147,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             // arrange
             List<Room> rooms = _roomsToDtos.Keys.ToList();
             DbSet<Room> dbSet = GetDbSet(rooms.AsQueryable());
-            DbSet<AvailableId> availableIdDbSet = GetDbSet(_availableIds.AsQueryable());
 
-            _dbContext.Setup(m => m.AvailableId).Returns(availableIdDbSet);
             _dbContext.Setup(m => m.Room).Returns(dbSet);
 
             // act
@@ -167,24 +155,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
 
             // assert
             _dbContext.Verify(m => m.SaveChanges(), Times.Once);
-        }
-
-        [Fact]
-        public void Create_ShouldCallRemoveMethodForAvailableId()
-        {
-            // arrange
-            List<Room> rooms = _roomsToDtos.Keys.ToList();
-            DbSet<Room> dbSet = GetDbSet(rooms.AsQueryable());
-            DbSet<AvailableId> availableIdDbSet = GetDbSet(_availableIds.AsQueryable());
-
-            _dbContext.Setup(m => m.AvailableId).Returns(availableIdDbSet);
-            _dbContext.Setup(m => m.Room).Returns(dbSet);
-
-            // act
-            _roomService.Create(new CreateRoomDto());
-
-            // assert
-            _dbContext.Verify(m => m.AvailableId.Remove(It.IsAny<AvailableId>()), Times.Once);
         }
 
         [Theory]
@@ -268,9 +238,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             // arrange
             List<Room> rooms = _roomsToDtos.Keys.ToList();
             DbSet<Room> dbSet = GetDbSet(rooms.AsQueryable());
-            DbSet<AvailableId> availableIdDbSet = GetDbSet(_availableIds.AsQueryable());
 
-            _dbContext.Setup(m => m.AvailableId).Returns(availableIdDbSet);
             _dbContext.Setup(m => m.Room).Returns(dbSet);
 
             // act
@@ -288,9 +256,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             // arrange
             List<Room> rooms = _roomsToDtos.Keys.ToList();
             DbSet<Room> dbSet = GetDbSet(rooms.AsQueryable());
-            DbSet<AvailableId> availableIdDbSet = GetDbSet(_availableIds.AsQueryable());
 
-            _dbContext.Setup(m => m.AvailableId).Returns(availableIdDbSet);
             _dbContext.Setup(m => m.Room).Returns(dbSet);
 
             // act
@@ -306,9 +272,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             // arrange
             List<Room> rooms = _roomsToDtos.Keys.ToList();
             DbSet<Room> dbSet = GetDbSet(rooms.AsQueryable());
-            DbSet<AvailableId> availableIdDbSet = GetDbSet(_availableIds.AsQueryable());
 
-            _dbContext.Setup(m => m.AvailableId).Returns(availableIdDbSet);
             _dbContext.Setup(m => m.Room).Returns(dbSet);
 
             // act
@@ -324,9 +288,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             // arrange
             List<Room> rooms = _roomsToDtos.Keys.ToList();
             DbSet<Room> dbSet = GetDbSet(rooms.AsQueryable());
-            DbSet<AvailableId> availableIdDbSet = GetDbSet(_availableIds.AsQueryable());
 
-            _dbContext.Setup(m => m.AvailableId).Returns(availableIdDbSet);
             _dbContext.Setup(m => m.Room).Returns(dbSet);
 
             // act
@@ -334,24 +296,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
 
             // assert
             _dbContext.Verify(m => m.SaveChanges(), Times.Once);
-        }
-
-        [Fact]
-        public void DeleteById_ShouldCallAddMethodForAvailableId()
-        {
-            // arrange
-            List<Room> rooms = _roomsToDtos.Keys.ToList();
-            DbSet<Room> dbSet = GetDbSet(rooms.AsQueryable());
-            DbSet<AvailableId> availableIdDbSet = GetDbSet(_availableIds.AsQueryable());
-
-            _dbContext.Setup(m => m.AvailableId).Returns(availableIdDbSet);
-            _dbContext.Setup(m => m.Room).Returns(dbSet);
-
-            // act
-            _roomService.DeleteById(1);
-
-            // assert
-            _dbContext.Verify(m => m.AvailableId.Add(It.IsAny<AvailableId>()), Times.Once);
         }
     }
 }

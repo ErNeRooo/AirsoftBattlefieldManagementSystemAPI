@@ -16,7 +16,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Entities
         DbSet<PlayerLocation> PlayerLocation { get; set; }
         DbSet<Team> Team { get; set; }
         DbSet<Room> Room { get; set; }
-        DbSet<AvailableId> AvailableId { get; set; }
 
         DatabaseFacade Database { get; }
         ChangeTracker ChangeTracker { get; }
@@ -24,7 +23,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Entities
         IModel Model { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
-
+        EntityEntry<TEntity> Entry<TEntity>(TEntity entity) where TEntity : class;
         int SaveChanges();
     }
 }

@@ -4,6 +4,7 @@ using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 {
@@ -22,11 +23,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
         {
             Room room = mapper.Map<Room>(roomDto);
 
-            AvailableId id = dbContext.AvailableId.First();
-            room.RoomId = id.Id;
-            dbContext.AvailableId.Remove(id);
-
             dbContext.Room.Add(room);
+
             dbContext.SaveChanges();
 
             return room.RoomId;
@@ -48,13 +46,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
         public bool DeleteById(int id)
         {
             Room? room = dbContext.Room.FirstOrDefault(r => r.RoomId == id);
-
+            
             if (room is null) return false;
 
-            var availableId = new AvailableId();
-            availableId.Id = id;
-
-            dbContext.AvailableId.Add(availableId);
             dbContext.Room.Remove(room);
             dbContext.SaveChanges();
 

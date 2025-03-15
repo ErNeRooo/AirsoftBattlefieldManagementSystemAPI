@@ -4,7 +4,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update
 {
     public class UpdateRoomDto
     {
-        [Required]
         public int MaxPlayers { get; set; }
+        public int JoinRoomNumber { get; set; }
     }
 }

@@ -16,13 +16,16 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Entities
         public DbSet<PlayerLocation> PlayerLocation { get; set; }
         public DbSet<Team> Team { get; set; }
         public DbSet<Room> Room { get; set; }
-        public DbSet<AvailableId> AvailableId { get; set; }
 
         public DatabaseFacade Database => base.Database;
         public ChangeTracker ChangeTracker => base.ChangeTracker;
         public DbContextId ContextId => base.ContextId;
         public IModel Model => base.Model;
 
+        public override EntityEntry<TEntity> Entry<TEntity>(TEntity entity)
+        {
+            return base.Entry(entity);
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

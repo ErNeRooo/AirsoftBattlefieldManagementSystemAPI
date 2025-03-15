@@ -4,5 +4,6 @@
     {
         public int RoomId { get; set; }
         public int MaxPlayers { get; set; }
+        public int JoinRoomNumber { get; set; }
     }
 }

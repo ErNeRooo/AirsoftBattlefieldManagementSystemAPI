@@ -42,15 +42,8 @@ namespace AirsoftBattlefieldManagementSystemAPI
             builder.Services.AddScoped<ILocationService, LocationService>();
             builder.Services.AddScoped<IKillService, KillService>();
             builder.Services.AddScoped<IDeathService, DeathService>();
-            builder.Services.AddScoped<AvailableIdSeeder>();
 
             var app = builder.Build();
-
-            using (var scope = app.Services.CreateScope())
-            {
-                var seeder = scope.ServiceProvider.GetRequiredService<AvailableIdSeeder>();
-                //seeder.Seed();
-            }
 
             if (app.Environment.IsDevelopment())
             {

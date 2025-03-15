@@ -6,5 +6,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create
     {
         [Required]
         public int MaxPlayers { get; set; }
+        public int JoinRoomNumber { get; set; }
     }
 }
