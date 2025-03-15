@@ -6,6 +6,7 @@ using AirsoftBattlefieldManagementSystemAPI.Services.Implementations;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using NLog.Web;
+using Scalar.AspNetCore;
 
 namespace AirsoftBattlefieldManagementSystemAPI
 {
@@ -56,6 +57,12 @@ namespace AirsoftBattlefieldManagementSystemAPI
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
+                app.MapScalarApiReference(options =>
+                {
+                    options
+                        .WithTheme(ScalarTheme.DeepSpace)
+                        .WithDefaultHttpClient(ScalarTarget.Kotlin, ScalarClient.OkHttp);
+                });
             }
 
             app.UseHttpsRedirection();
