@@ -11,11 +11,21 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 {
     public class RoomService(IMapper mapper, IBattleManagementSystemDbContext dbContext) : IRoomService
     {
-        public RoomDto? GetById(int id)
+        public RoomDto GetById(int id)
         {
             Room? room = dbContext.Room.FirstOrDefault(r => r.RoomId == id);
 
             if (room is null) throw new NotFoundException($"Room with id {id} not found");
+
+            RoomDto roomDto = mapper.Map<RoomDto>(room);
+            return roomDto;
+        }
+
+        public RoomDto GetByRoomJoinNumber(int roomJoinNumber)
+        {
+            Room? room = dbContext.Room.FirstOrDefault(r => r.JoinRoomNumber == roomJoinNumber);
+
+            if (room is null) throw new NotFoundException($"Room with room join number {roomJoinNumber} not found");
 
             RoomDto roomDto = mapper.Map<RoomDto>(room);
             return roomDto;

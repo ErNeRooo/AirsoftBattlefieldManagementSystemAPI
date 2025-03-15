@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AirsoftBattlefieldManagementSystemAPI.Exceptions;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
@@ -84,6 +85,39 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             result.ShouldSatisfyAllConditions(
                 result => result.RoomId.ShouldBe(id),
                 result => result.MaxPlayers.ShouldBe(maxPlayers));
+        }
+
+        [Theory]
+        [InlineData(1, 10)]
+        [InlineData(2, 1000)]
+        public void GetByRoomJoinNumber_ForExistingRoomId_ReturnsRoomDto(int roomJoinNumber, int maxPlayers)
+        {
+            // arrange
+            IQueryable<Room> rooms = _roomsToDtos.Keys.AsQueryable();
+            DbSet<Room> dbSet = GetDbSet(rooms);
+            _dbContext.Setup(m => m.Room).Returns(dbSet);
+
+            // act
+            RoomDto result = _roomService.GetByRoomJoinNumber(roomJoinNumber);
+
+            // assert
+            result.ShouldSatisfyAllConditions(
+                result => result.RoomId.ShouldBe(roomJoinNumber),
+                result => result.MaxPlayers.ShouldBe(maxPlayers));
+        }
+
+        [Theory]
+        [InlineData(-1)]
+        [InlineData(86)]
+        public void GetByRoomJoinNumber_ForNotExistingRoomId_ThrowsNotFoundException(int roomJoinNumber)
+        {
+            // arrange
+            IQueryable<Room> rooms = _roomsToDtos.Keys.AsQueryable();
+            DbSet<Room> dbSet = GetDbSet(rooms);
+            _dbContext.Setup(m => m.Room).Returns(dbSet);
+
+            // act & assert
+            Should.Throw<NotFoundException>(() => _roomService.GetByRoomJoinNumber(roomJoinNumber));
         }
 
         [Fact]

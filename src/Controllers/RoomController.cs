@@ -18,6 +18,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
             return Ok(roomDto);
         }
 
+        [HttpGet("room-join-number/{roomJoinNumber}")]
+        public ActionResult<RoomDto> GetRoomByRoomJoinNumber(int roomJoinNumber)
+        {
+            RoomDto roomDto = roomService.GetByRoomJoinNumber(roomJoinNumber);
+
+            return Ok(roomDto);
+        }
+
         [HttpPost("")]
         public ActionResult PostRoom([FromBody] CreateRoomDto roomDto)
         {
