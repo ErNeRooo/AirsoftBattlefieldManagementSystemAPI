@@ -1,4 +1,5 @@
-﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
+﻿using AirsoftBattlefieldManagementSystemAPI.Exceptions;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
@@ -15,19 +16,19 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
         {
             Kill? kill = dbContext.Kill.Include(k=> k.Location).FirstOrDefault(t => t.KillId == id);
 
-            if (kill is null) return null;
+            if (kill is null) throw new NotFoundException($"Kill with id {id} not found");
 
             KillDto killDto = mapper.Map<KillDto>(kill);
 
             return killDto;
         }
 
-        public List<KillDto>? GetAllOfPlayerWithId(int playerId)
+        public List<KillDto> GetAllOfPlayerWithId(int playerId)
         {
             var kills = dbContext.Kill.Include(k => k.Location)
                 .Where(k => k.PlayerId == playerId).ToList();
 
-            if (kills.IsNullOrEmpty()) return null;
+            if (kills.IsNullOrEmpty()) throw new NotFoundException($"Player with id {playerId} not found");
 
             List<KillDto> killDtos = kills.Select(location =>
             {
@@ -40,11 +41,11 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return killDtos;
         }
 
-        public int? Create(int playerId, CreateKillDto killDto)
+        public int Create(int playerId, CreateKillDto killDto)
         {
             Player? player = dbContext.Player.FirstOrDefault(p => p.PlayerId == playerId);
 
-            if(player is null) return null;
+            if(player is null) throw new NotFoundException($"Player with id {playerId} not found");
 
             Location location = mapper.Map<Location>(killDto);
             dbContext.Location.Add(location);
@@ -59,31 +60,27 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return kill.KillId;
         }
 
-        public bool Update(int id, UpdateKillDto killDto)
+        public void Update(int id, UpdateKillDto killDto)
         {
             Kill? previousKill = dbContext.Kill
                 .Include(k => k.Location)
                 .FirstOrDefault(t => t.KillId == id);
 
-            if (previousKill is null) return false;
+            if (previousKill is null) throw new NotFoundException($"Kill with id {id} not found");
 
             Location updatedLocation = mapper.Map(killDto, previousKill.Location);
             dbContext.Location.Update(updatedLocation);
             dbContext.SaveChanges();
-
-            return true;
         }
 
-        public bool DeleteById(int id)
+        public void DeleteById(int id)
         {
             Kill? kill = dbContext.Kill.FirstOrDefault(t => t.KillId == id);
 
-            if(kill is null) return false;
+            if(kill is null) throw new NotFoundException($"Kill with id {id} not found");
 
             dbContext.Kill.Remove(kill);
             dbContext.SaveChanges();
-
-            return true;
         }
     }
 }

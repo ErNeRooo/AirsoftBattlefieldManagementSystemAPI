@@ -1,4 +1,5 @@
-﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
+﻿using AirsoftBattlefieldManagementSystemAPI.Exceptions;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
@@ -13,7 +14,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
         {
             Team? team = dbContext.Team.FirstOrDefault(t => t.TeamId == id);
 
-            if (team is null) return null;
+            if (team is null) throw new NotFoundException($"Team with id {id} not found");
 
             TeamDto teamDto = mapper.Map<TeamDto>(team);
 
@@ -29,29 +30,25 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return team.TeamId;
         }
 
-        public bool Update(int id, UpdateTeamDto teamDto)
+        public void Update(int id, UpdateTeamDto teamDto)
         {
             Team? previousTeam = dbContext.Team.FirstOrDefault(t => t.TeamId == id);
 
-            if (previousTeam is null) return false;
+            if (previousTeam is null) throw new NotFoundException($"Team with id {id} not found");
 
             mapper.Map(teamDto, previousTeam);
             dbContext.Team.Update(previousTeam);
             dbContext.SaveChanges();
-
-            return true;
         }
 
-        public bool DeleteById(int id)
+        public void DeleteById(int id)
         {
             Team? team = dbContext.Team.FirstOrDefault(t => t.TeamId == id);
 
-            if(team is null) return false;
+            if(team is null) throw new NotFoundException($"Team with id {id} not found");
 
             dbContext.Team.Remove(team);
             dbContext.SaveChanges();
-
-            return true;
         }
     }
 }

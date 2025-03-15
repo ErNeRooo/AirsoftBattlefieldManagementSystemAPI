@@ -1,9 +1,11 @@
+using AirsoftBattlefieldManagementSystemAPI.Middleware;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles;
 using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
 using AirsoftBattlefieldManagementSystemAPI.Services.Implementations;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using NLog.Web;
 
 namespace AirsoftBattlefieldManagementSystemAPI
 {
@@ -12,6 +14,9 @@ namespace AirsoftBattlefieldManagementSystemAPI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Logging.ClearProviders();
+            builder.Host.UseNLog();
 
             builder.Services.AddControllers();
             builder.Services.AddOpenApi();
@@ -42,8 +47,11 @@ namespace AirsoftBattlefieldManagementSystemAPI
             builder.Services.AddScoped<ILocationService, LocationService>();
             builder.Services.AddScoped<IKillService, KillService>();
             builder.Services.AddScoped<IDeathService, DeathService>();
+            builder.Services.AddTransient<ErrorHandlingMiddleware>();
 
             var app = builder.Build();
+
+            app.UseMiddleware<ErrorHandlingMiddleware>();
 
             if (app.Environment.IsDevelopment())
             {

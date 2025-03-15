@@ -9,15 +9,13 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class AccountController(ILogger<AccountController> logger, IAccountService accountService) : Controller
+    public class AccountController(IAccountService accountService) : Controller
     {
         [HttpGet]
         [Route("id/{id}")]
         public ActionResult<AccountDto> GetById(int id)
         {
-            AccountDto? accountDto = accountService.GetById(id);
-
-            if (accountDto is null) return NotFound();
+            AccountDto accountDto = accountService.GetById(id);
 
             return Ok(accountDto);
         }
@@ -25,8 +23,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [HttpPost]
         public ActionResult Create([FromBody] CreateAccountDto accountDto)
         {
-            if(!ModelState.IsValid) return BadRequest();
-
             int id = accountService.Create(accountDto);
 
             return Created($"/Account/id/{id}", null);
@@ -36,24 +32,19 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [Route("id/{id}")]
         public ActionResult Update(int id, [FromBody] UpdateAccountDto accountDto)
         {
-            if (!ModelState.IsValid) return BadRequest();
+            accountService.Update(id, accountDto);
 
-            bool isSuccessful = accountService.Update(id, accountDto);
+            return Ok();
 
-            if (isSuccessful) return Ok();
-
-            return NotFound();
         }
 
         [HttpDelete]
         [Route("id/{id}")]
         public ActionResult Delete(int id)
         {
-            bool isSuccessful = accountService.DeleteById(id);
+            accountService.DeleteById(id);
 
-            if (isSuccessful) return NoContent();
-
-            return NotFound();
+            return NoContent();
         }
     }
 }

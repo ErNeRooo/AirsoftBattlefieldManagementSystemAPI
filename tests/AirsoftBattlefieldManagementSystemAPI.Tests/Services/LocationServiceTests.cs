@@ -104,27 +104,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
         }
 
         [Theory]
-        [InlineData(78)]
-        public void GetById_ForNonExistingId_ReturnsNull(int id)
-        {
-            // arrange
-            IQueryable<Location> locations = _locationsToDtos.Keys.AsQueryable();
-            DbSet<Location> locationDbSet = GetDbSet(locations);
-            DbSet<PlayerLocation> playerLocationDbSet = GetDbSet(_playerLocations.AsQueryable());
-            DbSet<Player> playerDbSet = GetDbSet(_players.AsQueryable());
-
-            _dbContext.Setup(m => m.Player).Returns(playerDbSet);
-            _dbContext.Setup(m => m.PlayerLocation).Returns(playerLocationDbSet);
-            _dbContext.Setup(m => m.Location).Returns(locationDbSet);
-
-            // act
-            var result = _locationService.GetById(id);
-
-            // assert
-            result.ShouldBeNull();
-        }
-
-        [Theory]
         [InlineData(4)]
         public void GetAllOfPlayerWithId_ForExistingId_ReturnsNull(int id)
         {
@@ -145,25 +124,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
                 result => result.Count.ShouldBe(1));
         }
 
-        [Theory]
-        [InlineData(86)]
-        public void GetAllOfPlayerWithId_ForNotExistingId_ReturnsNull(int id)
-        {
-            // arrange
-            IQueryable<Location> locations = _locationsToDtos.Keys.AsQueryable();
-            DbSet<Location> locationDbSet = GetDbSet(locations);
-            DbSet<PlayerLocation> playerLocationDbSet = GetDbSet(_playerLocations.AsQueryable());
-
-            _dbContext.Setup(m => m.PlayerLocation).Returns(playerLocationDbSet);
-            _dbContext.Setup(m => m.Location).Returns(locationDbSet);
-
-
-            // act
-            List<LocationDto> result = _locationService.GetAllOfPlayerWithId(id);
-
-            // assert
-            result.ShouldBeNull();
-        }
 
         [Fact]
         public void Create_ForExistingPlayerId_ReturnsIdOfCreatedLocation()
@@ -248,47 +208,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _locationService.Create(4, new CreateLocationDto());
 
             // assert
-            _dbContext.Verify(m => m.SaveChanges(), Times.AtLeast(2));
-        }
-
-        [Theory]
-        [InlineData(1)]
-        public void Update_ForExistingId_ReturnsTrue(int id)
-        {
-            // arrange
-            List<Location> locations = _locationsToDtos.Keys.ToList();
-            DbSet<Location> dbSet = GetDbSet(locations.AsQueryable());
-
-            _dbContext.Setup(m => m.Location).Returns(dbSet);
-
-            // act
-            var result = _locationService.Update(id, new UpdateLocationDto());
-
-            // assert
-            result.ShouldBe(true);
-        }
-
-        public static IEnumerable<object[]> Update_ForNotExistingId_ReturnsFalse_Data()
-        {
-            yield return new object[] { 0, new UpdateLocationDto {  } };
-            yield return new object[] { 3, new UpdateLocationDto {  } };
-        }
-
-        [Theory]
-        [MemberData(nameof(Update_ForNotExistingId_ReturnsFalse_Data))]
-        public void Update_ForNotExistingId_ReturnsFalse(int id, UpdateLocationDto locationDto)
-        {
-            // arrange
-            List<Location> locations = _locationsToDtos.Keys.ToList();
-            DbSet<Location> dbSet = GetDbSet(locations.AsQueryable());
-
-            _dbContext.Setup(m => m.Location).Returns(dbSet);
-
-            // act
-            var result = _locationService.Update(id, locationDto);
-
-            // assert
-            result.ShouldBe(false);
+            _dbContext.Verify(m => m.SaveChanges(), Times.Once);
         }
 
         [Fact]
@@ -321,41 +241,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
 
             // assert
             _dbContext.Verify(m => m.SaveChanges(), Times.Once);
-        }
-
-        [Theory]
-        [InlineData(1)]
-        public void DeleteById_ForExistingId_ReturnsTrue(int id)
-        {
-            // arrange
-            List<Location> locations = _locationsToDtos.Keys.ToList();
-            DbSet<Location> dbSet = GetDbSet(locations.AsQueryable());
-
-            _dbContext.Setup(m => m.Location).Returns(dbSet);
-
-            // act
-            var result = _locationService.DeleteById(id);
-
-            // assert
-            result.ShouldBe(true);
-        }
-
-        [Theory]
-        [InlineData(0)]
-        [InlineData(3)]
-        public void DeleteById_ForNotExistingId_ReturnsFalse(int id)
-        {
-            // arrange
-            List<Location> locations = _locationsToDtos.Keys.ToList();
-            DbSet<Location> dbSet = GetDbSet(locations.AsQueryable());
-
-            _dbContext.Setup(m => m.Location).Returns(dbSet);
-
-            // act
-            var result = _locationService.DeleteById(id);
-
-            // assert
-            result.ShouldBe(false);
         }
 
         [Fact]

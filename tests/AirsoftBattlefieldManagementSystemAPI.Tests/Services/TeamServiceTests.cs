@@ -89,23 +89,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
                 result => result.RoomId.ShouldBe(roomId));
         }
 
-        [Theory]
-        [InlineData(78)]
-        public void GetById_ForNonExistingId_ReturnsNull(int id)
-        {
-            // arrange
-            IQueryable<Team> teams = _teamsToDtos.Keys.AsQueryable();
-            DbSet<Team> dbSet = GetDbSet(teams);
-
-            _dbContext.Setup(m => m.Team).Returns(dbSet);
-
-            // act
-            var result = _teamService.GetById(id);
-
-            // assert
-            result.ShouldBeNull();
-        }
-
         public static IEnumerable<object[]> Create_ForCreateTeamDto_ReturnsIdOfCreatedTeam_Data()
         {
             yield return new object[] { new CreateTeamDto() };
@@ -167,53 +150,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Verify(m => m.SaveChanges(), Times.Once);
         }
 
-
-        public static IEnumerable<object[]> Update_ForExistingId_ReturnsTrue_Data()
-        {
-            yield return new object[] { 1, new UpdateTeamDto { } };
-            yield return new object[] { 2, new UpdateTeamDto { } };
-        }
-
-        [Theory]
-        [MemberData(nameof(Update_ForExistingId_ReturnsTrue_Data))]
-        public void Update_ForExistingId_ReturnsTrue(int id, UpdateTeamDto teamDto)
-        {
-            // arrange
-            List<Team> teams = _teamsToDtos.Keys.ToList();
-            DbSet<Team> dbSet = GetDbSet(teams.AsQueryable());
-
-            _dbContext.Setup(m => m.Team).Returns(dbSet);
-
-            // act
-            var result = _teamService.Update(id, teamDto);
-
-            // assert
-            result.ShouldBe(true);
-        }
-
-        public static IEnumerable<object[]> Update_ForNotExistingId_ReturnsFalse_Data()
-        {
-            yield return new object[] { 0, new UpdateTeamDto {  } };
-            yield return new object[] { 3, new UpdateTeamDto {  } };
-        }
-
-        [Theory]
-        [MemberData(nameof(Update_ForNotExistingId_ReturnsFalse_Data))]
-        public void Update_ForNotExistingId_ReturnsFalse(int id, UpdateTeamDto teamDto)
-        {
-            // arrange
-            List<Team> teams = _teamsToDtos.Keys.ToList();
-            DbSet<Team> dbSet = GetDbSet(teams.AsQueryable());
-
-            _dbContext.Setup(m => m.Team).Returns(dbSet);
-
-            // act
-            var result = _teamService.Update(id, teamDto);
-
-            // assert
-            result.ShouldBe(false);
-        }
-
         [Fact]
         public void Update_ShouldCallUpdateMethodOnce()
         {
@@ -244,42 +180,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
 
             // assert
             _dbContext.Verify(m => m.SaveChanges(), Times.Once);
-        }
-
-        [Theory]
-        [InlineData(1)]
-        [InlineData(2)]
-        public void DeleteById_ForExistingId_ReturnsTrue(int id)
-        {
-            // arrange
-            List<Team> teams = _teamsToDtos.Keys.ToList();
-            DbSet<Team> dbSet = GetDbSet(teams.AsQueryable());
-
-            _dbContext.Setup(m => m.Team).Returns(dbSet);
-
-            // act
-            var result = _teamService.DeleteById(id);
-
-            // assert
-            result.ShouldBe(true);
-        }
-
-        [Theory]
-        [InlineData(0)]
-        [InlineData(3)]
-        public void DeleteById_ForNotExistingId_ReturnsFalse(int id)
-        {
-            // arrange
-            List<Team> teams = _teamsToDtos.Keys.ToList();
-            DbSet<Team> dbSet = GetDbSet(teams.AsQueryable());
-
-            _dbContext.Setup(m => m.Team).Returns(dbSet);
-
-            // act
-            var result = _teamService.DeleteById(id);
-
-            // assert
-            result.ShouldBe(false);
         }
 
         [Fact]

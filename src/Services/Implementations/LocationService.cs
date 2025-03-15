@@ -1,4 +1,5 @@
-﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
+﻿using AirsoftBattlefieldManagementSystemAPI.Exceptions;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
@@ -15,7 +16,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             Location? location = dbContext.Location.FirstOrDefault(t => t.LocationId == id);
             PlayerLocation? playerLocation = dbContext.PlayerLocation.FirstOrDefault(t => t.LocationId == id);
 
-            if (location is null || playerLocation is null) return null;
+            if (location is null || playerLocation is null) throw new NotFoundException($"Location with id {id} not found");
 
             LocationDto locationDto = new LocationDto
             {
@@ -38,7 +39,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
                 .Where(pl => pl.PlayerId == playerId)
                 .Select(pl => pl.LocationId);
 
-            if (locationIDs.IsNullOrEmpty()) return null;
+            if (locationIDs is null) throw new NotFoundException($"Player with id {playerId} not found"); ;
 
             var locations = dbContext.Location
                 .Where(l => locationIDs.Contains(l.LocationId)).ToList();
@@ -60,16 +61,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return locationDtos;
         }
 
-        public int? Create(int playerId, CreateLocationDto locationDto)
+        public int Create(int playerId, CreateLocationDto locationDto)
         {
             Player? player = dbContext.Player.FirstOrDefault(p => p.PlayerId == playerId);
 
-            if(player is null) return null;
+            if(player is null) throw new NotFoundException($"Player with id {playerId} not found");
 
             Location location = mapper.Map<Location>(locationDto);
             dbContext.Location.Add(location);
-
-            dbContext.SaveChanges();
 
             PlayerLocation playerLocation = new PlayerLocation();
             playerLocation.LocationId = location.LocationId;
@@ -81,29 +80,25 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return location.LocationId;
         }
 
-        public bool Update(int id, UpdateLocationDto locationDto)
+        public void Update(int id, UpdateLocationDto locationDto)
         {
             Location? previousLocation = dbContext.Location.FirstOrDefault(t => t.LocationId == id);
 
-            if (previousLocation is null) return false;
+            if (previousLocation is null) throw new NotFoundException($"Location with id {id} not found");
 
             mapper.Map(locationDto, previousLocation);
             dbContext.Location.Update(previousLocation);
             dbContext.SaveChanges();
-
-            return true;
         }
 
-        public bool DeleteById(int id)
+        public void DeleteById(int id)
         {
             Location? location = dbContext.Location.FirstOrDefault(t => t.LocationId == id);
 
-            if(location is null) return false;
+            if(location is null) throw new NotFoundException($"Location with id {id} not found");
 
             dbContext.Location.Remove(location);
             dbContext.SaveChanges();
-
-            return true;
         }
     }
 }

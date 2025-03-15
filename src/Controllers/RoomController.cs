@@ -8,14 +8,12 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class RoomController(ILogger<RoomController> logger, IRoomService roomService) : ControllerBase
+    public class RoomController(IRoomService roomService) : ControllerBase
     {
         [HttpGet("id/{id}")]
         public ActionResult<RoomDto> GetRoom(int id)
         {
-            RoomDto? roomDto = roomService.GetById(id);
-
-            if (roomDto is null) return NotFound();
+            RoomDto roomDto = roomService.GetById(id);
 
             return Ok(roomDto);
         }
@@ -23,8 +21,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [HttpPost("")]
         public ActionResult PostRoom([FromBody] CreateRoomDto roomDto)
         {
-            if (!ModelState.IsValid) return BadRequest();
-
             int roomId = roomService.Create(roomDto);
 
             return Created($"/room/id/{roomId}", null);
@@ -33,23 +29,17 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [HttpPut("id/{id}")]
         public ActionResult PutRoom(int id, [FromBody] UpdateRoomDto roomDto)
         {
-            if (!ModelState.IsValid) return BadRequest();
+            roomService.Update(id, roomDto);
 
-            bool isSuccessful = roomService.Update(id, roomDto);
-
-            if(isSuccessful) return Ok();
-
-            return NotFound();
+            return Ok();
         }
 
         [HttpDelete("id/{id}")]
         public ActionResult DeleteRoom(int id)
         {
-            bool isSuccessful = roomService.DeleteById(id);
+            roomService.DeleteById(id);
 
-            if (isSuccessful) return NoContent();
-
-            return NotFound();
+            return NoContent();
         }
     }
 }

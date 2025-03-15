@@ -10,39 +10,31 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class KillController(ILogger<KillController> logger, IKillService killService) : Controller
+    public class KillController(IKillService killService) : Controller
     {
         [HttpGet]
         [Route("id/{id}")]
         public ActionResult<KillDto> GetById(int id)
         {
-            KillDto? KillDto = killService.GetById(id);
+            KillDto killDto = killService.GetById(id);
 
-            if (KillDto is null) return NotFound();
-
-            return Ok(KillDto);
+            return Ok(killDto);
         }
 
         [HttpGet]
         [Route("playerId/{playerId}")]
         public ActionResult<List<KillDto>> GetKillsOfPlayerWithId(int playerId)
         {
-            List<KillDto>? KillDtos = killService.GetAllOfPlayerWithId(playerId);
+            List<KillDto> killDtos = killService.GetAllOfPlayerWithId(playerId);
 
-            if (KillDtos is null) return NotFound();
-
-            return Ok(KillDtos);
+            return Ok(killDtos);
         }
 
         [HttpPost]
         [Route("playerId/{playerId}")]
         public ActionResult Create(int playerId, [FromBody] CreateKillDto KillDto)
         {
-            if(!ModelState.IsValid) return BadRequest();
-
-            int? id = killService.Create(playerId, KillDto);
-
-            if(id is null) return NotFound();
+            int id = killService.Create(playerId, KillDto);
 
             return Created($"/Kill/id/{id}", null);
         }
@@ -51,24 +43,18 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [Route("id/{id}")]
         public ActionResult Update(int id, [FromBody] UpdateKillDto killDto)
         {
-            if (!ModelState.IsValid) return BadRequest();
+            killService.Update(id, killDto);
 
-            bool isSuccessful = killService.Update(id, killDto);
-
-            if (isSuccessful) return Ok();
-
-            return NotFound();
+            return Ok();
         }
 
         [HttpDelete]
         [Route("id/{id}")]
         public ActionResult Delete(int id)
         {
-            bool isSuccessful = killService.DeleteById(id);
+            killService.DeleteById(id);
 
-            if (isSuccessful) return NoContent();
-
-            return NotFound();
+            return NoContent();
         }
     }
 }

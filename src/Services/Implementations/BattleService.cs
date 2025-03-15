@@ -1,4 +1,5 @@
-﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
+﻿using AirsoftBattlefieldManagementSystemAPI.Exceptions;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
@@ -14,7 +15,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
         {
             Battle? battle = dbContext.Battle.FirstOrDefault(t => t.BattleId == id);
 
-            if (battle is null) return null;
+            if (battle is null) throw new NotFoundException($"Battle with id {id} not found");
 
             BattleDto battleDto = mapper.Map<BattleDto>(battle);
 
@@ -29,28 +30,25 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return battle.BattleId;
         }
 
-        public bool Update(int id, UpdateBattleDto battleDto)
+        public void Update(int id, UpdateBattleDto battleDto)
         {
             Battle? previousBattle = dbContext.Battle.FirstOrDefault(t => t.BattleId == id);
 
-            if (previousBattle is null) return false;
+            if (previousBattle is null) throw new NotFoundException($"Battle with id {id} not found");
 
             mapper.Map(battleDto, previousBattle);
             dbContext.Battle.Update(previousBattle);
             dbContext.SaveChanges();
-            return true;
         }
 
-        public bool DeleteById(int id)
+        public void DeleteById(int id)
         {
             Battle? battle = dbContext.Battle.FirstOrDefault(t => t.BattleId == id);
 
-            if (battle is null) return false;
+            if (battle is null) throw new NotFoundException($"Battle with id {id} not found");
 
             dbContext.Battle.Remove(battle);
             dbContext.SaveChanges();
-
-            return true;
         }
     }
 }

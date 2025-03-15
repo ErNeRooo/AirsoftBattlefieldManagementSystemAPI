@@ -1,4 +1,5 @@
-﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
+﻿using AirsoftBattlefieldManagementSystemAPI.Exceptions;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
@@ -15,7 +16,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
         {
             Death? death = dbContext.Death.Include(k=> k.Location).FirstOrDefault(t => t.DeathId == id);
 
-            if (death is null) return null;
+            if (death is null) throw new NotFoundException($"Death with id {id} not found");
 
             DeathDto deathDto = mapper.Map<DeathDto>(death);
 
@@ -27,7 +28,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             var deaths = dbContext.Death.Include(k => k.Location)
                 .Where(k => k.PlayerId == playerId).ToList();
 
-            if (deaths.IsNullOrEmpty()) return null;
+            if (deaths is null) throw new NotFoundException($"Player with id {playerId} not found");
 
             List<DeathDto> deathDtos = deaths.Select(location =>
             {
@@ -40,11 +41,11 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return deathDtos;
         }
 
-        public int? Create(int playerId, CreateDeathDto deathDto)
+        public int Create(int playerId, CreateDeathDto deathDto)
         {
             Player? player = dbContext.Player.FirstOrDefault(p => p.PlayerId == playerId);
 
-            if(player is null) return null;
+            if(player is null) throw new NotFoundException($"Player with id {playerId} not found");
 
             Location location = mapper.Map<Location>(deathDto);
             dbContext.Location.Add(location);
@@ -59,31 +60,27 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return death.DeathId;
         }
 
-        public bool Update(int id, UpdateDeathDto deathDto)
+        public void Update(int id, UpdateDeathDto deathDto)
         {
             Death? previousDeath = dbContext.Death
                 .Include(k => k.Location)
                 .FirstOrDefault(t => t.DeathId == id);
 
-            if (previousDeath is null) return false;
+            if (previousDeath is null) throw new NotFoundException($"Death with id {id} not found");
 
             mapper.Map(deathDto, previousDeath.Location);
             dbContext.Location.Update(previousDeath.Location);
             dbContext.SaveChanges();
-
-            return true;
         }
 
-        public bool DeleteById(int id)
+        public void DeleteById(int id)
         {
             Death? death = dbContext.Death.FirstOrDefault(t => t.DeathId == id);
 
-            if(death is null) return false;
+            if(death is null) throw new NotFoundException($"Death with id {id} not found");
 
             dbContext.Death.Remove(death);
             dbContext.SaveChanges();
-
-            return true;
         }
     }
 }

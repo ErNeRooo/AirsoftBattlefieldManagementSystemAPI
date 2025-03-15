@@ -89,23 +89,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
                 result => result.IsDead.ShouldBe(isDead));
         }
 
-        [Theory]
-        [InlineData(78)]
-        public void GetById_ForNonExistingId_ReturnsNull(int id)
-        {
-            // arrange
-            IQueryable<Player> players = _playersToDtos.Keys.AsQueryable();
-            DbSet<Player> dbSet = GetDbSet(players);
-
-            _dbContext.Setup(m => m.Player).Returns(dbSet);
-
-            // act
-            var result = _playerService.GetById(id);
-
-            // assert
-            result.ShouldBeNull();
-        }
-
         public static IEnumerable<object[]> Create_ForCreatePlayerDto_ReturnsIdOfCreatedPlayer_Data()
         {
             yield return new object[] { new CreatePlayerDto { Name = "Nick", IsDead = true, TeamId = 1 } };
@@ -167,61 +150,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Verify(m => m.SaveChanges(), Times.Once);
         }
 
-
-        public static IEnumerable<object[]> Update_ForExistingId_ReturnsTrue_Data()
-        {
-            yield return new object[] { 1, new UpdatePlayerDto {  } };
-            yield return new object[] { 2, new UpdatePlayerDto { } };
-        }
-
-        [Theory]
-        [MemberData(nameof(Update_ForExistingId_ReturnsTrue_Data))]
-        public void Update_ForExistingId_ReturnsTrue(int id, UpdatePlayerDto playerDto)
-        {
-            // arrange
-            List<Player> players = _playersToDtos.Keys.ToList();
-            DbSet<Player> dbSet = GetDbSet(players.AsQueryable());
-
-            _dbContext.Setup(m => m.Player).Returns(dbSet);
-
-            // act
-            var result = _playerService.Update(id, playerDto);
-
-            // assert
-            result.ShouldBe(true);
-        }
-
-        public static IEnumerable<object[]> Update_ForNotExistingId_ReturnsFalse_Data()
-        {
-            yield return new object[]
-            {
-            0,
-            new UpdatePlayerDto {  }
-            };
-            yield return new object[]
-            {
-            3,
-            new UpdatePlayerDto {  }
-            };
-        }
-
-        [Theory]
-        [MemberData(nameof(Update_ForNotExistingId_ReturnsFalse_Data))]
-        public void Update_ForNotExistingId_ReturnsFalse(int id, UpdatePlayerDto playerDto)
-        {
-            // arrange
-            List<Player> players = _playersToDtos.Keys.ToList();
-            DbSet<Player> dbSet = GetDbSet(players.AsQueryable());
-
-            _dbContext.Setup(m => m.Player).Returns(dbSet);
-
-            // act
-            var result = _playerService.Update(id, playerDto);
-
-            // assert
-            result.ShouldBe(false);
-        }
-
         [Fact]
         public void Update_ShouldCallUpdateMethodOnce()
         {
@@ -252,42 +180,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
 
             // assert
             _dbContext.Verify(m => m.SaveChanges(), Times.Once);
-        }
-
-        [Theory]
-        [InlineData(1)]
-        [InlineData(2)]
-        public void DeleteById_ForExistingId_ReturnsTrue(int id)
-        {
-            // arrange
-            List<Player> players = _playersToDtos.Keys.ToList();
-            DbSet<Player> dbSet = GetDbSet(players.AsQueryable());
-
-            _dbContext.Setup(m => m.Player).Returns(dbSet);
-
-            // act
-            var result = _playerService.DeleteById(id);
-
-            // assert
-            result.ShouldBe(true);
-        }
-
-        [Theory]
-        [InlineData(0)]
-        [InlineData(3)]
-        public void DeleteById_ForNotExistingId_ReturnsFalse(int id)
-        {
-            // arrange
-            List<Player> players = _playersToDtos.Keys.ToList();
-            DbSet<Player> dbSet = GetDbSet(players.AsQueryable());
-
-            _dbContext.Setup(m => m.Player).Returns(dbSet);
-
-            // act
-            var result = _playerService.DeleteById(id);
-
-            // assert
-            result.ShouldBe(false);
         }
 
         [Fact]

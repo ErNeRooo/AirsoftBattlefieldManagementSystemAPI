@@ -1,4 +1,5 @@
-﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
+﻿using AirsoftBattlefieldManagementSystemAPI.Exceptions;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
@@ -13,7 +14,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
         {
             Account? account = dbContext.Account.FirstOrDefault(t => t.AccountId == id);
 
-            if (account is null) return null;
+            if (account is null) throw new NotFoundException($"Account with id {id} not found");
 
             AccountDto accountDto = mapper.Map<AccountDto>(account);
 
@@ -29,29 +30,25 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return account.AccountId;
         }
 
-        public bool Update(int id, UpdateAccountDto accountDto)
+        public void Update(int id, UpdateAccountDto accountDto)
         {
             Account? previousAccount = dbContext.Account.FirstOrDefault(t => t.AccountId == id);
 
-            if (previousAccount is null) return false;
+            if (previousAccount is null) throw new NotFoundException($"Account with id {id} not found");
 
             mapper.Map(accountDto, previousAccount);
             dbContext.Account.Update(previousAccount);
             dbContext.SaveChanges();
-
-            return true;
         }
 
-        public bool DeleteById(int id)
+        public void DeleteById(int id)
         {
             Account? account = dbContext.Account.FirstOrDefault(t => t.AccountId == id);
 
-            if(account is null) return false;
+            if(account is null) throw new NotFoundException($"Account with id {id} not found");
 
             dbContext.Account.Remove(account);
             dbContext.SaveChanges();
-
-            return true;
         }
     }
 }

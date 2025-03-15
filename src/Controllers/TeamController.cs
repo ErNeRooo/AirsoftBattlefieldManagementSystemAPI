@@ -9,15 +9,13 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class TeamController(ILogger<TeamController> logger, ITeamService teamService) : Controller
+    public class TeamController(ITeamService teamService) : Controller
     {
         [HttpGet]
         [Route("id/{id}")]
         public ActionResult<TeamDto> GetById(int id)
         {
-            TeamDto? teamDto = teamService.GetById(id);
-
-            if (teamDto is null) return NotFound();
+            TeamDto teamDto = teamService.GetById(id);
 
             return Ok(teamDto);
         }
@@ -25,8 +23,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [HttpPost]
         public ActionResult Create([FromBody] CreateTeamDto teamDto)
         {
-            if(!ModelState.IsValid) return BadRequest();
-
             int teamId = teamService.Create(teamDto);
 
             return Created($"/team/id/{teamId}", null);
@@ -36,24 +32,18 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [Route("id/{id}")]
         public ActionResult Update(int id, [FromBody] UpdateTeamDto teamDto)
         {
-            if (!ModelState.IsValid) return BadRequest();
+            teamService.Update(id, teamDto);
 
-            bool isSuccessful = teamService.Update(id, teamDto);
-
-            if (isSuccessful) return Ok();
-
-            return NotFound();
+            return Ok();
         }
 
         [HttpDelete]
         [Route("id/{id}")]
         public ActionResult Delete(int id)
         {
-            bool isSuccessful = teamService.DeleteById(id);
+            teamService.DeleteById(id);
 
-            if (isSuccessful) return NoContent();
-
-            return NotFound();
+            return NoContent();
         }
     }
 }

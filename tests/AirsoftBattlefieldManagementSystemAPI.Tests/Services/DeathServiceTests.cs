@@ -140,27 +140,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
         }
 
         [Theory]
-        [InlineData(78)]
-        public void GetById_ForNonExistingId_ReturnsNull(int id)
-        {
-            // arrange
-            IQueryable<Death> deaths = _deathsToDtos.Keys.AsQueryable();
-            DbSet<Death> deathDbSet = GetDbSet(deaths);
-            DbSet<Player> playerDbSet = GetDbSet(_players.AsQueryable());
-            DbSet<Location> locationDbSet = GetDbSet(_locations.AsQueryable());
-
-            _dbContext.Setup(m => m.Location).Returns(locationDbSet);
-            _dbContext.Setup(m => m.Player).Returns(playerDbSet);
-            _dbContext.Setup(m => m.Death).Returns(deathDbSet);
-
-            // act
-            var result = _deathService.GetById(id);
-
-            // assert
-            result.ShouldBeNull();
-        }
-
-        [Theory]
         [InlineData(4)]
         public void GetAllOfPlayerWithId_ForExistingId_ReturnsNull(int id)
         {
@@ -181,25 +160,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
                 result => result.Count.ShouldBe(1));
         }
 
-        [Theory]
-        [InlineData(86)]
-        public void GetAllOfPlayerWithId_ForNotExistingId_ReturnsNull(int id)
-        {
-            // arrange
-            IQueryable<Death> deaths = _deathsToDtos.Keys.AsQueryable();
-            DbSet<Death> deathDbSet = GetDbSet(deaths);
-            DbSet<Location> locationDbSet = GetDbSet(_locations.AsQueryable());
-
-            _dbContext.Setup(m => m.Location).Returns(locationDbSet);
-            _dbContext.Setup(m => m.Death).Returns(deathDbSet);
-
-
-            // act
-            List<DeathDto> result = _deathService.GetAllOfPlayerWithId(id);
-
-            // assert
-            result.ShouldBeNull();
-        }
 
         [Fact]
         public void Create_ForExistingPlayerId_ReturnsIdOfCreatedDeath()
@@ -287,48 +247,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Verify(m => m.SaveChanges(), Times.Once());
         }
 
-        [Theory]
-        [InlineData(1)]
-        public void Update_ForExistingId_ReturnsTrue(int id)
-        {
-            // arrange
-            List<Death> deaths = _deathsToDtos.Keys.ToList();
-            DbSet<Death> dbSet = GetDbSet(deaths.AsQueryable());
-            DbSet<Location> locationDbSet = GetDbSet(_locations.AsQueryable());
-
-            _dbContext.Setup(m => m.Location).Returns(locationDbSet);
-            _dbContext.Setup(m => m.Death).Returns(dbSet);
-
-            // act
-            var result = _deathService.Update(id, new UpdateDeathDto());
-
-            // assert
-            result.ShouldBe(true);
-        }
-
-        public static IEnumerable<object[]> Update_ForNotExistingId_ReturnsFalse_Data()
-        {
-            yield return new object[] { 0, new UpdateDeathDto {  } };
-            yield return new object[] { 3, new UpdateDeathDto {  } };
-        }
-
-        [Theory]
-        [MemberData(nameof(Update_ForNotExistingId_ReturnsFalse_Data))]
-        public void Update_ForNotExistingId_ReturnsFalse(int id, UpdateDeathDto deathDto)
-        {
-            // arrange
-            List<Death> deaths = _deathsToDtos.Keys.ToList();
-            DbSet<Death> dbSet = GetDbSet(deaths.AsQueryable());
-
-            _dbContext.Setup(m => m.Death).Returns(dbSet);
-
-            // act
-            var result = _deathService.Update(id, deathDto);
-
-            // assert
-            result.ShouldBe(false);
-        }
-
         [Fact]
         public void Update_ShouldCallUpdateMethodOnce()
         {
@@ -363,41 +281,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
 
             // assert
             _dbContext.Verify(m => m.SaveChanges(), Times.Once);
-        }
-
-        [Theory]
-        [InlineData(1)]
-        public void DeleteById_ForExistingId_ReturnsTrue(int id)
-        {
-            // arrange
-            List<Death> deaths = _deathsToDtos.Keys.ToList();
-            DbSet<Death> dbSet = GetDbSet(deaths.AsQueryable());
-
-            _dbContext.Setup(m => m.Death).Returns(dbSet);
-
-            // act
-            var result = _deathService.DeleteById(id);
-
-            // assert
-            result.ShouldBe(true);
-        }
-
-        [Theory]
-        [InlineData(0)]
-        [InlineData(3)]
-        public void DeleteById_ForNotExistingId_ReturnsFalse(int id)
-        {
-            // arrange
-            List<Death> deaths = _deathsToDtos.Keys.ToList();
-            DbSet<Death> dbSet = GetDbSet(deaths.AsQueryable());
-
-            _dbContext.Setup(m => m.Death).Returns(dbSet);
-
-            // act
-            var result = _deathService.DeleteById(id);
-
-            // assert
-            result.ShouldBe(false);
         }
 
         [Fact]

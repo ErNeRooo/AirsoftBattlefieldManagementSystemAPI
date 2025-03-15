@@ -16,9 +16,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [Route("id/{id}")]
         public ActionResult<BattleDto> GetById(int id)
         {
-            BattleDto? battleDto = battleService.GetById(id);
-
-            if (battleDto is null) return NotFound();
+            BattleDto battleDto = battleService.GetById(id);
 
             return Ok(battleDto);
         }
@@ -26,8 +24,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [HttpPost]
         public ActionResult Create([FromBody] CreateBattleDto battleDto)
         {
-            if (!ModelState.IsValid) return BadRequest();
-
             int battleId = battleService.Create(battleDto);
 
             return Created($"/Battle/id/{battleId}", null);
@@ -37,22 +33,16 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [Route("id/{id}")]
         public ActionResult Update(int id, [FromBody] UpdateBattleDto battleDto)
         {
-            if (!ModelState.IsValid) return BadRequest();
+            battleService.Update(id, battleDto);
 
-            bool isSuccessful = battleService.Update(id, battleDto);
-
-            if (isSuccessful) return Ok();
-
-            return NotFound();
+            return Ok();
         }
 
         [HttpDelete]
         [Route("id/{id}")]
         public ActionResult Delete(int id)
         {
-            bool isSuccessful = battleService.DeleteById(id);
-
-            if (isSuccessful) return NoContent();
+            battleService.DeleteById(id);
 
             return NotFound();
         }

@@ -10,15 +10,13 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class DeathController(ILogger<DeathController> logger, IDeathService deathService) : Controller
+    public class DeathController(IDeathService deathService) : Controller
     {
         [HttpGet]
         [Route("id/{id}")]
         public ActionResult<DeathDto> GetById(int id)
         {
-            DeathDto? deathDto = deathService.GetById(id);
-
-            if (deathDto is null) return NotFound();
+            DeathDto deathDto = deathService.GetById(id);
 
             return Ok(deathDto);
         }
@@ -27,9 +25,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [Route("playerId/{playerId}")]
         public ActionResult<List<DeathDto>> GetDeathsOfPlayerWithId(int playerId)
         {
-            List<DeathDto>? deathDtos = deathService.GetAllOfPlayerWithId(playerId);
-
-            if (deathDtos is null) return NotFound();
+            List<DeathDto> deathDtos = deathService.GetAllOfPlayerWithId(playerId);
 
             return Ok(deathDtos);
         }
@@ -38,11 +34,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [Route("playerId/{playerId}")]
         public ActionResult Create(int playerId, [FromBody] CreateDeathDto deathDto)
         {
-            if(!ModelState.IsValid) return BadRequest();
-
-            int? id = deathService.Create(playerId, deathDto);
-
-            if(id is null) return NotFound();
+            int id = deathService.Create(playerId, deathDto);
 
             return Created($"/Death/id/{id}", null);
         }
@@ -51,24 +43,18 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [Route("id/{id}")]
         public ActionResult Update(int id, [FromBody] UpdateDeathDto deathDto)
         {
-            if (!ModelState.IsValid) return BadRequest();
+            deathService.Update(id, deathDto);
 
-            bool isSuccessful = deathService.Update(id, deathDto);
-
-            if (isSuccessful) return Ok();
-
-            return NotFound();
+            return Ok();
         }
 
         [HttpDelete]
         [Route("id/{id}")]
         public ActionResult Delete(int id)
         {
-            bool isSuccessful = deathService.DeleteById(id);
+            deathService.DeleteById(id);
 
-            if (isSuccessful) return NoContent();
-
-            return NotFound();
+            return NoContent();
         }
     }
 }

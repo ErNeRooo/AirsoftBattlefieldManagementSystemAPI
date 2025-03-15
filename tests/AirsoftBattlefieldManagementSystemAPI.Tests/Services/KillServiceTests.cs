@@ -140,27 +140,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
         }
 
         [Theory]
-        [InlineData(78)]
-        public void GetById_ForNonExistingId_ReturnsNull(int id)
-        {
-            // arrange
-            IQueryable<Kill> kills = _killsToDtos.Keys.AsQueryable();
-            DbSet<Kill> killDbSet = GetDbSet(kills);
-            DbSet<Player> playerDbSet = GetDbSet(_players.AsQueryable());
-            DbSet<Location> locationDbSet = GetDbSet(_locations.AsQueryable());
-
-            _dbContext.Setup(m => m.Location).Returns(locationDbSet);
-            _dbContext.Setup(m => m.Player).Returns(playerDbSet);
-            _dbContext.Setup(m => m.Kill).Returns(killDbSet);
-
-            // act
-            var result = _killService.GetById(id);
-
-            // assert
-            result.ShouldBeNull();
-        }
-
-        [Theory]
         [InlineData(4)]
         public void GetAllOfPlayerWithId_ForExistingId_ReturnsNull(int id)
         {
@@ -179,26 +158,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             // assert
             result.ShouldSatisfyAllConditions(
                 result => result.Count.ShouldBe(1));
-        }
-
-        [Theory]
-        [InlineData(86)]
-        public void GetAllOfPlayerWithId_ForNotExistingId_ReturnsNull(int id)
-        {
-            // arrange
-            IQueryable<Kill> kills = _killsToDtos.Keys.AsQueryable();
-            DbSet<Kill> killDbSet = GetDbSet(kills);
-            DbSet<Location> locationDbSet = GetDbSet(_locations.AsQueryable());
-
-            _dbContext.Setup(m => m.Location).Returns(locationDbSet);
-            _dbContext.Setup(m => m.Kill).Returns(killDbSet);
-
-
-            // act
-            List<KillDto> result = _killService.GetAllOfPlayerWithId(id);
-
-            // assert
-            result.ShouldBeNull();
         }
 
         [Fact]
@@ -287,46 +246,10 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Verify(m => m.SaveChanges(), Times.Once());
         }
 
-        [Theory]
-        [InlineData(1)]
-        public void Update_ForExistingId_ReturnsTrue(int id)
-        {
-            // arrange
-            List<Kill> kills = _killsToDtos.Keys.ToList();
-            DbSet<Kill> dbSet = GetDbSet(kills.AsQueryable());
-            DbSet<Location> locationDbSet = GetDbSet(_locations.AsQueryable());
-
-            _dbContext.Setup(m => m.Location).Returns(locationDbSet);
-            _dbContext.Setup(m => m.Kill).Returns(dbSet);
-
-            // act
-            var result = _killService.Update(id, new UpdateKillDto());
-
-            // assert
-            result.ShouldBe(true);
-        }
-
         public static IEnumerable<object[]> Update_ForNotExistingId_ReturnsFalse_Data()
         {
             yield return new object[] { 0, new UpdateKillDto {  } };
             yield return new object[] { 3, new UpdateKillDto {  } };
-        }
-
-        [Theory]
-        [MemberData(nameof(Update_ForNotExistingId_ReturnsFalse_Data))]
-        public void Update_ForNotExistingId_ReturnsFalse(int id, UpdateKillDto killDto)
-        {
-            // arrange
-            List<Kill> kills = _killsToDtos.Keys.ToList();
-            DbSet<Kill> dbSet = GetDbSet(kills.AsQueryable());
-
-            _dbContext.Setup(m => m.Kill).Returns(dbSet);
-
-            // act
-            var result = _killService.Update(id, killDto);
-
-            // assert
-            result.ShouldBe(false);
         }
 
         [Fact]
@@ -363,41 +286,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
 
             // assert
             _dbContext.Verify(m => m.SaveChanges(), Times.Once);
-        }
-
-        [Theory]
-        [InlineData(1)]
-        public void DeleteById_ForExistingId_ReturnsTrue(int id)
-        {
-            // arrange
-            List<Kill> kills = _killsToDtos.Keys.ToList();
-            DbSet<Kill> dbSet = GetDbSet(kills.AsQueryable());
-
-            _dbContext.Setup(m => m.Kill).Returns(dbSet);
-
-            // act
-            var result = _killService.DeleteById(id);
-
-            // assert
-            result.ShouldBe(true);
-        }
-
-        [Theory]
-        [InlineData(0)]
-        [InlineData(3)]
-        public void DeleteById_ForNotExistingId_ReturnsFalse(int id)
-        {
-            // arrange
-            List<Kill> kills = _killsToDtos.Keys.ToList();
-            DbSet<Kill> dbSet = GetDbSet(kills.AsQueryable());
-
-            _dbContext.Setup(m => m.Kill).Returns(dbSet);
-
-            // act
-            var result = _killService.DeleteById(id);
-
-            // assert
-            result.ShouldBe(false);
         }
 
         [Fact]

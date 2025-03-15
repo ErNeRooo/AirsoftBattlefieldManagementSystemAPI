@@ -86,23 +86,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
                 result => result.MaxPlayers.ShouldBe(maxPlayers));
         }
 
-        [Theory]
-        [InlineData(78)]
-        public void GetById_ForNonExistingId_ReturnsNull(int id)
-        {
-            // arrange
-            IQueryable<Room> rooms = _roomsToDtos.Keys.AsQueryable();
-            DbSet<Room> dbSet = GetDbSet(rooms);
-
-            _dbContext.Setup(m => m.Room).Returns(dbSet);
-
-            // act
-            var result = _roomService.GetById(id);
-
-            // assert
-            result.ShouldBeNull();
-        }
-
         [Fact]
         public void Create_ForCreateRoomDto_ReturnsIdOfCreatedRoom()
         {
@@ -157,47 +140,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Verify(m => m.SaveChanges(), Times.Once);
         }
 
-        [Theory]
-        [InlineData(1)]
-        [InlineData(2)]
-        public void Update_ForExistingId_ReturnsTrue(int id)
-        {
-            // arrange
-            List<Room> rooms = _roomsToDtos.Keys.ToList();
-            DbSet<Room> dbSet = GetDbSet(rooms.AsQueryable());
-
-            _dbContext.Setup(m => m.Room).Returns(dbSet);
-
-            // act
-            var result = _roomService.Update(id, new UpdateRoomDto());
-
-            // assert
-            result.ShouldBe(true);
-        }
-
-        public static IEnumerable<object[]> Update_ForNotExistingId_ReturnsFalse_Data()
-        {
-            yield return new object[] { 0, new UpdateRoomDto {  } };
-            yield return new object[] { 3, new UpdateRoomDto {  } };
-        }
-
-        [Theory]
-        [MemberData(nameof(Update_ForNotExistingId_ReturnsFalse_Data))]
-        public void Update_ForNotExistingId_ReturnsFalse(int id, UpdateRoomDto roomDto)
-        {
-            // arrange
-            List<Room> rooms = _roomsToDtos.Keys.ToList();
-            DbSet<Room> dbSet = GetDbSet(rooms.AsQueryable());
-
-            _dbContext.Setup(m => m.Room).Returns(dbSet);
-
-            // act
-            var result = _roomService.Update(id, roomDto);
-
-            // assert
-            result.ShouldBe(false);
-        }
-
         [Fact]
         public void Update_ShouldCallUpdateMethodOnce()
         {
@@ -228,42 +170,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
 
             // assert
             _dbContext.Verify(m => m.SaveChanges(), Times.Once);
-        }
-
-        [Theory]
-        [InlineData(1)]
-        [InlineData(2)]
-        public void DeleteById_ForExistingId_ReturnsTrue(int id)
-        {
-            // arrange
-            List<Room> rooms = _roomsToDtos.Keys.ToList();
-            DbSet<Room> dbSet = GetDbSet(rooms.AsQueryable());
-
-            _dbContext.Setup(m => m.Room).Returns(dbSet);
-
-            // act
-            var result = _roomService.DeleteById(id);
-
-            // assert
-            result.ShouldBe(true);
-        }
-
-        [Theory]
-        [InlineData(0)]
-        [InlineData(3)]
-        public void DeleteById_ForNotExistingId_ReturnsFalse(int id)
-        {
-            // arrange
-            List<Room> rooms = _roomsToDtos.Keys.ToList();
-            DbSet<Room> dbSet = GetDbSet(rooms.AsQueryable());
-
-            _dbContext.Setup(m => m.Room).Returns(dbSet);
-
-            // act
-            var result = _roomService.DeleteById(id);
-
-            // assert
-            result.ShouldBe(false);
         }
 
         [Fact]

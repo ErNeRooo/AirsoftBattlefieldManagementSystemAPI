@@ -7,6 +7,7 @@ using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
+using AirsoftBattlefieldManagementSystemAPI.Exceptions;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 {
@@ -16,7 +17,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
         {
             Player? player = dbContext.Player.FirstOrDefault(p => p.PlayerId == id);
 
-            if (player is null) return null;
+            if (player is null) throw new NotFoundException($"Player with id {id} not found");
 
             PlayerDto playerDto = mapper.Map<PlayerDto>(player);
 
@@ -33,29 +34,25 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return player.PlayerId;
         }
 
-        public bool Update(int id, UpdatePlayerDto playerDto)
+        public void Update(int id, UpdatePlayerDto playerDto)
         {
             Player? previousPlayer = dbContext.Player.FirstOrDefault(p => p.PlayerId == id);
 
-            if (previousPlayer is null) return false;
+            if (previousPlayer is null) throw new NotFoundException($"Player with id {id} not found");
 
             mapper.Map(playerDto, previousPlayer);
             dbContext.Player.Update(previousPlayer);
             dbContext.SaveChanges();
-
-            return true;
         }
 
-        public bool DeleteById(int id)
+        public void DeleteById(int id)
         {
             var player = dbContext.Player.FirstOrDefault(p => p.PlayerId == id);
 
-            if (player is null) return false;
+            if (player is null) throw new NotFoundException($"Player with id {id} not found");
 
             dbContext.Player.Remove(player);
             dbContext.SaveChanges();
-
-            return true;
         }
     }
 }

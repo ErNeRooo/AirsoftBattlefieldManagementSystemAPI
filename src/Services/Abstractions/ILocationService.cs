@@ -6,10 +6,10 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Abstractions
 {
     public interface ILocationService
     {
-        public LocationDto? GetById(int id);
-        public List<LocationDto>? GetAllOfPlayerWithId(int playerId);
-        public int? Create(int playerId, CreateLocationDto locationDto);
-        public bool Update(int id, UpdateLocationDto locationDto);
-        public bool DeleteById(int id);
+        public LocationDto GetById(int id);
+        public List<LocationDto> GetAllOfPlayerWithId(int playerId);
+        public int Create(int playerId, CreateLocationDto locationDto);
+        public void Update(int id, UpdateLocationDto locationDto);
+        public void DeleteById(int id);
     }
 }

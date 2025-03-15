@@ -1,4 +1,5 @@
-﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
+﻿using AirsoftBattlefieldManagementSystemAPI.Exceptions;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
@@ -13,7 +14,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
         public RoomDto? GetById(int id)
         {
             Room? room = dbContext.Room.FirstOrDefault(r => r.RoomId == id);
-            if (room is null) return null;
+
+            if (room is null) throw new NotFoundException($"Room with id {id} not found");
 
             RoomDto roomDto = mapper.Map<RoomDto>(room);
             return roomDto;
@@ -30,29 +32,25 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return room.RoomId;
         }
 
-        public bool Update(int id, UpdateRoomDto playerDto)
+        public void Update(int id, UpdateRoomDto playerDto)
         {
             Room? previousRoom = dbContext.Room.FirstOrDefault(r => r.RoomId == id);
 
-            if(previousRoom is null) return false;
+            if(previousRoom is null) throw new NotFoundException($"Room with id {id} not found");
 
             Room updatedRoom = mapper.Map(playerDto, previousRoom);
             dbContext.Room.Update(updatedRoom);
             dbContext.SaveChanges();
-
-            return true;
         }
 
-        public bool DeleteById(int id)
+        public void DeleteById(int id)
         {
             Room? room = dbContext.Room.FirstOrDefault(r => r.RoomId == id);
             
-            if (room is null) return false;
+            if (room is null) throw new NotFoundException($"Room with id {id} not found");
 
             dbContext.Room.Remove(room);
             dbContext.SaveChanges();
-
-            return true;
         }
     }
 }

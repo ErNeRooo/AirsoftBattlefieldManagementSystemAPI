@@ -94,23 +94,6 @@ public class AccountServiceTests
             () => result.Password.ShouldBe(password));
     }
 
-    [Theory]
-    [InlineData(78)]
-    public void GetById_ForNonExistingId_ReturnsNull(int id)
-    {
-        // arrange
-        IQueryable<Account> accounts = _accountsToDtos.Keys.AsQueryable();
-        DbSet<Account> dbSet = GetDbSet(accounts);
-
-        _dbContext.Setup(m => m.Account).Returns(dbSet);
-
-        // act
-        var result = _accountService.GetById(id);
-
-        // assert
-        result.ShouldBeNull();
-    }
-
     public static IEnumerable<object[]> Create_ForCreateAccountDto_ReturnsIdOfCreatedAccount_Data()
     {
         yield return new object[]
@@ -180,69 +163,6 @@ public class AccountServiceTests
         _dbContext.Verify(m => m.SaveChanges(), Times.Once);
     }
 
-
-    public static IEnumerable<object[]> Update_ForExistingId_ReturnsTrue_Data()
-    {
-        yield return new object[]
-        {
-            1,
-            new UpdateAccountDto { Email = "haha@example.com", Password = "tori098" }
-        };
-        yield return new object[]
-        {
-            2,
-            new UpdateAccountDto { Email = "", Password = "" }
-        };
-    }
-
-    [Theory]
-    [MemberData(nameof(Update_ForExistingId_ReturnsTrue_Data))]
-    public void Update_ForExistingId_ReturnsTrue(int id, UpdateAccountDto accountDto)
-    {
-        // arrange
-        List<Account> accounts = _accountsToDtos.Keys.ToList();
-        DbSet<Account> dbSet = GetDbSet(accounts.AsQueryable());
-
-        _dbContext.Setup(m => m.Account).Returns(dbSet);
-
-        // act
-        var result = _accountService.Update(id, accountDto);
-
-        // assert
-        result.ShouldBe(true);
-    }
-
-    public static IEnumerable<object[]> Update_ForNotExistingId_ReturnsFalse_Data()
-    {
-        yield return new object[]
-        {
-            0,
-            new UpdateAccountDto { Email = "haha@example.com", Password = "tori098" }
-        };
-        yield return new object[]
-        {
-            3,
-            new UpdateAccountDto { Email = "", Password = "" }
-        };
-    }
-
-    [Theory]
-    [MemberData(nameof(Update_ForNotExistingId_ReturnsFalse_Data))]
-    public void Update_ForNotExistingId_ReturnsFalse(int id, UpdateAccountDto accountDto)
-    {
-        // arrange
-        List<Account> accounts = _accountsToDtos.Keys.ToList();
-        DbSet<Account> dbSet = GetDbSet(accounts.AsQueryable());
-
-        _dbContext.Setup(m => m.Account).Returns(dbSet);
-
-        // act
-        var result = _accountService.Update(id, accountDto);
-
-        // assert
-        result.ShouldBe(false);
-    }
-
     [Fact]
     public void Update_ShouldCallUpdateMethodOnce()
     {
@@ -273,42 +193,6 @@ public class AccountServiceTests
 
         // assert
         _dbContext.Verify(m => m.SaveChanges(), Times.Once);
-    }
-
-    [Theory]
-    [InlineData(1)]
-    [InlineData(2)]
-    public void DeleteById_ForExistingId_ReturnsTrue(int id)
-    {
-        // arrange
-        List<Account> accounts = _accountsToDtos.Keys.ToList();
-        DbSet<Account> dbSet = GetDbSet(accounts.AsQueryable());
-
-        _dbContext.Setup(m => m.Account).Returns(dbSet);
-
-        // act
-        var result = _accountService.DeleteById(id);
-
-        // assert
-        result.ShouldBe(true);
-    }
-
-    [Theory]
-    [InlineData(0)]
-    [InlineData(3)]
-    public void DeleteById_ForNotExistingId_ReturnsFalse(int id)
-    {
-        // arrange
-        List<Account> accounts = _accountsToDtos.Keys.ToList();
-        DbSet<Account> dbSet = GetDbSet(accounts.AsQueryable());
-
-        _dbContext.Setup(m => m.Account).Returns(dbSet);
-
-        // act
-        var result = _accountService.DeleteById(id);
-
-        // assert
-        result.ShouldBe(false);
     }
 
     [Fact]

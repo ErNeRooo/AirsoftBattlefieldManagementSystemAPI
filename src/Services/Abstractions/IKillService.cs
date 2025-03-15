@@ -6,10 +6,10 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Abstractions
 {
     public interface IKillService
     {
-        public KillDto? GetById(int id);
-        public List<KillDto>? GetAllOfPlayerWithId(int playerId);
-        public int? Create(int playerId, CreateKillDto killDto);
-        public bool Update(int id, UpdateKillDto killDto);
-        public bool DeleteById(int id);
+        public KillDto GetById(int id);
+        public List<KillDto> GetAllOfPlayerWithId(int playerId);
+        public int Create(int playerId, CreateKillDto killDto);
+        public void Update(int id, UpdateKillDto killDto);
+        public void DeleteById(int id);
     }
 }
