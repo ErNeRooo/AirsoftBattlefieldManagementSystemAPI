@@ -9,5 +9,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create
         public string Name { get; set; }
         [Required]
         public int RoomId { get; set; }
+        [Required]
+        public int OfficerPlayerId { get; set; }
     }
 }

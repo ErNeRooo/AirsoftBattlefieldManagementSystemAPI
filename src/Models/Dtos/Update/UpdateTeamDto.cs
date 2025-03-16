@@ -4,8 +4,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update
 {
     public class UpdateTeamDto
     {
-        [Required]
-        [MaxLength(20)]
+        [MaxLength(60)]
         public string Name { get; set; }
+        public int OfficerPlayerId { get; set; }
     }
 }

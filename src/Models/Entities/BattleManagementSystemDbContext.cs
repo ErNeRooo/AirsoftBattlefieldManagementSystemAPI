@@ -45,6 +45,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Entities
                 .HasMaxLength(60);
 
             modelBuilder
+                .Entity<Team>()
+                .HasOne(t => t.OfficerPlayer)
+                .WithMany()
+                .HasForeignKey(t => t.OfficerPlayerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+            modelBuilder
                 .Entity<Player>()
                 .Property(a => a.Name)
                 .HasMaxLength(40);
@@ -58,7 +66,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Entities
                 .Entity<Room>()
                 .HasOne(r => r.AdminPlayer)
                 .WithMany()
-                .HasForeignKey(r => r.AdminPlayerId);
+                .HasForeignKey(r => r.AdminPlayerId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
