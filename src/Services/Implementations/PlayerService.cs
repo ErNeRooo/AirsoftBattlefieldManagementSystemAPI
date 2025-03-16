@@ -1,19 +1,23 @@
-﻿using AirsoftBattlefieldManagementSystemAPI.Models;
+﻿using System.IdentityModel.Tokens.Jwt;
+using AirsoftBattlefieldManagementSystemAPI.Models;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using System.Numerics;
+using System.Security.Claims;
+using System.Text;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
 using AirsoftBattlefieldManagementSystemAPI.Exceptions;
+using Microsoft.IdentityModel.Tokens;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 {
-    public class PlayerService(IBattleManagementSystemDbContext dbContext, IMapper mapper) : IPlayerService
+    public class PlayerService(IBattleManagementSystemDbContext dbContext, IMapper mapper, IAuthenticationSettings authenticationSettings) : IPlayerService
     {
-        public PlayerDto? GetById(int id)
+        public PlayerDto GetById(int id)
         {
             Player? player = dbContext.Player.FirstOrDefault(p => p.PlayerId == id);
 
@@ -53,6 +57,30 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 
             dbContext.Player.Remove(player);
             dbContext.SaveChanges();
+        }
+
+        public string GenerateJwt(int playerId)
+        {
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim("playerId", $"{playerId}")
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey));
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var expires = DateTime.UtcNow.AddDays(authenticationSettings.JwtExpireDays);
+
+            var token = new JwtSecurityToken(
+                authenticationSettings.JwtIssuer,
+                audience: authenticationSettings.JwtIssuer,
+                claims: claims,
+                expires: expires,
+                signingCredentials: credentials
+            );
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            return tokenHandler.WriteToken(token);
         }
     }
 }

@@ -6,10 +6,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create
     {
         [Required]
         [MaxLength(20)]
-        public string? Name { get; set; }
-
-        public bool IsDead { get; set; } = false;
-        [Required]
-        public int? TeamId { get; set; }
+        public string Name { get; set; }
     }
 }

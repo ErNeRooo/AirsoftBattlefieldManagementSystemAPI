@@ -10,5 +10,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Abstractions
         public int Create(CreatePlayerDto playerDto);
         public void Update(int id, UpdatePlayerDto playerDto);
         public void DeleteById(int id);
+        public string GenerateJwt(int id);
     }
 }

@@ -1,10 +1,13 @@
+using System.Text;
 using AirsoftBattlefieldManagementSystemAPI.Middleware;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles;
 using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
 using AirsoftBattlefieldManagementSystemAPI.Services.Implementations;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using NLog.Web;
 using Scalar.AspNetCore;
 
@@ -18,6 +21,28 @@ namespace AirsoftBattlefieldManagementSystemAPI
 
             builder.Logging.ClearProviders();
             builder.Host.UseNLog();
+
+            var authenticationSettings = new AuthenticationSettings();
+
+            builder.Configuration.GetSection("Authentication").Bind(authenticationSettings);
+
+            builder.Services.AddSingleton<IAuthenticationSettings>(authenticationSettings);
+            builder.Services.AddAuthentication(option =>
+            {
+                option.DefaultAuthenticateScheme = "Bearer";
+                option.DefaultScheme = "Bearer";
+                option.DefaultChallengeScheme = "Bearer";
+            }).AddJwtBearer(cfg =>
+            {
+                cfg.RequireHttpsMetadata = false;
+                cfg.SaveToken = true;
+                cfg.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = authenticationSettings.JwtIssuer,
+                    ValidAudience = authenticationSettings.JwtIssuer,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey))
+                };
+            });
 
             builder.Services.AddControllers();
             builder.Services.AddOpenApi();
@@ -49,10 +74,13 @@ namespace AirsoftBattlefieldManagementSystemAPI
             builder.Services.AddScoped<IKillService, KillService>();
             builder.Services.AddScoped<IDeathService, DeathService>();
             builder.Services.AddTransient<ErrorHandlingMiddleware>();
+            builder.Services.AddScoped<IPasswordHasher<Player>, PasswordHasher<Player>>();
 
             var app = builder.Build();
 
             app.UseMiddleware<ErrorHandlingMiddleware>();
+
+            app.UseAuthentication();
 
             if (app.Environment.IsDevelopment())
             {

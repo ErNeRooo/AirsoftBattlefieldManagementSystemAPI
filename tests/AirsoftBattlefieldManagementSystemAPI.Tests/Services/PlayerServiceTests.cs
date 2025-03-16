@@ -21,13 +21,16 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
         private readonly PlayerService _playerService;
         private readonly Mock<IBattleManagementSystemDbContext> _dbContext;
         private readonly Mock<IMapper> _mapper;
+        private readonly Mock<IAuthenticationSettings> _authenticationSettings;
         private readonly Dictionary<Player, PlayerDto> _playersToDtos;
 
         public PlayerServiceTests()
         {
             _mapper = new Mock<IMapper>();
             _dbContext = new Mock<IBattleManagementSystemDbContext>();
-            _playerService = new PlayerService(_dbContext.Object, _mapper.Object);
+            _authenticationSettings = new Mock<IAuthenticationSettings>();
+
+            _playerService = new PlayerService(_dbContext.Object, _mapper.Object, _authenticationSettings.Object);
 
             _mapper.Setup(m => m.Map<PlayerDto>(It.IsAny<Player>())).Returns(
                 (Player p) => new PlayerDto
@@ -40,7 +43,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
                 (CreatePlayerDto p) => new Player
                 {
                     Name = p.Name,
-                    IsDead = p.IsDead,
                 });
 
             _playersToDtos = new Dictionary<Player, PlayerDto>()
@@ -91,8 +93,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
 
         public static IEnumerable<object[]> Create_ForCreatePlayerDto_ReturnsIdOfCreatedPlayer_Data()
         {
-            yield return new object[] { new CreatePlayerDto { Name = "Nick", IsDead = true, TeamId = 1 } };
-            yield return new object[] { new CreatePlayerDto { Name = "Quasyn", IsDead = true, TeamId = 1 } };
+            yield return new object[] { new CreatePlayerDto { Name = "Nick" } };
+            yield return new object[] { new CreatePlayerDto { Name = "Quasyn" } };
         }
 
         [Theory]

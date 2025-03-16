@@ -28,7 +28,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             var kills = dbContext.Kill.Include(k => k.Location)
                 .Where(k => k.PlayerId == playerId).ToList();
 
-            if (kills.IsNullOrEmpty()) throw new NotFoundException($"Player with id {playerId} not found");
+            if (kills is null) throw new NotFoundException($"Player with id {playerId} not found");
 
             List<KillDto> killDtos = kills.Select(location =>
             {

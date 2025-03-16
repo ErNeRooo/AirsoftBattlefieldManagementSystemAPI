@@ -20,12 +20,13 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
             return Ok(playerDto);
         }
 
-        [HttpPost("")]
-        public ActionResult<string> PostPlayer([FromBody] CreatePlayerDto playerDto)
+        [HttpPost("register")]
+        public ActionResult<string> Register([FromBody] CreatePlayerDto playerDto)
         {
             int playerId = playerService.Create(playerDto);
+            string jwtToken = playerService.GenerateJwt(playerId);
 
-            return Created($"/player/{playerId}", null);
+            return Created($"/player/id/{playerId}", jwtToken);
         }
 
         [HttpPut("id/{id}")]
