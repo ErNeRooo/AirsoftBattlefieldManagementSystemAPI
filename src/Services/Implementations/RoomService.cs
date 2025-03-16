@@ -5,11 +5,12 @@ using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 {
-    public class RoomService(IMapper mapper, IBattleManagementSystemDbContext dbContext) : IRoomService
+    public class RoomService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IPasswordHasher<Room> passwordHasher) : IRoomService
     {
         public RoomDto GetById(int id)
         {
@@ -34,6 +35,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
         public int Create(CreateRoomDto roomDto)
         {
             Room room = mapper.Map<Room>(roomDto);
+
+            var hash = passwordHasher.HashPassword(room, room.PasswordHash);
+            room.PasswordHash = hash;
 
             dbContext.Room.Add(room);
 

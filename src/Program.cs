@@ -74,7 +74,7 @@ namespace AirsoftBattlefieldManagementSystemAPI
             builder.Services.AddScoped<IKillService, KillService>();
             builder.Services.AddScoped<IDeathService, DeathService>();
             builder.Services.AddTransient<ErrorHandlingMiddleware>();
-            builder.Services.AddScoped<IPasswordHasher<Player>, PasswordHasher<Player>>();
+            builder.Services.AddScoped<IPasswordHasher<Room>, PasswordHasher<Room>>();
 
             var app = builder.Build();
 

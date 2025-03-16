@@ -6,8 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Controllers
 {
-    [ApiController]
+
     [Route("[controller]")]
+    [ApiController]
     public class RoomController(IRoomService roomService) : ControllerBase
     {
         [HttpGet("id/{id}")]
