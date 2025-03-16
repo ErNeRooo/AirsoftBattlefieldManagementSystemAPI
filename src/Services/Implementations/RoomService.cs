@@ -21,11 +21,11 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return roomDto;
         }
 
-        public RoomDto GetByRoomJoinNumber(int roomJoinNumber)
+        public RoomDto GetByJoinCode(string joinCode)
         {
-            Room? room = dbContext.Room.FirstOrDefault(r => r.JoinRoomNumber == roomJoinNumber);
+            Room? room = dbContext.Room.FirstOrDefault(r => r.JoinCode == joinCode);
 
-            if (room is null) throw new NotFoundException($"Room with room join number {roomJoinNumber} not found");
+            if (room is null) throw new NotFoundException($"Room with join code {joinCode} not found");
 
             RoomDto roomDto = mapper.Map<RoomDto>(room);
             return roomDto;

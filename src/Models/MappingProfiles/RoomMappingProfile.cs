@@ -14,6 +14,12 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles
 
             CreateMap<CreateRoomDto, Room>()
                 .ForMember(
+                    destinationMember: dest => dest.AdminPlayer,
+                    memberOptions: opt => opt.Ignore())
+                .ForMember(
+                    destinationMember: dest => dest.PasswordHash,
+                    memberOptions: opt => opt.MapFrom(r => r.Password))
+                .ForMember(
                     destinationMember: dest => dest.RoomId, 
                     memberOptions: opt => opt.Ignore())
                 .ForMember(
@@ -24,6 +30,12 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles
                     memberOptions: opt => opt.Ignore());
 
             CreateMap<UpdateRoomDto, Room>()
+                .ForMember(
+                    destinationMember: dest => dest.AdminPlayer,
+                    memberOptions: opt => opt.Ignore())
+                .ForMember(
+                    destinationMember: dest => dest.PasswordHash,
+                    memberOptions: opt => opt.MapFrom(r => r.Password))
                 .ForMember(
                     destinationMember: dest => dest.RoomId,
                     memberOptions: opt => opt.Ignore())

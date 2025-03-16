@@ -7,7 +7,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Abstractions
     public interface IRoomService
     {
         public RoomDto GetById(int id);
-        public RoomDto GetByRoomJoinNumber(int roomJoinNumber);
+        public RoomDto GetByJoinCode(string joinCode);
         public int Create(CreateRoomDto roomDto);
         public void Update(int id, UpdateRoomDto roomDto);
         public void DeleteById(int id);

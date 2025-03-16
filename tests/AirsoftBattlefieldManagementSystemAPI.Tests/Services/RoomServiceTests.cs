@@ -34,7 +34,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
                 (Room r) => new RoomDto
                 {
                     RoomId = r.RoomId,
-                    MaxPlayers = r.MaxPlayers
+                    MaxPlayers = r.MaxPlayers,
+                    JoinCode = r.JoinCode
                 });
             _mapper.Setup(m => m.Map<Room>(It.IsAny<CreateRoomDto>())).Returns(
                 (CreateRoomDto r) => new Room
@@ -45,12 +46,12 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _roomsToDtos = new Dictionary<Room, RoomDto>()
             {
                 {
-                    new Room() { RoomId = 1, MaxPlayers = 10 }, 
-                    new RoomDto() { RoomId = 1, MaxPlayers = 10 }
+                    new Room() { RoomId = 1, MaxPlayers = 10, JoinCode = "021370"}, 
+                    new RoomDto() { RoomId = 1, MaxPlayers = 10, JoinCode = "021370" }
                 },
                 {
-                    new Room() { RoomId = 2, MaxPlayers = 1000 },
-                    new RoomDto() { RoomId = 2, MaxPlayers = 1000 }
+                    new Room() { RoomId = 2, MaxPlayers = 1000, JoinCode = "000000" },
+                    new RoomDto() { RoomId = 2, MaxPlayers = 1000, JoinCode = "000000" }
                 }
             };
         }
@@ -88,9 +89,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
         }
 
         [Theory]
-        [InlineData(1, 10)]
-        [InlineData(2, 1000)]
-        public void GetByRoomJoinNumber_ForExistingRoomId_ReturnsRoomDto(int roomJoinNumber, int maxPlayers)
+        [InlineData("021370", 10)]
+        [InlineData("000000", 1000)]
+        public void GetByJoinCode_ForExistingRoomId_ReturnsRoomDto(string joinCode, int maxPlayers)
         {
             // arrange
             IQueryable<Room> rooms = _roomsToDtos.Keys.AsQueryable();
@@ -98,18 +99,18 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Room).Returns(dbSet);
 
             // act
-            RoomDto result = _roomService.GetByRoomJoinNumber(roomJoinNumber);
+            RoomDto result = _roomService.GetByJoinCode(joinCode);
 
             // assert
             result.ShouldSatisfyAllConditions(
-                result => result.RoomId.ShouldBe(roomJoinNumber),
+                result => result.JoinCode.ShouldBe(joinCode),
                 result => result.MaxPlayers.ShouldBe(maxPlayers));
         }
 
         [Theory]
-        [InlineData(-1)]
-        [InlineData(86)]
-        public void GetByRoomJoinNumber_ForNotExistingRoomId_ThrowsNotFoundException(int roomJoinNumber)
+        [InlineData("HELLNO")]
+        [InlineData("000002")]
+        public void GetByJoinCode_ForNotExistingRoomId_ThrowsNotFoundException(string joinNumber)
         {
             // arrange
             IQueryable<Room> rooms = _roomsToDtos.Keys.AsQueryable();
@@ -117,7 +118,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Room).Returns(dbSet);
 
             // act & assert
-            Should.Throw<NotFoundException>(() => _roomService.GetByRoomJoinNumber(roomJoinNumber));
+            Should.Throw<NotFoundException>(() => _roomService.GetByJoinCode(joinNumber));
         }
 
         [Fact]

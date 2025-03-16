@@ -18,10 +18,10 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
             return Ok(roomDto);
         }
 
-        [HttpGet("room-join-number/{roomJoinNumber}")]
-        public ActionResult<RoomDto> GetRoomByRoomJoinNumber(int roomJoinNumber)
+        [HttpGet("by-join-code/{joinCode}")]
+        public ActionResult<RoomDto> GetRoomByJoinCode(string joinCode)
         {
-            RoomDto roomDto = roomService.GetByRoomJoinNumber(roomJoinNumber);
+            RoomDto roomDto = roomService.GetByJoinCode(joinCode);
 
             return Ok(roomDto);
         }

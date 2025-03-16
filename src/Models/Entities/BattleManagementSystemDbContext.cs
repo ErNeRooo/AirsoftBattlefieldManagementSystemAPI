@@ -53,6 +53,12 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Entities
                 .Entity<Battle>()
                 .Property(a => a.Name)
                 .HasMaxLength(60);
+
+            modelBuilder
+                .Entity<Room>()
+                .HasOne(r => r.AdminPlayer)
+                .WithMany()
+                .HasForeignKey(r => r.AdminPlayerId);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
