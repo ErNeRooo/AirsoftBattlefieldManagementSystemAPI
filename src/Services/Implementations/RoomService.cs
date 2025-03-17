@@ -1,4 +1,5 @@
-﻿using AirsoftBattlefieldManagementSystemAPI.Exceptions;
+﻿using AirsoftBattlefieldManagementSystemAPI.Enums;
+using AirsoftBattlefieldManagementSystemAPI.Exceptions;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
@@ -10,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 {
-    public class RoomService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IPasswordHasher<Room> passwordHasher) : IRoomService
+    public class RoomService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IPasswordHasher<Room> passwordHasher, IJoinCodeService joinCodeService) : IRoomService
     {
         public RoomDto GetById(int id)
         {
@@ -34,10 +35,22 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 
         public int Create(CreateRoomDto roomDto)
         {
+            if (roomDto.JoinCode is null)
+            {
+                roomDto.JoinCode = joinCodeService.Generate(JoinCodeFormat.From0to9, 6);
+            }
+
             Room room = mapper.Map<Room>(roomDto);
 
-            var hash = passwordHasher.HashPassword(room, room.PasswordHash);
-            room.PasswordHash = hash;
+            if (room.PasswordHash is null)
+            {
+                room.PasswordHash = "";
+            }
+            else
+            {
+                var hash = passwordHasher.HashPassword(room, room.PasswordHash);
+                room.PasswordHash = hash;
+            }
 
             dbContext.Room.Add(room);
 
@@ -46,13 +59,24 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return room.RoomId;
         }
 
-        public void Update(int id, UpdateRoomDto playerDto)
+        public void Update(int id, UpdateRoomDto roomDto)
         {
             Room? previousRoom = dbContext.Room.FirstOrDefault(r => r.RoomId == id);
 
             if(previousRoom is null) throw new NotFoundException($"Room with id {id} not found");
 
-            Room updatedRoom = mapper.Map(playerDto, previousRoom);
+            Room updatedRoom = mapper.Map(roomDto, previousRoom);
+
+            if (updatedRoom.PasswordHash is null)
+            {
+                updatedRoom.PasswordHash = "";
+            }
+            else
+            {
+                var hash = passwordHasher.HashPassword(updatedRoom, updatedRoom.PasswordHash);
+                updatedRoom.PasswordHash = hash;
+            }
+
             dbContext.Room.Update(updatedRoom);
             dbContext.SaveChanges();
         }

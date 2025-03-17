@@ -11,6 +11,7 @@ using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
 using AirsoftBattlefieldManagementSystemAPI.Services.Implementations;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Shouldly;
@@ -22,13 +23,17 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
         private readonly RoomService _roomService;
         private readonly Mock<IBattleManagementSystemDbContext> _dbContext;
         private readonly Mock<IMapper> _mapper;
+        private readonly Mock<IPasswordHasher<Room>> _passwordHasher;
+        private readonly Mock<IJoinCodeService> _joinCodeService;
         private readonly Dictionary<Room, RoomDto> _roomsToDtos;
 
         public RoomServiceTests()
         {
             _mapper = new Mock<IMapper>();
             _dbContext = new Mock<IBattleManagementSystemDbContext>();
-            _roomService = new RoomService(_mapper.Object, _dbContext.Object);
+            _passwordHasher = new Mock<IPasswordHasher<Room>>();
+            _joinCodeService = new Mock<IJoinCodeService>();
+            _roomService = new RoomService(_mapper.Object, _dbContext.Object, _passwordHasher.Object, _joinCodeService.Object);
 
             _mapper.Setup(m => m.Map<RoomDto>(It.IsAny<Room>())).Returns(
                 (Room r) => new RoomDto

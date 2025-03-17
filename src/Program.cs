@@ -1,10 +1,14 @@
 using System.Text;
 using AirsoftBattlefieldManagementSystemAPI.Middleware;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles;
+using AirsoftBattlefieldManagementSystemAPI.Models.Validators;
 using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
 using AirsoftBattlefieldManagementSystemAPI.Services.Implementations;
 using AutoMapper;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -73,8 +77,14 @@ namespace AirsoftBattlefieldManagementSystemAPI
             builder.Services.AddScoped<ILocationService, LocationService>();
             builder.Services.AddScoped<IKillService, KillService>();
             builder.Services.AddScoped<IDeathService, DeathService>();
+            builder.Services.AddScoped<IJoinCodeService, JoinCodeService>();
+
             builder.Services.AddTransient<ErrorHandlingMiddleware>();
+
             builder.Services.AddScoped<IPasswordHasher<Room>, PasswordHasher<Room>>();
+
+            builder.Services.AddFluentValidationAutoValidation();
+            builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
             var app = builder.Build();
 
