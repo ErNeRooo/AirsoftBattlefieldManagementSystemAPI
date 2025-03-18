@@ -4,7 +4,7 @@
     {
         public int PlayerId { get; set; }
         public string Name { get; set; }
-        public bool IsDead { get; set; }
+        public bool IsDead { get; set; } = false;
 
         public int? TeamId { get; set; }
         public virtual Team Team { get; set; }
