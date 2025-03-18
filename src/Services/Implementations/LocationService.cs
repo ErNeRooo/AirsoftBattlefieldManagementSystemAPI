@@ -70,6 +70,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             Location location = mapper.Map<Location>(locationDto);
             dbContext.Location.Add(location);
 
+            dbContext.SaveChanges();
+
             PlayerLocation playerLocation = new PlayerLocation();
             playerLocation.LocationId = location.LocationId;
             playerLocation.PlayerId = playerId;
