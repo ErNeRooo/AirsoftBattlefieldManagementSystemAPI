@@ -26,16 +26,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
         {
             Account account = mapper.Map<Account>(accountDto);
 
-            if (account.PasswordHash is null)
-            {
-                account.PasswordHash = "";
-            }
-            else
-            {
-                var hash = passwordHasher.HashPassword(account, account.PasswordHash);
-                account.PasswordHash = hash;
-            }
-
+            var hash = passwordHasher.HashPassword(account, account.PasswordHash);
+            account.PasswordHash = hash;
 
             dbContext.Account.Add(account);
             dbContext.SaveChanges();
@@ -51,15 +43,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 
             mapper.Map(accountDto, previousAccount);
 
-            if (previousAccount.PasswordHash is null)
-            {
-                previousAccount.PasswordHash = "";
-            }
-            else
-            {
-                var hash = passwordHasher.HashPassword(previousAccount, previousAccount.PasswordHash);
-                previousAccount.PasswordHash = hash;
-            }
+            var hash = passwordHasher.HashPassword(previousAccount, previousAccount.PasswordHash);
+            previousAccount.PasswordHash = hash;
 
             dbContext.Account.Update(previousAccount);
             dbContext.SaveChanges();

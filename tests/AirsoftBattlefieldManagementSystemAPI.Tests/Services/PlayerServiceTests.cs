@@ -10,6 +10,7 @@ using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
 using AirsoftBattlefieldManagementSystemAPI.Services.Implementations;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Shouldly;
@@ -22,6 +23,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
         private readonly Mock<IBattleManagementSystemDbContext> _dbContext;
         private readonly Mock<IMapper> _mapper;
         private readonly Mock<IAuthenticationSettings> _authenticationSettings;
+        private readonly Mock<IPasswordHasher<Room>> _passwordHasher;
         private readonly Dictionary<Player, PlayerDto> _playersToDtos;
 
         public PlayerServiceTests()
@@ -29,8 +31,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _mapper = new Mock<IMapper>();
             _dbContext = new Mock<IBattleManagementSystemDbContext>();
             _authenticationSettings = new Mock<IAuthenticationSettings>();
+            _passwordHasher = new Mock<IPasswordHasher<Room>>();
 
-            _playerService = new PlayerService(_dbContext.Object, _mapper.Object, _authenticationSettings.Object);
+            _playerService = new PlayerService(_dbContext.Object, _mapper.Object, _authenticationSettings.Object, _passwordHasher.Object);
 
             _mapper.Setup(m => m.Map<PlayerDto>(It.IsAny<Player>())).Returns(
                 (Player p) => new PlayerDto

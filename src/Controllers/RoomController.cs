@@ -19,7 +19,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
             return Ok(roomDto);
         }
 
-        [HttpGet("by-join-code/{joinCode}")]
+        [HttpGet("join-code/{joinCode}")]
         public ActionResult<RoomDto> GetRoomByJoinCode(string joinCode)
         {
             RoomDto roomDto = roomService.GetByJoinCode(joinCode);
@@ -30,9 +30,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [HttpPost("")]
         public ActionResult PostRoom([FromBody] PostRoomDto roomDto)
         {
-            int roomId = roomService.Create(roomDto);
+            string joinCode = roomService.Create(roomDto);
 
-            return Created($"/room/id/{roomId}", null);
+            return Created($"/room/join-code/{joinCode}", null);
         }
 
         [HttpPut("id/{id}")]

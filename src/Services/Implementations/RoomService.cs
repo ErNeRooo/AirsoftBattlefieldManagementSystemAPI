@@ -33,7 +33,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return roomDto;
         }
 
-        public int Create(PostRoomDto roomDto)
+        public string Create(PostRoomDto roomDto)
         {
             if (roomDto.JoinCode is null)
             {
@@ -42,21 +42,13 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 
             Room room = mapper.Map<Room>(roomDto);
 
-            if (room.PasswordHash is null)
-            {
-                room.PasswordHash = "";
-            }
-            else
-            {
-                var hash = passwordHasher.HashPassword(room, room.PasswordHash);
-                room.PasswordHash = hash;
-            }
+            var hash = passwordHasher.HashPassword(room, room.PasswordHash);
+            room.PasswordHash = hash;
 
             dbContext.Room.Add(room);
-
             dbContext.SaveChanges();
 
-            return room.RoomId;
+            return room.JoinCode;
         }
 
         public void Update(int id, PutRoomDto roomDto)
@@ -67,16 +59,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 
             Room updatedRoom = mapper.Map(roomDto, previousRoom);
 
-            if (updatedRoom.PasswordHash is null)
-            {
-                updatedRoom.PasswordHash = "";
-            }
-            else
-            {
-                var hash = passwordHasher.HashPassword(updatedRoom, updatedRoom.PasswordHash);
-                updatedRoom.PasswordHash = hash;
-            }
-
+            var hash = passwordHasher.HashPassword(updatedRoom, updatedRoom.PasswordHash);
+            updatedRoom.PasswordHash = hash;
+            
             dbContext.Room.Update(updatedRoom);
             dbContext.SaveChanges();
         }

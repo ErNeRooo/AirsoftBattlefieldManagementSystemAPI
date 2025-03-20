@@ -6,7 +6,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update
     {
         public int MaxPlayers { get; set; }
         public string JoinCode { get; set; }
-        public string Password { get; set; }
+        public string Password { get; set; } = string.Empty;
         public int AdminPlayerId { get; set; }
     }
 }

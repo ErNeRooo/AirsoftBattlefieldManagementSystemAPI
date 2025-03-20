@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AirsoftBattlefieldManagementSystemAPI.Enums;
 using AirsoftBattlefieldManagementSystemAPI.Exceptions;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
@@ -45,7 +46,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _mapper.Setup(m => m.Map<Room>(It.IsAny<PostRoomDto>())).Returns(
                 (PostRoomDto r) => new Room
                 {
-                    MaxPlayers = r.MaxPlayers
+                    MaxPlayers = r.MaxPlayers,
+                    PasswordHash = r.Password,
+                    JoinCode = r.JoinCode
                 });
             _mapper.Setup(m => m.Map<PutRoomDto, Room>(It.IsAny<PutRoomDto>(), It.IsAny<Room>())).Returns(
                 (PutRoomDto postRoom, Room room) =>
@@ -137,25 +140,23 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
         }
 
         [Fact]
-        public void Create_ForCreateRoomDto_ReturnsIdOfCreatedRoom()
+        public void Create_ForCreateRoomDto_ReturnsJoinCodeOfCreatedRoom()
         {
             // arrange
             List<Room> rooms = _roomsToDtos.Keys.ToList();
             DbSet<Room> roomDbSet = GetDbSet(rooms.AsQueryable());
 
             _dbContext.Setup(m => m.Room).Returns(roomDbSet);
-            _dbContext.Setup(m => m.Room.Add(It.IsAny<Room>())).Callback(
-                (Room room) =>
-                {
-                    room.RoomId = roomDbSet.Count() + 1;
-                    rooms.Add(room);
-                });
+            _joinCodeService.Setup(m => m.Generate(It.IsAny<JoinCodeFormat>(), It.IsAny<int>()))
+                .Returns("021370");
+            _passwordHasher.Setup(m => m.HashPassword(It.IsAny<Room>(), It.IsAny<string>()))
+                .Returns("CoolPasswordHash");
 
             // act 
-            int result = _roomService.Create(new PostRoomDto());
+            string result = _roomService.Create(new PostRoomDto());
 
             // assert
-            result.ShouldBe(roomDbSet.Count());
+            result.ShouldBe("021370");
         }
 
         [Fact]

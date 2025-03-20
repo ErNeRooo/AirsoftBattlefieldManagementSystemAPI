@@ -8,7 +8,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Abstractions
     {
         public RoomDto GetById(int id);
         public RoomDto GetByJoinCode(string joinCode);
-        public int Create(PostRoomDto roomDto);
+        public string Create(PostRoomDto roomDto);
         public void Update(int id, PutRoomDto roomDto);
         public void DeleteById(int id);
     }
