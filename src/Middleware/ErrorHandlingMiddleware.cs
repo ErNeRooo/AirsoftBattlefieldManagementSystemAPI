@@ -10,7 +10,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Middleware
             {
                 await next.Invoke(context);
             }
-            catch (NotFoundException e)
+            catch (ValidationException e)
             {
                 context.Response.StatusCode = 404;
                 await context.Response.WriteAsync(e.Message);

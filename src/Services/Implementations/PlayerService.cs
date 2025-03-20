@@ -11,11 +11,13 @@ using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
 using AirsoftBattlefieldManagementSystemAPI.Exceptions;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Login;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 {
-    public class PlayerService(IBattleManagementSystemDbContext dbContext, IMapper mapper, IAuthenticationSettings authenticationSettings) : IPlayerService
+    public class PlayerService(IBattleManagementSystemDbContext dbContext, IMapper mapper, IAuthenticationSettings authenticationSettings, IPasswordHasher<Room> passwordHasher) : IPlayerService
     {
         public PlayerDto GetById(int id)
         {
@@ -47,6 +49,30 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             mapper.Map(playerDto, previousPlayer);
             dbContext.Player.Update(previousPlayer);
             dbContext.SaveChanges();
+        }
+
+        public void JoinRoom(int id, LoginRoomDto roomDto)
+        {
+            string joinCode = roomDto.JoinCode;
+            string password = roomDto.Password;
+
+            Room room = dbContext.Room.FirstOrDefault(r => r.JoinCode == joinCode);
+            Player? player = dbContext.Player.FirstOrDefault(p => p.PlayerId == id);
+
+            if (player is null) throw new NotFoundException($"Player with id {id} not found");
+
+            var verificationResult = passwordHasher.VerifyHashedPassword(room, room.PasswordHash, password);
+
+            if (verificationResult == PasswordVerificationResult.Success || verificationResult == PasswordVerificationResult.SuccessRehashNeeded)
+            {
+                player.RoomId = room.RoomId;
+                dbContext.Player.Update(player);
+                dbContext.SaveChanges();
+            }
+            else
+            {
+                throw new WrongPasswordException("Wrong room password");
+            }
         }
 
         public void DeleteById(int id)
