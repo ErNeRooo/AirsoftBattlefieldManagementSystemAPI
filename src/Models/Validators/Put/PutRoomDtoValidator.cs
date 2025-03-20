@@ -24,11 +24,11 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Validators
 
             RuleFor(r => r.AdminPlayerId).NotEmpty().Custom((value, context) =>
             {
-                bool isExisting = dbContext.Room.Any(r => r.AdminPlayerId == value);
+                bool isExisting = dbContext.Player.Any(r => r.PlayerId == value);
 
                 if (!isExisting)
                 {
-                    context.AddFailure("AdminPlayerId", $"There is not a player with id {value}");
+                    context.AddFailure("AdminPlayerId", $"There is no player with id {value}");
                 }
             });
         }
