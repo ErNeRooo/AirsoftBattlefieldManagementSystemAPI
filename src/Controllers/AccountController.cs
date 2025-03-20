@@ -21,7 +21,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create([FromBody] CreateAccountDto accountDto)
+        public ActionResult Create([FromBody] PostAccountDto accountDto)
         {
             int id = accountService.Create(accountDto);
 

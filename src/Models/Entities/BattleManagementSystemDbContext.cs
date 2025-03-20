@@ -35,11 +35,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Entities
                 .HasMaxLength(320);
 
             modelBuilder
-                .Entity<Account>()
-                .Property(a => a.Password)
-                .HasMaxLength(64);
-
-            modelBuilder
                 .Entity<Team>()
                 .Property(a => a.Name)
                 .HasMaxLength(60);

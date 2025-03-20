@@ -5,10 +5,11 @@ using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 {
-    public class AccountService(IMapper mapper, IBattleManagementSystemDbContext dbContext) : IAccountService
+    public class AccountService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IPasswordHasher<Account> passwordHasher) : IAccountService
     {
         public AccountDto? GetById(int id)
         {
@@ -21,9 +22,21 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return accountDto;
         }
 
-        public int Create(CreateAccountDto accountDto)
+        public int Create(PostAccountDto accountDto)
         {
             Account account = mapper.Map<Account>(accountDto);
+
+            if (account.PasswordHash is null)
+            {
+                account.PasswordHash = "";
+            }
+            else
+            {
+                var hash = passwordHasher.HashPassword(account, account.PasswordHash);
+                account.PasswordHash = hash;
+            }
+
+
             dbContext.Account.Add(account);
             dbContext.SaveChanges();
 
@@ -37,6 +50,17 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             if (previousAccount is null) throw new NotFoundException($"Account with id {id} not found");
 
             mapper.Map(accountDto, previousAccount);
+
+            if (previousAccount.PasswordHash is null)
+            {
+                previousAccount.PasswordHash = "";
+            }
+            else
+            {
+                var hash = passwordHasher.HashPassword(previousAccount, previousAccount.PasswordHash);
+                previousAccount.PasswordHash = hash;
+            }
+
             dbContext.Account.Update(previousAccount);
             dbContext.SaveChanges();
         }

@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Models.Validators
 {
-    public class CreateAccountDtoValidator : AbstractValidator<CreateAccountDto>
+    public class CreateAccountDtoValidator : AbstractValidator<PostAccountDto>
     {
         public CreateAccountDtoValidator(IBattleManagementSystemDbContext dbContext)
         {

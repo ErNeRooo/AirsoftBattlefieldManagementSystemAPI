@@ -82,6 +82,7 @@ namespace AirsoftBattlefieldManagementSystemAPI
             builder.Services.AddTransient<ErrorHandlingMiddleware>();
 
             builder.Services.AddScoped<IPasswordHasher<Room>, PasswordHasher<Room>>();
+            builder.Services.AddScoped<IPasswordHasher<Account>, PasswordHasher<Account>>();
 
             builder.Services.AddFluentValidationAutoValidation();
             builder.Services.AddValidatorsFromAssemblyContaining<Program>();

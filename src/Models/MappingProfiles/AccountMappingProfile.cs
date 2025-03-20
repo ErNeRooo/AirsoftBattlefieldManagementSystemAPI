@@ -12,15 +12,21 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles
         {
             CreateMap<Account, AccountDto>();
 
-            CreateMap<CreateAccountDto, Account>()
+            CreateMap<PostAccountDto, Account>()
                 .ForMember(
                     destinationMember: dest => dest.AccountId,
-                    memberOptions: opt => opt.Ignore());
+                    memberOptions: opt => opt.Ignore())
+                .ForMember(
+                    destinationMember: dest => dest.PasswordHash,
+                    memberOptions: opt => opt.MapFrom(a => a.Password));
 
             CreateMap<UpdateAccountDto, Account>()
                 .ForMember(
                     destinationMember: dest => dest.AccountId,
-                    memberOptions: opt => opt.Ignore());
+                    memberOptions: opt => opt.Ignore())
+                .ForMember(
+                    destinationMember: dest => dest.PasswordHash,
+                    memberOptions: opt => opt.MapFrom(a => a.Password));
         }
     }
 }

@@ -30,8 +30,8 @@ public class AccountServiceTests
                 Email = src.Email,
                 Password = src.Password
             });
-        _mapper.Setup(m => m.Map<Account>(It.IsAny<CreateAccountDto>()))
-            .Returns((CreateAccountDto src) => new Account
+        _mapper.Setup(m => m.Map<Account>(It.IsAny<PostAccountDto>()))
+            .Returns((PostAccountDto src) => new Account
             {
                 AccountId = 0,
                 Email = src.Email,
@@ -98,17 +98,17 @@ public class AccountServiceTests
     {
         yield return new object[]
         {
-            new CreateAccountDto { Email = "haha@example.com", Password = "tori098" }
+            new PostAccountDto { Email = "haha@example.com", Password = "tori098" }
         };
         yield return new object[]
         {
-            new CreateAccountDto { Email = "", Password = "" }
+            new PostAccountDto { Email = "", Password = "" }
         };
     }
 
     [Theory]
     [MemberData(nameof(Create_ForCreateAccountDto_ReturnsIdOfCreatedAccount_Data))]
-    public void Create_ForCreateAccountDto_ReturnsIdOfCreatedAccount(CreateAccountDto accountDto)
+    public void Create_ForCreateAccountDto_ReturnsIdOfCreatedAccount(PostAccountDto accountDto)
     {
         // arrange
         List<Account> accounts = _accountsToDtos.Keys.ToList();
@@ -141,7 +141,7 @@ public class AccountServiceTests
         _dbContext.Setup(m => m.Account).Returns(dbSet);
 
         // act
-        _accountService.Create(new CreateAccountDto());
+        _accountService.Create(new PostAccountDto());
 
         // assert
         _dbContext.Verify(m => m.Account.Add(It.IsAny<Account>()), Times.Once);
@@ -157,7 +157,7 @@ public class AccountServiceTests
         _dbContext.Setup(m => m.Account).Returns(dbSet);
 
         // act
-        _accountService.Create(new CreateAccountDto());
+        _accountService.Create(new PostAccountDto());
 
         // assert
         _dbContext.Verify(m => m.SaveChanges(), Times.Once);

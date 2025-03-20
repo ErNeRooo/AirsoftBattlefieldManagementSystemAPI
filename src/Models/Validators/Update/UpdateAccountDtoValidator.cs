@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Models.Validators
 {
-    public class UpdateAccountDtoValidator : AbstractValidator<CreateAccountDto>
+    public class UpdateAccountDtoValidator : AbstractValidator<PostAccountDto>
     {
         public UpdateAccountDtoValidator(IBattleManagementSystemDbContext dbContext)
         {
