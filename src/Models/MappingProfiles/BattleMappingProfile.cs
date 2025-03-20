@@ -12,14 +12,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles
         {
             CreateMap<Battle, BattleDto>();
 
-            CreateMap<CreateBattleDto, Battle>().ForMember(
+            CreateMap<PostBattleDto, Battle>().ForMember(
                     destinationMember: dest => dest.BattleId,
                     memberOptions: opt => opt.Ignore())
                 .ForMember(
                     destinationMember: dest => dest.Room,
                     memberOptions: opt => opt.Ignore());
 
-            CreateMap<UpdateBattleDto, Battle>()
+            CreateMap<PutBattleDto, Battle>()
                 .ForMember(
                     destinationMember: dest => dest.BattleId,
                     memberOptions: opt => opt.Ignore())

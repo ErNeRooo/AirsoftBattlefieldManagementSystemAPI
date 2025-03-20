@@ -21,7 +21,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return teamDto;
         }
 
-        public int Create(CreateTeamDto teamDto)
+        public int Create(PostTeamDto teamDto)
         {
             Team team = mapper.Map<Team>(teamDto);
             dbContext.Team.Add(team);
@@ -30,7 +30,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return team.TeamId;
         }
 
-        public void Update(int id, UpdateTeamDto teamDto)
+        public void Update(int id, PutTeamDto teamDto)
         {
             Team? previousTeam = dbContext.Team.FirstOrDefault(t => t.TeamId == id);
 

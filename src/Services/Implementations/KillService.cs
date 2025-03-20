@@ -41,7 +41,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return killDtos;
         }
 
-        public int Create(int playerId, CreateKillDto killDto)
+        public int Create(int playerId, PostKillDto killDto)
         {
             Player? player = dbContext.Player.FirstOrDefault(p => p.PlayerId == playerId);
 
@@ -60,7 +60,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return kill.KillId;
         }
 
-        public void Update(int id, UpdateKillDto killDto)
+        public void Update(int id, PutKillDto killDto)
         {
             Kill? previousKill = dbContext.Kill
                 .Include(k => k.Location)

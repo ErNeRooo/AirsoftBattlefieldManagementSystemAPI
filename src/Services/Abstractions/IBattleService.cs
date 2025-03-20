@@ -7,8 +7,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Abstractions
     public interface IBattleService
     {
         public BattleDto GetById(int id);
-        public int Create(CreateBattleDto battleDto);
-        public void Update(int id, UpdateBattleDto battleDto);
+        public int Create(PostBattleDto postBattleDto);
+        public void Update(int id, PutBattleDto battleDto);
         public void DeleteById(int id);
     }
 }

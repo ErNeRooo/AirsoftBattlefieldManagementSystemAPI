@@ -4,6 +4,7 @@ using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Services.Implementations;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Moq;
@@ -15,12 +16,14 @@ public class AccountServiceTests
 {
     private readonly Mock<IBattleManagementSystemDbContext> _dbContext;
     private readonly Mock<IMapper> _mapper;
+    private readonly Mock<IPasswordHasher<Account>> _passwordHasher;
     private readonly AccountService _accountService;
     private readonly Dictionary<Account, AccountDto> _accountsToDtos;
 
     public AccountServiceTests()
     {
         _dbContext = new Mock<IBattleManagementSystemDbContext>();
+        _passwordHasher = new Mock<IPasswordHasher<Account>>();
 
         _mapper = new Mock<IMapper>();
         _mapper.Setup(m => m.Map<AccountDto>(It.IsAny<Account>()))
@@ -28,34 +31,33 @@ public class AccountServiceTests
             {
                 AccountId = src.AccountId,
                 Email = src.Email,
-                Password = src.Password
             });
         _mapper.Setup(m => m.Map<Account>(It.IsAny<PostAccountDto>()))
             .Returns((PostAccountDto src) => new Account
             {
                 AccountId = 0,
                 Email = src.Email,
-                Password = src.Password
+                PasswordHash = src.Password
             });
-        _mapper.Setup(m => m.Map(It.IsAny<UpdateAccountDto>(), It.IsAny<Account>()))
-            .Returns((UpdateAccountDto src, Account dest) => new Account
+        _mapper.Setup(m => m.Map(It.IsAny<PutAccountDto>(), It.IsAny<Account>()))
+            .Returns((PutAccountDto src, Account dest) => new Account
             {
                 AccountId = dest.AccountId,
                 Email = src.Email,
-                Password = src.Password
+                PasswordHash = src.Password
             });
 
-        _accountService = new AccountService(_mapper.Object, _dbContext.Object);
+        _accountService = new AccountService(_mapper.Object, _dbContext.Object, _passwordHasher.Object);
 
         _accountsToDtos = new Dictionary<Account, AccountDto>
         {
             {
-                new Account { AccountId = 1, Email = "some.email@gmail.com", Password = "inu123" },
-                new AccountDto { AccountId = 1, Email = "some.email@gmail.com", Password = "inu123" }
+                new Account { AccountId = 1, Email = "some.email@gmail.com"},
+                new AccountDto { AccountId = 1, Email = "some.email@gmail.com"}
             },
             {
-                new Account { AccountId = 2, Email = "hellomum@gmail.com", Password = "neko321" },
-                new AccountDto { AccountId = 2, Email = "hellomum@gmail.com", Password = "neko321" }
+                new Account { AccountId = 2, Email = "hellomum@gmail.com" },
+                new AccountDto { AccountId = 2, Email = "hellomum@gmail.com" }
             }
         };
     }
@@ -90,8 +92,7 @@ public class AccountServiceTests
         // assert
         result.ShouldSatisfyAllConditions(
             () => result.AccountId.ShouldBe(id),
-            () => result.Email.ShouldBe(email),
-            () => result.Password.ShouldBe(password));
+            () => result.Email.ShouldBe(email));
     }
 
     public static IEnumerable<object[]> Create_ForCreateAccountDto_ReturnsIdOfCreatedAccount_Data()
@@ -173,7 +174,7 @@ public class AccountServiceTests
         _dbContext.Setup(m => m.Account).Returns(dbSet);
 
         // act
-        _accountService.Update(1, new UpdateAccountDto());
+        _accountService.Update(1, new PutAccountDto());
 
         // assert
         _dbContext.Verify(m => m.Account.Update(It.IsAny<Account>()), Times.Once);
@@ -189,7 +190,7 @@ public class AccountServiceTests
         _dbContext.Setup(m => m.Account).Returns(dbSet);
 
         // act
-        _accountService.Update(1, new UpdateAccountDto());
+        _accountService.Update(1, new PutAccountDto());
 
         // assert
         _dbContext.Verify(m => m.SaveChanges(), Times.Once);

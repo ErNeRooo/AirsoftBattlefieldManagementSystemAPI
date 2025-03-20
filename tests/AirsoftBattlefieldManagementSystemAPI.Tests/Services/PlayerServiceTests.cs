@@ -39,8 +39,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
                     Name = p.Name,
                     IsDead = p.IsDead
                 });
-            _mapper.Setup(m => m.Map<Player>(It.IsAny<CreatePlayerDto>())).Returns(
-                (CreatePlayerDto p) => new Player
+            _mapper.Setup(m => m.Map<Player>(It.IsAny<PostPlayerDto>())).Returns(
+                (PostPlayerDto p) => new Player
                 {
                     Name = p.Name,
                 });
@@ -93,13 +93,13 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
 
         public static IEnumerable<object[]> Create_ForCreatePlayerDto_ReturnsIdOfCreatedPlayer_Data()
         {
-            yield return new object[] { new CreatePlayerDto { Name = "Nick" } };
-            yield return new object[] { new CreatePlayerDto { Name = "Quasyn" } };
+            yield return new object[] { new PostPlayerDto { Name = "Nick" } };
+            yield return new object[] { new PostPlayerDto { Name = "Quasyn" } };
         }
 
         [Theory]
         [MemberData(nameof(Create_ForCreatePlayerDto_ReturnsIdOfCreatedPlayer_Data))]
-        public void Create_ForCreatePlayerDto_ReturnsIdOfCreatedPlayer(CreatePlayerDto createPlayerDto)
+        public void Create_ForCreatePlayerDto_ReturnsIdOfCreatedPlayer(PostPlayerDto postPlayerDto)
         {
             // arrange
             List<Player> players = _playersToDtos.Keys.ToList();
@@ -114,7 +114,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
                 });
 
             // act 
-            int result = _playerService.Create(createPlayerDto);
+            int result = _playerService.Create(postPlayerDto);
 
             // assert
             result.ShouldBe(dbSet.Count());
@@ -130,7 +130,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Player).Returns(dbSet);
 
             // act
-            _playerService.Create(new CreatePlayerDto());
+            _playerService.Create(new PostPlayerDto());
 
             // assert
             _dbContext.Verify(m => m.Player.Add(It.IsAny<Player>()), Times.Once);
@@ -146,7 +146,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Player).Returns(dbSet);
 
             // act
-            _playerService.Create(new CreatePlayerDto());
+            _playerService.Create(new PostPlayerDto());
 
             // assert
             _dbContext.Verify(m => m.SaveChanges(), Times.Once);
@@ -162,7 +162,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Player).Returns(dbSet);
 
             // act
-            _playerService.Update(1, new UpdatePlayerDto());
+            _playerService.Update(1, new PutPlayerDto());
 
             // assert
             _dbContext.Verify(m => m.Player.Update(It.IsAny<Player>()), Times.Once);
@@ -178,7 +178,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Player).Returns(dbSet);
 
             // act
-            _playerService.Update(1, new UpdatePlayerDto());
+            _playerService.Update(1, new PutPlayerDto());
 
             // assert
             _dbContext.Verify(m => m.SaveChanges(), Times.Once);

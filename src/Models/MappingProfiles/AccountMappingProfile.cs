@@ -20,7 +20,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles
                     destinationMember: dest => dest.PasswordHash,
                     memberOptions: opt => opt.MapFrom(a => a.Password));
 
-            CreateMap<UpdateAccountDto, Account>()
+            CreateMap<PutAccountDto, Account>()
                 .ForMember(
                     destinationMember: dest => dest.AccountId,
                     memberOptions: opt => opt.Ignore())

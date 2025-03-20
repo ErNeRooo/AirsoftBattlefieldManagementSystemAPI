@@ -31,12 +31,12 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles
                     memberOptions: opt =>
                         opt.MapFrom(src => src.Location.Time));
 
-            CreateMap<CreateDeathDto, Location>()
+            CreateMap<PostDeathDto, Location>()
                 .ForMember(
                     destinationMember: dest => dest.LocationId,
                     memberOptions: opt => opt.Ignore());
 
-            CreateMap<UpdateDeathDto, Location>()
+            CreateMap<PutDeathDto, Location>()
                 .ForMember(
                     destinationMember: dest => dest.LocationId,
                     memberOptions: opt => opt.Ignore());
@@ -46,12 +46,12 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles
                     destinationMember: dest => dest.LocationId,
                     memberOptions: opt => opt.Ignore());
 
-            CreateMap<CreateDeathDto, Death>()
+            CreateMap<PostDeathDto, Death>()
                 .ForMember(
                     destinationMember: dest => dest.DeathId,
                     memberOptions: opt => opt.Ignore());
 
-            CreateMap<UpdateDeathDto, Death>()
+            CreateMap<PutDeathDto, Death>()
                 .ForMember(
                     destinationMember: dest => dest.DeathId,
                     memberOptions: opt => opt.Ignore());

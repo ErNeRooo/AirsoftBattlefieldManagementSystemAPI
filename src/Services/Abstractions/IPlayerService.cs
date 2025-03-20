@@ -7,8 +7,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Abstractions
     public interface IPlayerService
     {
         public PlayerDto GetById(int id);
-        public int Create(CreatePlayerDto playerDto);
-        public void Update(int id, UpdatePlayerDto playerDto);
+        public int Create(PostPlayerDto playerDto);
+        public void Update(int id, PutPlayerDto playerDto);
         public void DeleteById(int id);
         public string GenerateJwt(int id);
     }

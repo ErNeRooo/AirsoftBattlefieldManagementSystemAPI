@@ -50,8 +50,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
                 new Player { PlayerId = 4 }
             };
 
-            _mapper.Setup(m => m.Map<Location>(It.IsAny<CreateKillDto>())).Returns(
-                (CreateKillDto k) => new Location
+            _mapper.Setup(m => m.Map<Location>(It.IsAny<PostKillDto>())).Returns(
+                (PostKillDto k) => new Location
                 {
                     Longitude = k.Longitude,
                     Latitude = k.Latitude,
@@ -60,8 +60,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
                     Time = k.Time
                 });
 
-            _mapper.Setup(m => m.Map<UpdateKillDto, Location>(It.IsAny<UpdateKillDto>(), It.IsAny<Location>())).Returns(
-                (UpdateKillDto src, Location dest) =>
+            _mapper.Setup(m => m.Map<PutKillDto, Location>(It.IsAny<PutKillDto>(), It.IsAny<Location>())).Returns(
+                (PutKillDto src, Location dest) =>
                 {
                     dest = new Location
                     {
@@ -180,7 +180,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
                 });
 
             // act 
-            int? result = _killService.Create(4, new CreateKillDto());
+            int? result = _killService.Create(4, new PostKillDto());
 
             // assert
             result.ShouldBe(killDbSet.Count());
@@ -200,7 +200,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Kill).Returns(dbSet);
 
             // act
-            _killService.Create(4, new CreateKillDto());
+            _killService.Create(4, new PostKillDto());
 
             // assert
             _dbContext.Verify(m => m.Kill.Add(It.IsAny<Kill>()), Times.Once);
@@ -220,7 +220,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Kill).Returns(dbSet);
 
             // act
-            _killService.Create(4, new CreateKillDto());
+            _killService.Create(4, new PostKillDto());
 
             // assert
             _dbContext.Verify(m => m.Location.Add(It.IsAny<Location>()), Times.Once);
@@ -240,7 +240,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Kill).Returns(dbSet);
 
             // act
-            _killService.Create(4, new CreateKillDto());
+            _killService.Create(4, new PostKillDto());
 
             // assert
             _dbContext.Verify(m => m.SaveChanges(), Times.Once());
@@ -248,8 +248,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
 
         public static IEnumerable<object[]> Update_ForNotExistingId_ReturnsFalse_Data()
         {
-            yield return new object[] { 0, new UpdateKillDto {  } };
-            yield return new object[] { 3, new UpdateKillDto {  } };
+            yield return new object[] { 0, new PutKillDto {  } };
+            yield return new object[] { 3, new PutKillDto {  } };
         }
 
         [Fact]
@@ -264,7 +264,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Kill).Returns(dbSet);
 
             // act
-            _killService.Update(1, new UpdateKillDto());
+            _killService.Update(1, new PutKillDto());
 
             // assert
             _dbContext.Verify(m => m.Location.Update(It.IsAny<Location>()), Times.Once);
@@ -282,7 +282,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Kill).Returns(dbSet);
 
             // act
-            _killService.Update(1, new UpdateKillDto());
+            _killService.Update(1, new PutKillDto());
 
             // assert
             _dbContext.Verify(m => m.SaveChanges(), Times.Once);

@@ -33,7 +33,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return roomDto;
         }
 
-        public int Create(CreateRoomDto roomDto)
+        public int Create(PostRoomDto roomDto)
         {
             if (roomDto.JoinCode is null)
             {
@@ -59,7 +59,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return room.RoomId;
         }
 
-        public void Update(int id, UpdateRoomDto roomDto)
+        public void Update(int id, PutRoomDto roomDto)
         {
             Room? previousRoom = dbContext.Room.FirstOrDefault(r => r.RoomId == id);
 

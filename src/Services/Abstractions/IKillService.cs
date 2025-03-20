@@ -8,8 +8,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Abstractions
     {
         public KillDto GetById(int id);
         public List<KillDto> GetAllOfPlayerWithId(int playerId);
-        public int Create(int playerId, CreateKillDto killDto);
-        public void Update(int id, UpdateKillDto killDto);
+        public int Create(int playerId, PostKillDto postKillDto);
+        public void Update(int id, PutKillDto killDto);
         public void DeleteById(int id);
     }
 }

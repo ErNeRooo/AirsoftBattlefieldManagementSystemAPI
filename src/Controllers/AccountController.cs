@@ -30,7 +30,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
 
         [HttpPut]
         [Route("id/{id}")]
-        public ActionResult Update(int id, [FromBody] UpdateAccountDto accountDto)
+        public ActionResult Update(int id, [FromBody] PutAccountDto accountDto)
         {
             accountService.Update(id, accountDto);
 

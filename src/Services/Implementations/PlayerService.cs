@@ -28,7 +28,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return playerDto;
         }
 
-        public int Create(CreatePlayerDto playerDto)
+        public int Create(PostPlayerDto playerDto)
         {
             var player = mapper.Map<Player>(playerDto);
 
@@ -38,7 +38,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return player.PlayerId;
         }
 
-        public void Update(int id, UpdatePlayerDto playerDto)
+        public void Update(int id, PutPlayerDto playerDto)
         {
             Player? previousPlayer = dbContext.Player.FirstOrDefault(p => p.PlayerId == id);
 

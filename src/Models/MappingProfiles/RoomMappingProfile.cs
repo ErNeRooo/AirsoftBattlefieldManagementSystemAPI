@@ -12,7 +12,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles
         {
             CreateMap<Room, RoomDto>();
 
-            CreateMap<CreateRoomDto, Room>()
+            CreateMap<PostRoomDto, Room>()
                 .ForMember(
                     destinationMember: dest => dest.AdminPlayer,
                     memberOptions: opt => opt.Ignore())
@@ -29,7 +29,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles
                     destinationMember: dest => dest.Battles,
                     memberOptions: opt => opt.Ignore());
 
-            CreateMap<UpdateRoomDto, Room>()
+            CreateMap<PutRoomDto, Room>()
                 .ForMember(
                     destinationMember: dest => dest.AdminPlayer,
                     memberOptions: opt => opt.Ignore())

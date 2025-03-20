@@ -21,7 +21,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpPost("register")]
-        public ActionResult<string> Register([FromBody] CreatePlayerDto playerDto)
+        public ActionResult<string> Register([FromBody] PostPlayerDto playerDto)
         {
             int playerId = playerService.Create(playerDto);
             string jwtToken = playerService.GenerateJwt(playerId);
@@ -30,7 +30,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpPut("id/{id}")]
-        public ActionResult<string> PutPlayer(int id, [FromBody] UpdatePlayerDto playerDto)
+        public ActionResult<string> PutPlayer(int id, [FromBody] PutPlayerDto playerDto)
         {
             playerService.Update(id, playerDto);
 

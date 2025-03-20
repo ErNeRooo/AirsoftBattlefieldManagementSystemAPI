@@ -22,7 +22,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return battleDto;
         }
 
-        public int Create(CreateBattleDto battleDto)
+        public int Create(PostBattleDto battleDto)
         {
             Battle battle = mapper.Map<Battle>(battleDto);
             dbContext.Battle.Add(battle);
@@ -30,7 +30,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return battle.BattleId;
         }
 
-        public void Update(int id, UpdateBattleDto battleDto)
+        public void Update(int id, PutBattleDto battleDto)
         {
             Battle? previousBattle = dbContext.Battle.FirstOrDefault(t => t.BattleId == id);
 

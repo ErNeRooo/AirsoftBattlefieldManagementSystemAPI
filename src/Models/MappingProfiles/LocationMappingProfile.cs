@@ -10,16 +10,16 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles
     {
         public LocationMappingProfile()
         {
-            CreateMap<CreateLocationDto, PlayerLocation>().ForMember(
+            CreateMap<PostLocationDto, PlayerLocation>().ForMember(
                 destinationMember: dest => dest.LocationId,
                 memberOptions: opt => opt.Ignore());
 
-            CreateMap<CreateLocationDto, Location>()
+            CreateMap<PostLocationDto, Location>()
                 .ForMember(
                     destinationMember: dest => dest.LocationId,
                     memberOptions: opt => opt.Ignore());
 
-            CreateMap<UpdateLocationDto, Location>()
+            CreateMap<PutLocationDto, Location>()
                 .ForMember(
                     destinationMember: dest => dest.LocationId,
                     memberOptions: opt => opt.Ignore());

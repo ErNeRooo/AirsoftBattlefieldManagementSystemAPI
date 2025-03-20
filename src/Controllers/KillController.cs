@@ -32,7 +32,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
 
         [HttpPost]
         [Route("playerId/{playerId}")]
-        public ActionResult Create(int playerId, [FromBody] CreateKillDto KillDto)
+        public ActionResult Create(int playerId, [FromBody] PostKillDto KillDto)
         {
             int id = killService.Create(playerId, KillDto);
 
@@ -41,7 +41,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
 
         [HttpPut]
         [Route("id/{id}")]
-        public ActionResult Update(int id, [FromBody] UpdateKillDto killDto)
+        public ActionResult Update(int id, [FromBody] PutKillDto killDto)
         {
             killService.Update(id, killDto);
 

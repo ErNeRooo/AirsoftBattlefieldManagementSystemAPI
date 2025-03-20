@@ -22,7 +22,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create([FromBody] CreateBattleDto battleDto)
+        public ActionResult Create([FromBody] PostBattleDto battleDto)
         {
             int battleId = battleService.Create(battleDto);
 
@@ -31,7 +31,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
 
         [HttpPut]
         [Route("id/{id}")]
-        public ActionResult Update(int id, [FromBody] UpdateBattleDto battleDto)
+        public ActionResult Update(int id, [FromBody] PutBattleDto battleDto)
         {
             battleService.Update(id, battleDto);
 

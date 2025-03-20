@@ -36,8 +36,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
                     Name = t.Name,
                     RoomId = t.RoomId
                 });
-            _mapper.Setup(m => m.Map<Team>(It.IsAny<CreateTeamDto>())).Returns(
-                (CreateTeamDto t) => new Team
+            _mapper.Setup(m => m.Map<Team>(It.IsAny<PostTeamDto>())).Returns(
+                (PostTeamDto t) => new Team
                 {
                     Name = t.Name,
                     RoomId = t.RoomId
@@ -91,13 +91,13 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
 
         public static IEnumerable<object[]> Create_ForCreateTeamDto_ReturnsIdOfCreatedTeam_Data()
         {
-            yield return new object[] { new CreateTeamDto() };
-            yield return new object[] { new CreateTeamDto() };
+            yield return new object[] { new PostTeamDto() };
+            yield return new object[] { new PostTeamDto() };
         }
 
         [Theory]
         [MemberData(nameof(Create_ForCreateTeamDto_ReturnsIdOfCreatedTeam_Data))]
-        public void Create_ForCreateTeamDto_ReturnsIdOfCreatedTeam(CreateTeamDto createTeamDto)
+        public void Create_ForCreateTeamDto_ReturnsIdOfCreatedTeam(PostTeamDto postTeamDto)
         {
             // arrange
             List<Team> teams = _teamsToDtos.Keys.ToList();
@@ -112,7 +112,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
                 });
 
             // act 
-            int result = _teamService.Create(createTeamDto);
+            int result = _teamService.Create(postTeamDto);
 
             // assert
             result.ShouldBe(dbSet.Count());
@@ -128,7 +128,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Team).Returns(dbSet);
 
             // act
-            _teamService.Create(new CreateTeamDto());
+            _teamService.Create(new PostTeamDto());
 
             // assert
             _dbContext.Verify(m => m.Team.Add(It.IsAny<Team>()), Times.Once);
@@ -144,7 +144,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Team).Returns(dbSet);
 
             // act
-            _teamService.Create(new CreateTeamDto());
+            _teamService.Create(new PostTeamDto());
 
             // assert
             _dbContext.Verify(m => m.SaveChanges(), Times.Once);
@@ -160,7 +160,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Team).Returns(dbSet);
 
             // act
-            _teamService.Update(1, new UpdateTeamDto());
+            _teamService.Update(1, new PutTeamDto());
 
             // assert
             _dbContext.Verify(m => m.Team.Update(It.IsAny<Team>()), Times.Once);
@@ -176,7 +176,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Team).Returns(dbSet);
 
             // act
-            _teamService.Update(1, new UpdateTeamDto());
+            _teamService.Update(1, new PutTeamDto());
 
             // assert
             _dbContext.Verify(m => m.SaveChanges(), Times.Once);

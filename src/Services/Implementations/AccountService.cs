@@ -43,7 +43,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return account.AccountId;
         }
 
-        public void Update(int id, UpdateAccountDto accountDto)
+        public void Update(int id, PutAccountDto accountDto)
         {
             Account? previousAccount = dbContext.Account.FirstOrDefault(t => t.AccountId == id);
 

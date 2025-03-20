@@ -42,10 +42,20 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
                     MaxPlayers = r.MaxPlayers,
                     JoinCode = r.JoinCode
                 });
-            _mapper.Setup(m => m.Map<Room>(It.IsAny<CreateRoomDto>())).Returns(
-                (CreateRoomDto r) => new Room
+            _mapper.Setup(m => m.Map<Room>(It.IsAny<PostRoomDto>())).Returns(
+                (PostRoomDto r) => new Room
                 {
                     MaxPlayers = r.MaxPlayers
+                });
+            _mapper.Setup(m => m.Map<PutRoomDto, Room>(It.IsAny<PutRoomDto>(), It.IsAny<Room>())).Returns(
+                (PutRoomDto postRoom, Room room) =>
+                {
+                    room.AdminPlayerId = postRoom.AdminPlayerId;
+                    room.JoinCode = postRoom.JoinCode;
+                    room.PasswordHash = postRoom.Password;
+                    room.MaxPlayers = postRoom.MaxPlayers;
+
+                    return room;
                 });
 
             _roomsToDtos = new Dictionary<Room, RoomDto>()
@@ -142,7 +152,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
                 });
 
             // act 
-            int result = _roomService.Create(new CreateRoomDto());
+            int result = _roomService.Create(new PostRoomDto());
 
             // assert
             result.ShouldBe(roomDbSet.Count());
@@ -158,7 +168,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Room).Returns(dbSet);
 
             // act
-            _roomService.Create(new CreateRoomDto());
+            _roomService.Create(new PostRoomDto());
 
             // assert
             _dbContext.Verify(m => m.Room.Add(It.IsAny<Room>()), Times.Once);
@@ -174,7 +184,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Room).Returns(dbSet);
 
             // act
-            _roomService.Create(new CreateRoomDto());
+            _roomService.Create(new PostRoomDto());
 
             // assert
             _dbContext.Verify(m => m.SaveChanges(), Times.Once);
@@ -190,7 +200,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Room).Returns(dbSet);
 
             // act
-            _roomService.Update(1, new UpdateRoomDto());
+            _roomService.Update(1, new PutRoomDto());
 
             // assert
             _dbContext.Verify(m => m.Room.Update(It.IsAny<Room>()), Times.Once);
@@ -206,10 +216,10 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Room).Returns(dbSet);
 
             // act
-            _roomService.Update(1, new UpdateRoomDto());
+            _roomService.Update(1, new PutRoomDto());
 
             // assert
-            _dbContext.Verify(m => m.SaveChanges(), Times.Once);
+            _dbContext.Verify(m => m.SaveChanges(), Times.Once());
         }
 
         [Fact]

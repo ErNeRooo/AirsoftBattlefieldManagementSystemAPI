@@ -37,8 +37,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
                     IsActive = b.IsActive,
                     RoomId = b.RoomId
                 });
-            _mapper.Setup(m => m.Map<Battle>(It.IsAny<CreateBattleDto>())).Returns(
-                (CreateBattleDto b) => new Battle
+            _mapper.Setup(m => m.Map<Battle>(It.IsAny<PostBattleDto>())).Returns(
+                (PostBattleDto b) => new Battle
                 {
                     Name = b.Name,
                     IsActive = b.IsActive,
@@ -94,13 +94,13 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
 
         public static IEnumerable<object[]> Create_ForCreateBattleDto_ReturnsIdOfCreatedBattle_Data()
         {
-            yield return new object[] { new CreateBattleDto { Name = "Bitwa Małowidzka", IsActive = true, RoomId = 4 } };
-            yield return new object[] { new CreateBattleDto { Name = "Ofensywa Lipska", IsActive = false, RoomId = 1 } };
+            yield return new object[] { new PostBattleDto { Name = "Bitwa Małowidzka", IsActive = true, RoomId = 4 } };
+            yield return new object[] { new PostBattleDto { Name = "Ofensywa Lipska", IsActive = false, RoomId = 1 } };
         }
 
         [Theory]
         [MemberData(nameof(Create_ForCreateBattleDto_ReturnsIdOfCreatedBattle_Data))]
-        public void Create_ForCreateBattleDto_ReturnsIdOfCreatedBattle(CreateBattleDto createBattleDto)
+        public void Create_ForCreateBattleDto_ReturnsIdOfCreatedBattle(PostBattleDto postBattleDto)
         {
             // arrange
             List<Battle> battles = _battlesToDtos.Keys.ToList();
@@ -115,7 +115,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
                 });
 
             // act 
-            int result = _battleService.Create(createBattleDto);
+            int result = _battleService.Create(postBattleDto);
 
             // assert
             result.ShouldBe(dbSet.Count());
@@ -131,7 +131,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Battle).Returns(dbSet);
 
             // act
-            _battleService.Create(new CreateBattleDto());
+            _battleService.Create(new PostBattleDto());
 
             // assert
             _dbContext.Verify(m => m.Battle.Add(It.IsAny<Battle>()), Times.Once);
@@ -147,7 +147,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Battle).Returns(dbSet);
 
             // act
-            _battleService.Create(new CreateBattleDto());
+            _battleService.Create(new PostBattleDto());
 
             // assert
             _dbContext.Verify(m => m.SaveChanges(), Times.Once);
@@ -163,7 +163,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Battle).Returns(dbSet);
 
             // act
-            _battleService.Update(1, new UpdateBattleDto());
+            _battleService.Update(1, new PutBattleDto());
 
             // assert
             _dbContext.Verify(m => m.Battle.Update(It.IsAny<Battle>()), Times.Once);
@@ -179,7 +179,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Battle).Returns(dbSet);
 
             // act
-            _battleService.Update(1, new UpdateBattleDto());
+            _battleService.Update(1, new PutBattleDto());
 
             // assert
             _dbContext.Verify(m => m.SaveChanges(), Times.Once);

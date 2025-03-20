@@ -31,7 +31,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
 
         [HttpPost]
         [Route("playerId/{playerId}")]
-        public ActionResult Create(int playerId, [FromBody] CreateLocationDto locationDto)
+        public ActionResult Create(int playerId, [FromBody] PostLocationDto locationDto)
         {
             int id = locationService.Create(playerId, locationDto);
 
@@ -40,7 +40,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
 
         [HttpPut]
         [Route("id/{id}")]
-        public ActionResult Update(int id, [FromBody] UpdateLocationDto locationDto)
+        public ActionResult Update(int id, [FromBody] PutLocationDto locationDto)
         {
             locationService.Update(id, locationDto);
 

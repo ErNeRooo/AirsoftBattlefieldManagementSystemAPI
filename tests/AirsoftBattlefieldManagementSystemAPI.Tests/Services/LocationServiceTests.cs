@@ -49,8 +49,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
                 new Player { PlayerId = 4}
             };
 
-            _mapper.Setup(m => m.Map<Location>(It.IsAny<CreateLocationDto>())).Returns(
-                (CreateLocationDto l) => new Location
+            _mapper.Setup(m => m.Map<Location>(It.IsAny<PostLocationDto>())).Returns(
+                (PostLocationDto l) => new Location
                 {
                     Longitude = l.Longitude,
                     Latitude = l.Latitude,
@@ -145,7 +145,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
                 });
 
             // act 
-            int? result = _locationService.Create(4, new CreateLocationDto());
+            int? result = _locationService.Create(4, new PostLocationDto());
 
             // assert
             result.ShouldBe(locationDbSet.Count());
@@ -165,7 +165,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Location).Returns(dbSet);
 
             // act
-            _locationService.Create(4, new CreateLocationDto());
+            _locationService.Create(4, new PostLocationDto());
 
             // assert
             _dbContext.Verify(m => m.Location.Add(It.IsAny<Location>()), Times.Once);
@@ -185,14 +185,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Location).Returns(dbSet);
 
             // act
-            _locationService.Create(4, new CreateLocationDto());
+            _locationService.Create(4, new PostLocationDto());
 
             // assert
             _dbContext.Verify(m => m.PlayerLocation.Add(It.IsAny<PlayerLocation>()), Times.Once);
         }
 
         [Fact]
-        public void Create_ShouldCallSaveChangesMethod()
+        public void Create_ShouldCallSaveChangesMethodTwice()
         {
             // arrange
             List<Location> locations = _locationsToDtos.Keys.ToList();
@@ -205,10 +205,10 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Location).Returns(dbSet);
 
             // act
-            _locationService.Create(4, new CreateLocationDto());
+            _locationService.Create(4, new PostLocationDto());
 
             // assert
-            _dbContext.Verify(m => m.SaveChanges(), Times.Once);
+            _dbContext.Verify(m => m.SaveChanges(), Times.Exactly(2));
         }
 
         [Fact]
@@ -221,7 +221,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Location).Returns(dbSet);
 
             // act
-            _locationService.Update(1, new UpdateLocationDto());
+            _locationService.Update(1, new PutLocationDto());
 
             // assert
             _dbContext.Verify(m => m.Location.Update(It.IsAny<Location>()), Times.Once);
@@ -237,7 +237,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Location).Returns(dbSet);
 
             // act
-            _locationService.Update(1, new UpdateLocationDto());
+            _locationService.Update(1, new PutLocationDto());
 
             // assert
             _dbContext.Verify(m => m.SaveChanges(), Times.Once);

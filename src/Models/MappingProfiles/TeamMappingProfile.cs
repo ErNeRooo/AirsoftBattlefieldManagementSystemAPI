@@ -12,7 +12,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles
         {
             CreateMap<Team, TeamDto>();
 
-            CreateMap<CreateTeamDto, Team>()
+            CreateMap<PostTeamDto, Team>()
                 .ForMember(
                     destinationMember: dest => dest.TeamId,
                     memberOptions: opt => opt.Ignore())
@@ -23,7 +23,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles
                     destinationMember: dest => dest.Room,
                     memberOptions: opt => opt.Ignore());
 
-            CreateMap<UpdateTeamDto, Team>()
+            CreateMap<PutTeamDto, Team>()
                 .ForMember(
                     destinationMember: dest => dest.TeamId,
                     memberOptions: opt => opt.Ignore())

@@ -8,7 +8,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Abstractions
     {
         public AccountDto GetById(int id);
         public int Create(PostAccountDto accountDto);
-        public void Update(int id, UpdateAccountDto accountDto);
+        public void Update(int id, PutAccountDto accountDto);
         public void DeleteById(int id);
     }
 }

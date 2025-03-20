@@ -50,8 +50,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
                 new Player { PlayerId = 4 }
             };
 
-            _mapper.Setup(m => m.Map<Location>(It.IsAny<CreateDeathDto>())).Returns(
-                (CreateDeathDto d) => new Location
+            _mapper.Setup(m => m.Map<Location>(It.IsAny<PostDeathDto>())).Returns(
+                (PostDeathDto d) => new Location
                 {
                     Longitude = d.Longitude,
                     Latitude = d.Latitude,
@@ -60,8 +60,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
                     Time = d.Time
                 });
 
-            _mapper.Setup(m => m.Map<UpdateDeathDto, Location>(It.IsAny<UpdateDeathDto>(), It.IsAny<Location>())).Returns(
-                (UpdateDeathDto src, Location dest) =>
+            _mapper.Setup(m => m.Map<PutDeathDto, Location>(It.IsAny<PutDeathDto>(), It.IsAny<Location>())).Returns(
+                (PutDeathDto src, Location dest) =>
                 {
                     dest = new Location
                     {
@@ -181,7 +181,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
                 });
 
             // act 
-            int? result = _deathService.Create(4, new CreateDeathDto());
+            int? result = _deathService.Create(4, new PostDeathDto());
 
             // assert
             result.ShouldBe(deathDbSet.Count());
@@ -201,7 +201,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Death).Returns(dbSet);
 
             // act
-            _deathService.Create(4, new CreateDeathDto());
+            _deathService.Create(4, new PostDeathDto());
 
             // assert
             _dbContext.Verify(m => m.Death.Add(It.IsAny<Death>()), Times.Once);
@@ -221,7 +221,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Death).Returns(dbSet);
 
             // act
-            _deathService.Create(4, new CreateDeathDto());
+            _deathService.Create(4, new PostDeathDto());
 
             // assert
             _dbContext.Verify(m => m.Location.Add(It.IsAny<Location>()), Times.Once);
@@ -241,7 +241,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Death).Returns(dbSet);
 
             // act
-            _deathService.Create(4, new CreateDeathDto());
+            _deathService.Create(4, new PostDeathDto());
 
             // assert
             _dbContext.Verify(m => m.SaveChanges(), Times.Once());
@@ -259,7 +259,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Death).Returns(dbSet);
 
             // act
-            _deathService.Update(1, new UpdateDeathDto());
+            _deathService.Update(1, new PutDeathDto());
 
             // assert
             _dbContext.Verify(m => m.Location.Update(It.IsAny<Location>()), Times.Once);
@@ -277,7 +277,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Services
             _dbContext.Setup(m => m.Death).Returns(dbSet);
 
             // act
-            _deathService.Update(1, new UpdateDeathDto());
+            _deathService.Update(1, new PutDeathDto());
 
             // assert
             _dbContext.Verify(m => m.SaveChanges(), Times.Once);

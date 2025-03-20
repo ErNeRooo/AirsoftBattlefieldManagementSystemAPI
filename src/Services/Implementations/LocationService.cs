@@ -61,7 +61,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return locationDtos;
         }
 
-        public int Create(int playerId, CreateLocationDto locationDto)
+        public int Create(int playerId, PostLocationDto locationDto)
         {
             Player? player = dbContext.Player.FirstOrDefault(p => p.PlayerId == playerId);
 
@@ -82,7 +82,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return location.LocationId;
         }
 
-        public void Update(int id, UpdateLocationDto locationDto)
+        public void Update(int id, PutLocationDto locationDto)
         {
             Location? previousLocation = dbContext.Location.FirstOrDefault(t => t.LocationId == id);
 

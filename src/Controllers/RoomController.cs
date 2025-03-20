@@ -28,7 +28,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpPost("")]
-        public ActionResult PostRoom([FromBody] CreateRoomDto roomDto)
+        public ActionResult PostRoom([FromBody] PostRoomDto roomDto)
         {
             int roomId = roomService.Create(roomDto);
 
@@ -36,7 +36,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpPut("id/{id}")]
-        public ActionResult PutRoom(int id, [FromBody] UpdateRoomDto roomDto)
+        public ActionResult PutRoom(int id, [FromBody] PutRoomDto roomDto)
         {
             roomService.Update(id, roomDto);
 
