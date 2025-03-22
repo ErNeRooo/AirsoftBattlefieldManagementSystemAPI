@@ -3,12 +3,14 @@ using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class LocationController(ILocationService locationService) : Controller
     {
         [HttpGet]

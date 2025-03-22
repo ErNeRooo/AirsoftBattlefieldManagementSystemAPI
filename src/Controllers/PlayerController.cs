@@ -5,12 +5,14 @@ using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class PlayerController(IPlayerService playerService) : ControllerBase
     {
         [HttpGet("id/{id}")]
@@ -22,6 +24,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpPost("register")]
+        [AllowAnonymous]
         public ActionResult<string> Register([FromBody] PostPlayerDto playerDto)
         {
             int playerId = playerService.Create(playerDto);

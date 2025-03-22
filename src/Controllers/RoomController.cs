@@ -2,6 +2,7 @@
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
 using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Controllers
@@ -9,6 +10,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
 
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class RoomController(IRoomService roomService) : ControllerBase
     {
         [HttpGet("id/{id}")]

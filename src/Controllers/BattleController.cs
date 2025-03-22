@@ -3,6 +3,7 @@ using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
 using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
 using AirsoftBattlefieldManagementSystemAPI.Services.Implementations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
 {
     [Controller]
     [Route("[controller]")]
+    [Authorize]
     public class BattleController(IBattleService battleService) : Controller
     {
         [HttpGet]
