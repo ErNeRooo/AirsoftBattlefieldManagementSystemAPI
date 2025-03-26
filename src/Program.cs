@@ -1,4 +1,5 @@
 using System.Text;
+using AirsoftBattlefieldManagementSystemAPI.Authorization;
 using AirsoftBattlefieldManagementSystemAPI.Middleware;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
@@ -9,6 +10,7 @@ using AirsoftBattlefieldManagementSystemAPI.Services.Implementations;
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -48,6 +50,12 @@ namespace AirsoftBattlefieldManagementSystemAPI
                 };
             });
 
+            builder.Services.AddAuthorization(options =>
+            {
+                
+            });
+
+            builder.Services.AddScoped<IAuthorizationHandler, PlayerOwnsResourceHandler>();
             builder.Services.AddControllers();
             builder.Services.AddOpenApi();
             builder.Services.AddDbContext<IBattleManagementSystemDbContext, BattleManagementSystemDbContext>(

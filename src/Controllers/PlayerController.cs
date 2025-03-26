@@ -36,7 +36,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [HttpPut("id/{id}")]
         public ActionResult<string> PutPlayer(int id, [FromBody] PutPlayerDto playerDto)
         {
-            playerService.Update(id, playerDto);
+            playerService.Update(id, playerDto, User);
 
             return Ok();
         }
@@ -44,7 +44,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [HttpPatch("id/{id}/join-room")]
         public ActionResult<string> JoinRoom(int id, [FromBody] LoginRoomDto roomDto)
         {
-            playerService.JoinRoom(id, roomDto);
+            playerService.JoinRoom(id, roomDto, User);
 
             return Ok();
         }
@@ -52,7 +52,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [HttpDelete("id/{id}")]
         public ActionResult<string> DeletePlayer(int id)
         {
-            playerService.DeleteById(id);
+            playerService.DeleteById(id, User);
 
             return NoContent();
         }

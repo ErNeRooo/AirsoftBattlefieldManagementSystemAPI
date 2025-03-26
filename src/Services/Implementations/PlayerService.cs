@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Numerics;
 using System.Security.Claims;
 using System.Text;
+using AirsoftBattlefieldManagementSystemAPI.Authorization;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
@@ -12,12 +13,13 @@ using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
 using AirsoftBattlefieldManagementSystemAPI.Exceptions;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Login;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 {
-    public class PlayerService(IBattleManagementSystemDbContext dbContext, IMapper mapper, IAuthenticationSettings authenticationSettings, IPasswordHasher<Room> passwordHasher) : IPlayerService
+    public class PlayerService(IBattleManagementSystemDbContext dbContext, IMapper mapper, IAuthenticationSettings authenticationSettings, IPasswordHasher<Room> passwordHasher, IAuthorizationService authorizationService) : IPlayerService
     {
         public PlayerDto GetById(int id)
         {
@@ -40,8 +42,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return player.PlayerId;
         }
 
-        public void Update(int id, PutPlayerDto playerDto)
+        public void Update(int id, PutPlayerDto playerDto, ClaimsPrincipal user)
         {
+            var authorizationResult =
+                authorizationService.AuthorizeAsync(user, id,
+                    new PlayerOwnsResourceRequirement()).Result;
+
+            if (!authorizationResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate player with id {id}");
+
             Player? previousPlayer = dbContext.Player.FirstOrDefault(p => p.PlayerId == id);
 
             if (previousPlayer is null) throw new NotFoundException($"Player with id {id} not found");
@@ -51,8 +59,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             dbContext.SaveChanges();
         }
 
-        public void JoinRoom(int id, LoginRoomDto roomDto)
+        public void JoinRoom(int id, LoginRoomDto roomDto, ClaimsPrincipal user)
         {
+            var authorizationResult =
+                authorizationService.AuthorizeAsync(user, id,
+                    new PlayerOwnsResourceRequirement()).Result;
+
+            if (!authorizationResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate player with id {id}");
+
             string joinCode = roomDto.JoinCode;
             string password = roomDto.Password;
 
@@ -75,8 +89,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             }
         }
 
-        public void DeleteById(int id)
+        public void DeleteById(int id, ClaimsPrincipal user)
         {
+            var authorizationResult =
+                authorizationService.AuthorizeAsync(user, id,
+                    new PlayerOwnsResourceRequirement()).Result;
+
+            if (!authorizationResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate player with id {id}");
+
             var player = dbContext.Player.FirstOrDefault(p => p.PlayerId == id);
 
             if (player is null) throw new NotFoundException($"Player with id {id} not found");
