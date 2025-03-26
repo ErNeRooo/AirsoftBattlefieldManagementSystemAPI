@@ -1,4 +1,6 @@
-﻿using AirsoftBattlefieldManagementSystemAPI.Enums;
+﻿using System.Security.Claims;
+using AirsoftBattlefieldManagementSystemAPI.Authorization;
+using AirsoftBattlefieldManagementSystemAPI.Enums;
 using AirsoftBattlefieldManagementSystemAPI.Exceptions;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
@@ -6,12 +8,13 @@ using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 {
-    public class RoomService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IPasswordHasher<Room> passwordHasher, IJoinCodeService joinCodeService) : IRoomService
+    public class RoomService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IPasswordHasher<Room> passwordHasher, IJoinCodeService joinCodeService, IAuthorizationService authorizationService) : IRoomService
     {
         public RoomDto GetById(int id)
         {
@@ -33,8 +36,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return roomDto;
         }
 
-        public string Create(PostRoomDto roomDto)
+        public string Create(PostRoomDto roomDto, ClaimsPrincipal user)
         {
+            var authorizationResult =
+                authorizationService.AuthorizeAsync(user, roomDto.AdminPlayerId,
+                    new PlayerOwnsResourceRequirement()).Result;
+
+            if (!authorizationResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
+
             if (roomDto.JoinCode is null)
             {
                 roomDto.JoinCode = joinCodeService.Generate(JoinCodeFormat.From0to9, 6);
@@ -51,11 +60,17 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return room.JoinCode;
         }
 
-        public void Update(int id, PutRoomDto roomDto)
+        public void Update(int id, PutRoomDto roomDto, ClaimsPrincipal user)
         {
             Room? previousRoom = dbContext.Room.FirstOrDefault(r => r.RoomId == id);
 
             if(previousRoom is null) throw new NotFoundException($"Room with id {id} not found");
+
+            var authorizationResult =
+                authorizationService.AuthorizeAsync(user, previousRoom.AdminPlayerId,
+                    new PlayerOwnsResourceRequirement()).Result;
+
+            if (!authorizationResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
 
             Room updatedRoom = mapper.Map(roomDto, previousRoom);
 
@@ -66,11 +81,17 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             dbContext.SaveChanges();
         }
 
-        public void DeleteById(int id)
+        public void DeleteById(int id, ClaimsPrincipal user)
         {
             Room? room = dbContext.Room.FirstOrDefault(r => r.RoomId == id);
             
             if (room is null) throw new NotFoundException($"Room with id {id} not found");
+
+            var authorizationResult =
+                authorizationService.AuthorizeAsync(user, room.AdminPlayerId,
+                    new PlayerOwnsResourceRequirement()).Result;
+
+            if (!authorizationResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
 
             dbContext.Room.Remove(room);
             dbContext.SaveChanges();
