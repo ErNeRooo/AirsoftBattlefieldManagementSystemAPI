@@ -1,4 +1,6 @@
-﻿using AirsoftBattlefieldManagementSystemAPI.Exceptions;
+﻿using AirsoftBattlefieldManagementSystemAPI.Authorization;
+using AirsoftBattlefieldManagementSystemAPI.Enums;
+using AirsoftBattlefieldManagementSystemAPI.Exceptions;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
@@ -6,10 +8,13 @@ using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
 using AutoMapper;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 {
-    public class LocationService(IMapper mapper, IBattleManagementSystemDbContext dbContext) : ILocationService
+    public class LocationService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IAuthorizationService authorizationService) : ILocationService
     {
         public LocationDto? GetById(int id)
         {
@@ -39,7 +44,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
                 .Where(pl => pl.PlayerId == playerId)
                 .Select(pl => pl.LocationId);
 
-            if (locationIDs is null) throw new NotFoundException($"Player with id {playerId} not found"); ;
+            if (locationIDs is null) throw new NotFoundException($"Player with id {playerId} not found");
 
             var locations = dbContext.Location
                 .Where(l => locationIDs.Contains(l.LocationId)).ToList();
@@ -61,8 +66,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return locationDtos;
         }
 
-        public int Create(int playerId, PostLocationDto locationDto)
+        public int Create(int playerId, PostLocationDto locationDto, ClaimsPrincipal user)
         {
+            var authorizationResult =
+                authorizationService.AuthorizeAsync(user, playerId,
+                    new PlayerOwnsResourceRequirement()).Result;
+
+            if (!authorizationResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
+
             Player? player = dbContext.Player.FirstOrDefault(p => p.PlayerId == playerId);
 
             if(player is null) throw new NotFoundException($"Player with id {playerId} not found");
@@ -82,22 +93,38 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return location.LocationId;
         }
 
-        public void Update(int id, PutLocationDto locationDto)
+        public void Update(int id, PutLocationDto locationDto, ClaimsPrincipal user)
         {
-            Location? previousLocation = dbContext.Location.FirstOrDefault(t => t.LocationId == id);
+            Location? oldLocation = dbContext.Location.FirstOrDefault(t => t.LocationId == id);
+            PlayerLocation? playerLocation = dbContext.PlayerLocation.FirstOrDefault(playerLocation => playerLocation.LocationId == id);
 
-            if (previousLocation is null) throw new NotFoundException($"Location with id {id} not found");
+            if (oldLocation is null) throw new NotFoundException($"Location with id {id} not found");
+            if (playerLocation is null) throw new NotFoundException($"Location to player reference not found");
 
-            mapper.Map(locationDto, previousLocation);
-            dbContext.Location.Update(previousLocation);
+            var authorizationResult =
+                authorizationService.AuthorizeAsync(user, playerLocation.PlayerId,
+                    new PlayerOwnsResourceRequirement()).Result;
+
+            if (!authorizationResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
+
+            mapper.Map(locationDto, oldLocation);
+            dbContext.Location.Update(oldLocation);
             dbContext.SaveChanges();
         }
 
-        public void DeleteById(int id)
+        public void DeleteById(int id, ClaimsPrincipal user)
         {
             Location? location = dbContext.Location.FirstOrDefault(t => t.LocationId == id);
+            PlayerLocation? playerLocation = dbContext.PlayerLocation.FirstOrDefault(playerLocation => playerLocation.LocationId == id);
 
-            if(location is null) throw new NotFoundException($"Location with id {id} not found");
+            if (location is null) throw new NotFoundException($"Location with id {id} not found");
+            if (playerLocation is null) throw new NotFoundException($"Location to player reference not found");
+
+            var authorizationResult =
+                authorizationService.AuthorizeAsync(user, playerLocation.PlayerId,
+                    new PlayerOwnsResourceRequirement()).Result;
+
+            if (!authorizationResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
 
             dbContext.Location.Remove(location);
             dbContext.SaveChanges();

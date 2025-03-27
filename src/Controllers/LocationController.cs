@@ -35,7 +35,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [Route("playerId/{playerId}")]
         public ActionResult Create(int playerId, [FromBody] PostLocationDto locationDto)
         {
-            int id = locationService.Create(playerId, locationDto);
+            int id = locationService.Create(playerId, locationDto, User);
 
             return Created($"/Location/id/{id}", null);
         }
@@ -44,7 +44,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [Route("id/{id}")]
         public ActionResult Update(int id, [FromBody] PutLocationDto locationDto)
         {
-            locationService.Update(id, locationDto);
+            locationService.Update(id, locationDto, User);
 
             return Ok();
         }
@@ -53,9 +53,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [Route("id/{id}")]
         public ActionResult Delete(int id)
         {
-            locationService.DeleteById(id);
+            locationService.DeleteById(id, User);
 
-            return NotFound();
+            return NoContent();
         }
     }
 }
