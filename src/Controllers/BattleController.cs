@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Controllers
 {
-    [Controller]
+    [ApiController]
     [Route("[controller]")]
     [Authorize]
     public class BattleController(IBattleService battleService) : Controller
@@ -26,7 +26,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [HttpPost]
         public ActionResult Create([FromBody] PostBattleDto battleDto)
         {
-            int battleId = battleService.Create(battleDto);
+            int battleId = battleService.Create(battleDto, User);
 
             return Created($"/Battle/id/{battleId}", null);
         }
@@ -35,7 +35,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [Route("id/{id}")]
         public ActionResult Update(int id, [FromBody] PutBattleDto battleDto)
         {
-            battleService.Update(id, battleDto);
+            battleService.Update(id, battleDto, User);
 
             return Ok();
         }
@@ -44,9 +44,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [Route("id/{id}")]
         public ActionResult Delete(int id)
         {
-            battleService.DeleteById(id);
+            battleService.DeleteById(id, User);
 
-            return NotFound();
+            return NoContent();
         }
     }
 }

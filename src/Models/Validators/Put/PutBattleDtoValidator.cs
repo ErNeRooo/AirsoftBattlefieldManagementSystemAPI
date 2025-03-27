@@ -9,8 +9,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Validators
     {
         public PutBattleDtoValidator(IBattleManagementSystemDbContext dbContext)
         {
-            RuleFor(p => p.Name).NotEmpty().MaximumLength(20);
-            RuleFor(p => p.IsActive).NotEmpty();
+            RuleFor(p => p.Name).NotEmpty().MaximumLength(60);
+            RuleFor(p => p.IsActive).NotNull();
         }
     }
 }
