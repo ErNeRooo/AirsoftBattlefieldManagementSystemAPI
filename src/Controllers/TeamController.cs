@@ -25,7 +25,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [HttpPost]
         public ActionResult Create([FromBody] PostTeamDto teamDto)
         {
-            int teamId = teamService.Create(teamDto);
+            int teamId = teamService.Create(teamDto, User);
 
             return Created($"/team/id/{teamId}", null);
         }
@@ -34,7 +34,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [Route("id/{id}")]
         public ActionResult Update(int id, [FromBody] PutTeamDto teamDto)
         {
-            teamService.Update(id, teamDto);
+            teamService.Update(id, teamDto, User);
 
             return Ok();
         }
@@ -43,7 +43,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [Route("id/{id}")]
         public ActionResult Delete(int id)
         {
-            teamService.DeleteById(id);
+            teamService.DeleteById(id, User);
 
             return NoContent();
         }
