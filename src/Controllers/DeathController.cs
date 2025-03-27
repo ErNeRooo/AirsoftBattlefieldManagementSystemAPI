@@ -36,7 +36,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [Route("playerId/{playerId}")]
         public ActionResult Create(int playerId, [FromBody] PostDeathDto deathDto)
         {
-            int id = deathService.Create(playerId, deathDto);
+            int id = deathService.Create(playerId, deathDto, User);
 
             return Created($"/Death/id/{id}", null);
         }
@@ -45,7 +45,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [Route("id/{id}")]
         public ActionResult Update(int id, [FromBody] PutDeathDto deathDto)
         {
-            deathService.Update(id, deathDto);
+            deathService.Update(id, deathDto, User);
 
             return Ok();
         }
@@ -54,7 +54,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [Route("id/{id}")]
         public ActionResult Delete(int id)
         {
-            deathService.DeleteById(id);
+            deathService.DeleteById(id, User);
 
             return NoContent();
         }

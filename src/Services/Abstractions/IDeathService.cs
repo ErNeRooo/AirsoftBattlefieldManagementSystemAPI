@@ -1,4 +1,5 @@
-﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
+﻿using System.Security.Claims;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
 
@@ -8,8 +9,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Abstractions
     {
         public DeathDto GetById(int id);
         public List<DeathDto> GetAllOfPlayerWithId(int playerId);
-        public int Create(int playerId, PostDeathDto postDeathDto);
-        public void Update(int id, PutDeathDto deathDto);
-        public void DeleteById(int id);
+        public int Create(int playerId, PostDeathDto postDeathDto, ClaimsPrincipal user);
+        public void Update(int id, PutDeathDto deathDto, ClaimsPrincipal user);
+        public void DeleteById(int id, ClaimsPrincipal user);
     }
 }
