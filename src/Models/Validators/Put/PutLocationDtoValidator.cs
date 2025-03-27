@@ -1,12 +1,13 @@
 ﻿using System.Text.RegularExpressions;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Models.Validators
 {
-    public class PutLocationDtoValidator : AbstractValidator<PostLocationDto>
+    public class PutLocationDtoValidator : AbstractValidator<PutLocationDto>
     {
         public PutLocationDtoValidator()
         {

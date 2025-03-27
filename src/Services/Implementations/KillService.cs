@@ -1,16 +1,19 @@
-﻿using AirsoftBattlefieldManagementSystemAPI.Exceptions;
+﻿using System.Security.Claims;
+using AirsoftBattlefieldManagementSystemAPI.Authorization;
+using AirsoftBattlefieldManagementSystemAPI.Exceptions;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 {
-    public class KillService(IMapper mapper, IBattleManagementSystemDbContext dbContext) : IKillService
+    public class KillService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IAuthorizationService authorizationService) : IKillService
     {
         public KillDto? GetById(int id)
         {
@@ -41,8 +44,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return killDtos;
         }
 
-        public int Create(int playerId, PostKillDto killDto)
+        public int Create(int playerId, PostKillDto killDto, ClaimsPrincipal user)
         {
+            var authorizationResult =
+                authorizationService.AuthorizeAsync(user, playerId,
+                    new PlayerOwnsResourceRequirement()).Result;
+
+            if (!authorizationResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
+
             Player? player = dbContext.Player.FirstOrDefault(p => p.PlayerId == playerId);
 
             if(player is null) throw new NotFoundException($"Player with id {playerId} not found");
@@ -50,6 +59,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             Location location = mapper.Map<Location>(killDto);
             dbContext.Location.Add(location);
 
+            dbContext.SaveChanges();
+            
             Kill kill = new Kill();
             kill.LocationId = location.LocationId;
             kill.PlayerId = playerId;
@@ -60,7 +71,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return kill.KillId;
         }
 
-        public void Update(int id, PutKillDto killDto)
+        public void Update(int id, PutKillDto killDto, ClaimsPrincipal user)
         {
             Kill? previousKill = dbContext.Kill
                 .Include(k => k.Location)
@@ -68,17 +79,29 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 
             if (previousKill is null) throw new NotFoundException($"Kill with id {id} not found");
 
+            var authorizationResult =
+                authorizationService.AuthorizeAsync(user, previousKill.PlayerId,
+                    new PlayerOwnsResourceRequirement()).Result;
+
+            if (!authorizationResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
+            
             Location updatedLocation = mapper.Map(killDto, previousKill.Location);
             dbContext.Location.Update(updatedLocation);
             dbContext.SaveChanges();
         }
 
-        public void DeleteById(int id)
+        public void DeleteById(int id, ClaimsPrincipal user)
         {
             Kill? kill = dbContext.Kill.FirstOrDefault(t => t.KillId == id);
 
             if(kill is null) throw new NotFoundException($"Kill with id {id} not found");
 
+            var authorizationResult =
+                authorizationService.AuthorizeAsync(user, kill.PlayerId,
+                    new PlayerOwnsResourceRequirement()).Result;
+
+            if (!authorizationResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
+            
             dbContext.Kill.Remove(kill);
             dbContext.SaveChanges();
         }
