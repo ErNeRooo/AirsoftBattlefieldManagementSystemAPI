@@ -64,6 +64,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             Death death = new Death();
             death.LocationId = location.LocationId;
             death.PlayerId = playerId;
+            death.RoomId = (int)player.RoomId;
             dbContext.Death.Add(death);
 
             dbContext.SaveChanges();

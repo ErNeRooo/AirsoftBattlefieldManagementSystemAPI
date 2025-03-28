@@ -86,6 +86,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             PlayerLocation playerLocation = new PlayerLocation();
             playerLocation.LocationId = location.LocationId;
             playerLocation.PlayerId = playerId;
+            playerLocation.RoomId = (int)player.RoomId;
             dbContext.PlayerLocation.Add(playerLocation);
 
             dbContext.SaveChanges();

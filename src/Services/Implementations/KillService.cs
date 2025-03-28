@@ -64,6 +64,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             Kill kill = new Kill();
             kill.LocationId = location.LocationId;
             kill.PlayerId = playerId;
+            kill.RoomId = (int)player.RoomId;
             dbContext.Kill.Add(kill);
 
             dbContext.SaveChanges();

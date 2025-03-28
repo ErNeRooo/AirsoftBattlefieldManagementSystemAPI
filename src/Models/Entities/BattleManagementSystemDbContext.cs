@@ -63,6 +63,24 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Entities
                 .WithMany()
                 .HasForeignKey(r => r.AdminPlayerId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Kill>()
+                .HasOne(k => k.Room)
+                .WithMany()
+                .HasForeignKey(kill => kill.RoomId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Death>()
+                .HasOne(death => death.Room)
+                .WithMany()
+                .HasForeignKey(death => death.RoomId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<PlayerLocation>()
+                .HasOne(playerLocation => playerLocation.Room)
+                .WithMany()
+                .HasForeignKey(playerLocation => playerLocation.RoomId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

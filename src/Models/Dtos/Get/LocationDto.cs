@@ -6,6 +6,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get
     {
         public int LocationId { get; set; }
         public int PlayerId { get; set; }
+        public int RoomId { get; set; }
         public decimal Longitude { get; set; }
         public decimal Latitude { get; set; }
         public short Accuracy { get; set; }
