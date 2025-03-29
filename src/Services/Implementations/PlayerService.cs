@@ -21,12 +21,18 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 {
     public class PlayerService(IBattleManagementSystemDbContext dbContext, IMapper mapper, IAuthenticationSettings authenticationSettings, IPasswordHasher<Room> passwordHasher, IAuthorizationService authorizationService) : IPlayerService
     {
-        public PlayerDto GetById(int id)
+        public PlayerDto GetById(int id, ClaimsPrincipal user)
         {
             Player? player = dbContext.Player.FirstOrDefault(p => p.PlayerId == id);
 
             if (player is null) throw new NotFoundException($"Player with id {id} not found");
 
+            var playerIsInTheSameRoomAsResourceResult =
+                authorizationService.AuthorizeAsync(user, player.RoomId,
+                    new PlayerIsInTheSameRoomAsResourceRequirement()).Result;
+
+            if (!playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
+            
             PlayerDto playerDto = mapper.Map<PlayerDto>(player);
 
             return playerDto;

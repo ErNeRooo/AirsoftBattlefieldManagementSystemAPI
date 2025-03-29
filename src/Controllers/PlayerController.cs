@@ -18,7 +18,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [HttpGet("id/{id}")]
         public ActionResult<PlayerDto> GetPlayerById(int id)
         {
-            PlayerDto playerDto = playerService.GetById(id);
+            PlayerDto playerDto = playerService.GetById(id, User);
 
             return Ok(playerDto);
         }
