@@ -7,7 +7,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Abstractions
 {
     public interface ITeamService
     {
-        public TeamDto GetById(int id);
+        public TeamDto GetById(int id, ClaimsPrincipal user);
         public int Create(PostTeamDto postTeamDto, ClaimsPrincipal user);
         public void Update(int id, PutTeamDto teamDto, ClaimsPrincipal user);
         public void DeleteById(int id, ClaimsPrincipal user);

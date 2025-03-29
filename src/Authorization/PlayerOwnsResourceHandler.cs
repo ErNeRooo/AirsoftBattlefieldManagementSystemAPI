@@ -10,16 +10,11 @@ namespace AirsoftBattlefieldManagementSystemAPI.Authorization
             PlayerOwnsResourceRequirement requirement, 
             int targetPlayerId)
         {
-            string? claimValue = context.User.FindFirst(c => c.Type == "playerId").Value;
-
-            if (claimValue is null) context.Fail();
-
-            int claimPlayerId = int.Parse(claimValue);
-
-            if (targetPlayerId == claimPlayerId)
-            {
-                context.Succeed(requirement);
-            };
+            string? claimPlayerId = context.User.FindFirst(c => c.Type == "playerId").Value;
+            bool isCovertedSuccessfully = int.TryParse(claimPlayerId, out int playerId);
+            
+            if (isCovertedSuccessfully && playerId == targetPlayerId) context.Succeed(requirement);
+            else context.Fail();
 
             return Task.CompletedTask;
         }

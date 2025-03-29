@@ -56,6 +56,7 @@ namespace AirsoftBattlefieldManagementSystemAPI
             });
 
             builder.Services.AddScoped<IAuthorizationHandler, PlayerOwnsResourceHandler>();
+            builder.Services.AddScoped<IAuthorizationHandler, PlayerIsInTheSameRoomAsResourceHandler>();
             builder.Services.AddControllers();
             builder.Services.AddOpenApi();
             builder.Services.AddDbContext<IBattleManagementSystemDbContext, BattleManagementSystemDbContext>(
