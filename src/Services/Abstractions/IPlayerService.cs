@@ -8,7 +8,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Abstractions
 {
     public interface IPlayerService
     {
-        public PlayerDto GetById(int id);
+        public PlayerDto GetById(int id, ClaimsPrincipal user);
         public int Create(PostPlayerDto playerDto);
         public void Update(int id, PutPlayerDto playerDto, ClaimsPrincipal user);
         public void JoinRoom(int id, LoginRoomDto roomDto, ClaimsPrincipal user);
