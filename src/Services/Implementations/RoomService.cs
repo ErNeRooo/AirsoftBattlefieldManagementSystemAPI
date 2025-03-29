@@ -66,11 +66,15 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 
             if(previousRoom is null) throw new NotFoundException($"Room with id {id} not found");
 
-            var authorizationResult =
+            var playerOwnsResourceResult =
                 authorizationService.AuthorizeAsync(user, previousRoom.AdminPlayerId,
                     new PlayerOwnsResourceRequirement()).Result;
+            
+            var playerIsInTheSameRoomAsResourceResult =
+                authorizationService.AuthorizeAsync(user, previousRoom.RoomId,
+                    new PlayerIsInTheSameRoomAsResourceRequirement()).Result;
 
-            if (!authorizationResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
+            if (!playerOwnsResourceResult.Succeeded || !playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
 
             Room updatedRoom = mapper.Map(roomDto, previousRoom);
 
@@ -87,11 +91,15 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             
             if (room is null) throw new NotFoundException($"Room with id {id} not found");
 
-            var authorizationResult =
+            var playerOwnsResourceResult =
                 authorizationService.AuthorizeAsync(user, room.AdminPlayerId,
                     new PlayerOwnsResourceRequirement()).Result;
+            
+            var playerIsInTheSameRoomAsResourceResult =
+                authorizationService.AuthorizeAsync(user, room.RoomId,
+                    new PlayerIsInTheSameRoomAsResourceRequirement()).Result;
 
-            if (!authorizationResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
+            if (!playerOwnsResourceResult.Succeeded || !playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
 
             dbContext.Room.Remove(room);
             dbContext.SaveChanges();
