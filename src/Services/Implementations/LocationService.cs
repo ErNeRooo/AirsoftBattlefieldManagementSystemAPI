@@ -16,13 +16,19 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 {
     public class LocationService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IAuthorizationService authorizationService) : ILocationService
     {
-        public LocationDto? GetById(int id)
+        public LocationDto? GetById(int id, ClaimsPrincipal user)
         {
             Location? location = dbContext.Location.FirstOrDefault(t => t.LocationId == id);
             PlayerLocation? playerLocation = dbContext.PlayerLocation.FirstOrDefault(t => t.LocationId == id);
 
             if (location is null || playerLocation is null) throw new NotFoundException($"Location with id {id} not found");
 
+            var playerIsInTheSameRoomAsResourceResult =
+                authorizationService.AuthorizeAsync(user, playerLocation.RoomId,
+                    new PlayerIsInTheSameRoomAsResourceRequirement()).Result;
+
+            if (!playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
+            
             LocationDto locationDto = new LocationDto
             {
                 PlayerId = playerLocation.PlayerId,
@@ -37,14 +43,22 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return locationDto;
         }
 
-        public List<LocationDto>? GetAllOfPlayerWithId(int playerId)
+        public List<LocationDto>? GetAllOfPlayerWithId(int playerId, ClaimsPrincipal user)
         {
+            Player? player = dbContext.Player.FirstOrDefault(p => p.PlayerId == playerId);
+            
+            if (player is null) throw new NotFoundException($"Player with id {playerId} not found");
+            
+            var playerIsInTheSameRoomAsResourceResult =
+                authorizationService.AuthorizeAsync(user, player.RoomId,
+                    new PlayerIsInTheSameRoomAsResourceRequirement()).Result;
+
+            if (!playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
+            
             var locationIDs = 
                 dbContext.PlayerLocation
                 .Where(pl => pl.PlayerId == playerId)
                 .Select(pl => pl.LocationId);
-
-            if (locationIDs is null) throw new NotFoundException($"Player with id {playerId} not found");
 
             var locations = dbContext.Location
                 .Where(l => locationIDs.Contains(l.LocationId)).ToList();
@@ -102,11 +116,15 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             if (oldLocation is null) throw new NotFoundException($"Location with id {id} not found");
             if (playerLocation is null) throw new NotFoundException($"Location to player reference not found");
 
-            var authorizationResult =
+            var playerOwnsResourceResult =
                 authorizationService.AuthorizeAsync(user, playerLocation.PlayerId,
                     new PlayerOwnsResourceRequirement()).Result;
+            
+            var playerIsInTheSameRoomAsResourceResult =
+                authorizationService.AuthorizeAsync(user, playerLocation.RoomId,
+                    new PlayerIsInTheSameRoomAsResourceRequirement()).Result;
 
-            if (!authorizationResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
+            if (!playerOwnsResourceResult.Succeeded || !playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
 
             mapper.Map(locationDto, oldLocation);
             dbContext.Location.Update(oldLocation);
@@ -121,11 +139,15 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             if (location is null) throw new NotFoundException($"Location with id {id} not found");
             if (playerLocation is null) throw new NotFoundException($"Location to player reference not found");
 
-            var authorizationResult =
+            var playerOwnsResourceResult =
                 authorizationService.AuthorizeAsync(user, playerLocation.PlayerId,
                     new PlayerOwnsResourceRequirement()).Result;
+            
+            var playerIsInTheSameRoomAsResourceResult =
+                authorizationService.AuthorizeAsync(user, playerLocation.RoomId,
+                    new PlayerIsInTheSameRoomAsResourceRequirement()).Result;
 
-            if (!authorizationResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
+            if (!playerOwnsResourceResult.Succeeded || !playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
 
             dbContext.Location.Remove(location);
             dbContext.SaveChanges();
