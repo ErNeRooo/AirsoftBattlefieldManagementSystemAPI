@@ -17,7 +17,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [Route("id/{id}")]
         public ActionResult<LocationDto> GetById(int id)
         {
-            LocationDto locationDto = locationService.GetById(id);
+            LocationDto locationDto = locationService.GetById(id, User);
 
             return Ok(locationDto);
         }
@@ -26,7 +26,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [Route("playerId/{playerId}")]
         public ActionResult<List<LocationDto>> GetLocationsOfPlayerWithId(int playerId)
         {
-            List<LocationDto> locationDtos = locationService.GetAllOfPlayerWithId(playerId);
+            List<LocationDto> locationDtos = locationService.GetAllOfPlayerWithId(playerId, User);
 
             return Ok(locationDtos);
         }
