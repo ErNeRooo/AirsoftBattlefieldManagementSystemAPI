@@ -7,8 +7,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Abstractions
 {
     public interface IKillService
     {
-        public KillDto GetById(int id);
-        public List<KillDto> GetAllOfPlayerWithId(int playerId);
+        public KillDto GetById(int id, ClaimsPrincipal user);
+        public List<KillDto> GetAllOfPlayerWithId(int playerId, ClaimsPrincipal user);
         public int Create(int playerId, PostKillDto postKillDto, ClaimsPrincipal user);
         public void Update(int id, PutKillDto killDto, ClaimsPrincipal user);
         public void DeleteById(int id, ClaimsPrincipal user);

@@ -15,23 +15,37 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 {
     public class KillService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IAuthorizationService authorizationService) : IKillService
     {
-        public KillDto? GetById(int id)
+        public KillDto? GetById(int id, ClaimsPrincipal user)
         {
             Kill? kill = dbContext.Kill.Include(k=> k.Location).FirstOrDefault(t => t.KillId == id);
 
             if (kill is null) throw new NotFoundException($"Kill with id {id} not found");
+            
+            var playerIsInTheSameRoomAsResourceResult =
+                authorizationService.AuthorizeAsync(user, kill.RoomId,
+                    new PlayerIsInTheSameRoomAsResourceRequirement()).Result;
 
+            if (!playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
+            
             KillDto killDto = mapper.Map<KillDto>(kill);
 
             return killDto;
         }
 
-        public List<KillDto> GetAllOfPlayerWithId(int playerId)
+        public List<KillDto> GetAllOfPlayerWithId(int playerId, ClaimsPrincipal user)
         {
+            Player? player = dbContext.Player.FirstOrDefault(p => p.PlayerId == playerId);
+            
+            if (player is null) throw new NotFoundException($"Player with id {playerId} not found");
+            
+            var playerIsInTheSameRoomAsResourceResult =
+                authorizationService.AuthorizeAsync(user, player.RoomId,
+                    new PlayerIsInTheSameRoomAsResourceRequirement()).Result;
+
+            if (!playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
+            
             var kills = dbContext.Kill.Include(k => k.Location)
                 .Where(k => k.PlayerId == playerId).ToList();
-
-            if (kills is null) throw new NotFoundException($"Player with id {playerId} not found");
 
             List<KillDto> killDtos = kills.Select(location =>
             {
@@ -46,16 +60,20 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 
         public int Create(int playerId, PostKillDto killDto, ClaimsPrincipal user)
         {
-            var authorizationResult =
-                authorizationService.AuthorizeAsync(user, playerId,
-                    new PlayerOwnsResourceRequirement()).Result;
-
-            if (!authorizationResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
-
             Player? player = dbContext.Player.FirstOrDefault(p => p.PlayerId == playerId);
 
             if(player is null) throw new NotFoundException($"Player with id {playerId} not found");
+            
+            var playerOwnsResourceResult =
+                authorizationService.AuthorizeAsync(user, player.PlayerId,
+                    new PlayerOwnsResourceRequirement()).Result;
+            
+            var playerIsInTheSameRoomAsResourceResult =
+                authorizationService.AuthorizeAsync(user, player.RoomId,
+                    new PlayerIsInTheSameRoomAsResourceRequirement()).Result;
 
+            if (!playerOwnsResourceResult.Succeeded || !playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
+            
             Location location = mapper.Map<Location>(killDto);
             dbContext.Location.Add(location);
 
@@ -80,12 +98,16 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 
             if (previousKill is null) throw new NotFoundException($"Kill with id {id} not found");
 
-            var authorizationResult =
+            var playerOwnsResourceResult =
                 authorizationService.AuthorizeAsync(user, previousKill.PlayerId,
                     new PlayerOwnsResourceRequirement()).Result;
-
-            if (!authorizationResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
             
+            var playerIsInTheSameRoomAsResourceResult =
+                authorizationService.AuthorizeAsync(user, previousKill.RoomId,
+                    new PlayerIsInTheSameRoomAsResourceRequirement()).Result;
+
+            if (!playerOwnsResourceResult.Succeeded || !playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
+
             Location updatedLocation = mapper.Map(killDto, previousKill.Location);
             dbContext.Location.Update(updatedLocation);
             dbContext.SaveChanges();
@@ -97,12 +119,16 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 
             if(kill is null) throw new NotFoundException($"Kill with id {id} not found");
 
-            var authorizationResult =
+            var playerOwnsResourceResult =
                 authorizationService.AuthorizeAsync(user, kill.PlayerId,
                     new PlayerOwnsResourceRequirement()).Result;
-
-            if (!authorizationResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
             
+            var playerIsInTheSameRoomAsResourceResult =
+                authorizationService.AuthorizeAsync(user, kill.RoomId,
+                    new PlayerIsInTheSameRoomAsResourceRequirement()).Result;
+
+            if (!playerOwnsResourceResult.Succeeded || !playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
+
             dbContext.Kill.Remove(kill);
             dbContext.SaveChanges();
         }
