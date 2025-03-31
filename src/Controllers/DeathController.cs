@@ -18,7 +18,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [Route("id/{id}")]
         public ActionResult<DeathDto> GetById(int id)
         {
-            DeathDto deathDto = deathService.GetById(id);
+            DeathDto deathDto = deathService.GetById(id, User);
 
             return Ok(deathDto);
         }
@@ -27,7 +27,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [Route("playerId/{playerId}")]
         public ActionResult<List<DeathDto>> GetDeathsOfPlayerWithId(int playerId)
         {
-            List<DeathDto> deathDtos = deathService.GetAllOfPlayerWithId(playerId);
+            List<DeathDto> deathDtos = deathService.GetAllOfPlayerWithId(playerId, User);
 
             return Ok(deathDtos);
         }
