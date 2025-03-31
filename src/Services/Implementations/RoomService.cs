@@ -38,18 +38,16 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 
         public string Create(PostRoomDto roomDto, ClaimsPrincipal user)
         {
-            var authorizationResult =
-                authorizationService.AuthorizeAsync(user, roomDto.AdminPlayerId,
-                    new PlayerOwnsResourceRequirement()).Result;
-
-            if (!authorizationResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
-
             if (roomDto.JoinCode is null)
             {
                 roomDto.JoinCode = joinCodeService.Generate(JoinCodeFormat.From0to9, 6);
             }
 
             Room room = mapper.Map<Room>(roomDto);
+
+            var playerIdClaim = user.Claims.FirstOrDefault(c => c.Type == "playerId")?.Value;
+            int.TryParse(playerIdClaim, out int playerId);
+            room.AdminPlayerId = playerId;
 
             var hash = passwordHasher.HashPassword(room, room.PasswordHash);
             room.PasswordHash = hash;
