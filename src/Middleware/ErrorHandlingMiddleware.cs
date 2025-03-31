@@ -20,6 +20,13 @@ namespace AirsoftBattlefieldManagementSystemAPI.Middleware
                 context.Response.StatusCode = 400;
                 await context.Response.WriteAsync(e.Message);
             }
+            catch (NotASingleAvailableJoinCodeException e)
+            {
+                logger.LogError(e, e.Message);
+                
+                context.Response.StatusCode = 503;
+                await context.Response.WriteAsync(e.Message);
+            }
             catch (ForbidException e)
             {
                 context.Response.StatusCode = 403;
