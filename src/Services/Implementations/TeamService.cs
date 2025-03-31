@@ -31,17 +31,18 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 
         public int Create(PostTeamDto teamDto, ClaimsPrincipal user)
         {
-            var playerOwnsResourceResult =
-                authorizationService.AuthorizeAsync(user, teamDto.OfficerPlayerId,
-                    new PlayerOwnsResourceRequirement()).Result;
-            
             var playerIsInTheSameRoomAsResourceResult =
                 authorizationService.AuthorizeAsync(user, teamDto.RoomId,
                     new PlayerIsInTheSameRoomAsResourceRequirement()).Result;
 
-            if (!playerOwnsResourceResult.Succeeded || !playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
-
+            if (!playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
+            
             Team team = mapper.Map<Team>(teamDto);
+            
+            string? playerIdClaim = user.Claims.FirstOrDefault(c => c.Type == "playerId").Value;
+            int.TryParse(playerIdClaim, out int playerId);
+            team.OfficerPlayerId = playerId;
+            
             dbContext.Team.Add(team);
             dbContext.SaveChanges();
 

@@ -18,15 +18,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Validators
                     context.AddFailure("RoomId", $"Room with id {value} not found");
                 }
             });
-            RuleFor(t => t.OfficerPlayerId).NotEmpty().Custom((value, context) =>
-            {
-                bool isNotExiting = !dbContext.Player.Any(p => p.PlayerId == value);
-
-                if (isNotExiting)
-                {
-                    context.AddFailure("OfficerPlayerId", $"Player with id {value} not found");
-                }
-            });
         }
     }
 }
