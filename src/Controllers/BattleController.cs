@@ -18,7 +18,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [Route("id/{id}")]
         public ActionResult<BattleDto> GetById(int id)
         {
-            BattleDto battleDto = battleService.GetById(id);
+            BattleDto battleDto = battleService.GetById(id, User);
 
             return Ok(battleDto);
         }
