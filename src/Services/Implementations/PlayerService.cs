@@ -95,6 +95,21 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             }
         }
 
+        public void LeaveRoom(ClaimsPrincipal user)
+        {
+            string? claimPlayerId = user.Claims.FirstOrDefault(c => c.Type == "playerId").Value;
+            bool isSuccessfull = int.TryParse(claimPlayerId, out int playerId);
+            
+            if (!isSuccessfull) throw new ForbidException("Invalid claim playerId");
+
+            Player player = dbContext.Player.FirstOrDefault(p => p.PlayerId == playerId);
+            
+            player.RoomId = null;
+            
+            dbContext.Player.Update(player);
+            dbContext.SaveChanges();
+        }
+
         public void DeleteById(int id, ClaimsPrincipal user)
         {
             var authorizationResult =

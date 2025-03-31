@@ -48,6 +48,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
 
             return Ok();
         }
+        
+        [HttpPatch("leave-room")]
+        public ActionResult<string> LeaveRoom()
+        {
+            playerService.LeaveRoom(User);
+
+            return Ok();
+        }
 
         [HttpDelete("id/{id}")]
         public ActionResult<string> DeletePlayer(int id)

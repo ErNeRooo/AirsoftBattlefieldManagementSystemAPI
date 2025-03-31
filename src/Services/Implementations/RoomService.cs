@@ -46,7 +46,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             Room room = mapper.Map<Room>(roomDto);
 
             var playerIdClaim = user.Claims.FirstOrDefault(c => c.Type == "playerId")?.Value;
-            int.TryParse(playerIdClaim, out int playerId);
+            bool isSuccessfull = int.TryParse(playerIdClaim, out int playerId);
+            if (!isSuccessfull) throw new ForbidException("Invalid claim playerId");
             room.AdminPlayerId = playerId;
 
             var hash = passwordHasher.HashPassword(room, room.PasswordHash);
