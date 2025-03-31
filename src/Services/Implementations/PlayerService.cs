@@ -65,21 +65,20 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             dbContext.SaveChanges();
         }
 
-        public void JoinRoom(int id, LoginRoomDto roomDto, ClaimsPrincipal user)
+        public void JoinRoom(LoginRoomDto roomDto, ClaimsPrincipal user)
         {
-            var authorizationResult =
-                authorizationService.AuthorizeAsync(user, id,
-                    new PlayerOwnsResourceRequirement()).Result;
-
-            if (!authorizationResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate player with id {id}");
-
             string joinCode = roomDto.JoinCode;
             string password = roomDto.Password;
+            
+            string? claimPlayerId = user.Claims.FirstOrDefault(c => c.Type == "playerId").Value;
+            bool isSuccessfull = int.TryParse(claimPlayerId, out int playerId);
+            
+            if (!isSuccessfull) throw new ForbidException("Invalid claim playerId");
 
             Room room = dbContext.Room.FirstOrDefault(r => r.JoinCode == joinCode);
-            Player? player = dbContext.Player.FirstOrDefault(p => p.PlayerId == id);
+            Player? player = dbContext.Player.FirstOrDefault(p => p.PlayerId == playerId);
 
-            if (player is null) throw new NotFoundException($"Player with id {id} not found");
+            if (player is null) throw new NotFoundException($"Player with id {playerId} not found");
 
             var verificationResult = passwordHasher.VerifyHashedPassword(room, room.PasswordHash, password);
 

@@ -41,10 +41,10 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
             return Ok();
         }
 
-        [HttpPatch("id/{id}/join-room")]
-        public ActionResult<string> JoinRoom(int id, [FromBody] LoginRoomDto roomDto)
+        [HttpPatch("join-room")]
+        public ActionResult<string> JoinRoom([FromBody] LoginRoomDto roomDto)
         {
-            playerService.JoinRoom(id, roomDto, User);
+            playerService.JoinRoom(roomDto, User);
 
             return Ok();
         }
