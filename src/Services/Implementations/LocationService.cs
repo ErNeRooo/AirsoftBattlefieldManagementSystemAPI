@@ -57,8 +57,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             
             var locationIDs = 
                 dbContext.PlayerLocation
-                .Where(pl => pl.PlayerId == playerId)
-                .Select(pl => pl.LocationId);
+                .Where(playerLocation => playerLocation.PlayerId == playerId && playerLocation.RoomId == player.RoomId)
+                .Select(playerLocation => playerLocation.LocationId);
 
             var locations = dbContext.Location
                 .Where(l => locationIDs.Contains(l.LocationId)).ToList();

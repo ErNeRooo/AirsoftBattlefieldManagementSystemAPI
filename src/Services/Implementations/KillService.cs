@@ -44,8 +44,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 
             if (!playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
             
-            var kills = dbContext.Kill.Include(k => k.Location)
-                .Where(k => k.PlayerId == playerId).ToList();
+            var kills = dbContext.Kill
+                .Include(k => k.Location)
+                .Where(kill => kill.PlayerId == playerId && kill.RoomId == player.RoomId).ToList();
 
             List<KillDto> killDtos = kills.Select(location =>
             {

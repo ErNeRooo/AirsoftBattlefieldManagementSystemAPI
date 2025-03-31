@@ -34,18 +34,18 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 
         public List<DeathDto>? GetAllOfPlayerWithId(int playerId, ClaimsPrincipal user)
         {
-            Death? death = dbContext.Death.FirstOrDefault(t => t.PlayerId == playerId);
+            Player? player = dbContext.Player.FirstOrDefault(t => t.PlayerId == playerId);
             
-            if (death is null) throw new NotFoundException($"Player with id {playerId} not found");
+            if (player is null) throw new NotFoundException($"Player with id {playerId} not found");
             
             var playerIsInTheSameRoomAsResourceResult =
-                authorizationService.AuthorizeAsync(user, death.RoomId,
+                authorizationService.AuthorizeAsync(user, player.RoomId,
                     new PlayerIsInTheSameRoomAsResourceRequirement()).Result;
 
             if (!playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
             
             var deaths = dbContext.Death.Include(k => k.Location)
-                .Where(k => k.PlayerId == playerId).ToList();
+                .Where(death => death.PlayerId == playerId && death.RoomId == player.RoomId).ToList();
 
             List<DeathDto> deathDtos = deaths.Select(location =>
             {

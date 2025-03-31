@@ -57,7 +57,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             dbContext.Room.Add(room);
             dbContext.SaveChanges();
 
-            return room.JoinCode;
+            return room.RoomId.ToString();
         }
 
         public void Update(int id, PutRoomDto roomDto, ClaimsPrincipal user)
