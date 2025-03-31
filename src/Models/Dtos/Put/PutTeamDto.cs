@@ -4,7 +4,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update
 {
     public class PutTeamDto
     {
-        public string Name { get; set; }
-        public int OfficerPlayerId { get; set; }
+        public string? Name { get; set; }
+        public int? OfficerPlayerId { get; set; }
     }
 }

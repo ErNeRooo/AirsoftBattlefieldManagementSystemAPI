@@ -44,7 +44,11 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles
                     memberOptions: opt => opt.Ignore())
                 .ForMember(
                     destinationMember: dest => dest.Battles,
-                    memberOptions: opt => opt.Ignore());
+                    memberOptions: opt => opt.Ignore())
+                .ForMember(dest => dest.MaxPlayers, opt => opt.Condition(src => src.MaxPlayers != null))
+                .ForMember(dest => dest.JoinCode, opt => opt.Condition(src => src.JoinCode != null))
+                .ForMember(dest => dest.PasswordHash, opt => opt.Condition(src => src.Password != null))
+                .ForMember(dest => dest.AdminPlayer, opt => opt.Condition(src => src.AdminPlayerId != null));
         }
     }
 }

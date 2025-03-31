@@ -9,9 +9,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Validators
     {
         public PutPlayerDtoValidator(IBattleManagementSystemDbContext dbContext)
         {
-            RuleFor(p => p.Name).NotEmpty().MaximumLength(20);
-            RuleFor(p => p.IsDead).NotNull();
-            RuleFor(p => p.TeamId).NotEmpty().Custom((value, context) =>
+            RuleFor(p => p.Name).MaximumLength(20);
+            RuleFor(p => p.TeamId).Custom((value, context) =>
             {
                 bool isNotExiting = !dbContext.Team.Any(p => p.TeamId == value);
 

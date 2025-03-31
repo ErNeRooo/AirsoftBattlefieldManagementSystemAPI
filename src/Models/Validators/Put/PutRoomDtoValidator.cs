@@ -9,10 +9,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Validators
     {
         public PutRoomDtoValidator(IBattleManagementSystemDbContext dbContext)
         {
-            RuleFor(r => r.Password).NotEmpty();
-            RuleFor(r => r.MaxPlayers).NotEmpty().GreaterThan(1).LessThan(100000);
+            RuleFor(r => r.MaxPlayers).GreaterThan(1).LessThan(100000);
 
-            RuleFor(r => r.JoinCode).NotEmpty().Length(6).Custom((value, context) =>
+            RuleFor(r => r.JoinCode).Length(6).Custom((value, context) =>
             {
                 bool isJoinCodeOccupied = dbContext.Room.Any(r => r.JoinCode == value);
 
@@ -22,7 +21,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Validators
                 }
             });
 
-            RuleFor(r => r.AdminPlayerId).NotEmpty().Custom((value, context) =>
+            RuleFor(r => r.AdminPlayerId).Custom((value, context) =>
             {
                 bool isExisting = dbContext.Player.Any(r => r.PlayerId == value);
 

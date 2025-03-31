@@ -39,7 +39,12 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles
             CreateMap<PutDeathDto, Location>()
                 .ForMember(
                     destinationMember: dest => dest.LocationId,
-                    memberOptions: opt => opt.Ignore());
+                    memberOptions: opt => opt.Ignore())
+                .ForMember(dest => dest.Longitude, opt => opt.Condition(src => src.Longitude != null))
+                .ForMember(dest => dest.Latitude, opt => opt.Condition(src => src.Latitude != null))
+                .ForMember(dest => dest.Bearing, opt => opt.Condition(src => src.Bearing != null))
+                .ForMember(dest => dest.Accuracy, opt => opt.Condition(src => src.Accuracy != null))
+                .ForMember(dest => dest.Time, opt => opt.Condition(src => src.Time != null));
 
             CreateMap<DeathDto, Location>()
                 .ForMember(

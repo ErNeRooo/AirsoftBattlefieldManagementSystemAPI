@@ -7,10 +7,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Validators
 {
     public class PutBattleDtoValidator : AbstractValidator<PutBattleDto>
     {
-        public PutBattleDtoValidator(IBattleManagementSystemDbContext dbContext)
+        public PutBattleDtoValidator()
         {
-            RuleFor(p => p.Name).NotEmpty().MaximumLength(60);
-            RuleFor(p => p.IsActive).NotNull();
+            RuleFor(p => p.Name).MaximumLength(60);
         }
     }
 }

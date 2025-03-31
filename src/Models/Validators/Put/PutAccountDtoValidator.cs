@@ -11,7 +11,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Validators
     {
         public PutAccountDtoValidator(IBattleManagementSystemDbContext dbContext)
         {
-            RuleFor(a => a.Email).NotEmpty().EmailAddress().Custom((value, context) =>
+            RuleFor(a => a.Email).EmailAddress().Custom((value, context) =>
             {
                 bool isExiting = dbContext.Account.Any(p => p.Email == value);
 
@@ -20,7 +20,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Validators
                     context.AddFailure("Email", $"There is already account with email {value}");
                 }
             });
-            RuleFor(a => a.Password).NotEmpty().MinimumLength(10);
+            RuleFor(a => a.Password).MinimumLength(10);
         }
     }
 }
