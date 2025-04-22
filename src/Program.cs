@@ -59,10 +59,6 @@ namespace AirsoftBattlefieldManagementSystemAPI
             builder.Services.AddScoped<IAuthorizationHandler, PlayerIsInTheSameRoomAsResourceHandler>();
             builder.Services.AddControllers();
             builder.Services.AddOpenApi();
-            builder.Services.AddDbContext<IBattleManagementSystemDbContext, BattleManagementSystemDbContext>(
-                options =>
-                    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-                    );
             builder.Services.AddSingleton<IMapper>(sp =>
             {
                 var config = new MapperConfiguration(cfg =>
@@ -96,6 +92,11 @@ namespace AirsoftBattlefieldManagementSystemAPI
             builder.Services.AddFluentValidationAutoValidation();
             builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
+            builder.Services.AddDbContext<IBattleManagementSystemDbContext, BattleManagementSystemDbContext>(
+                options =>
+                    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+            );
+            
             var app = builder.Build();
 
             app.UseMiddleware<ErrorHandlingMiddleware>();

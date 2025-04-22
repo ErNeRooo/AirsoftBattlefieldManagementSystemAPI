@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Models.Entities
 {
-    public class BattleManagementSystemDbContext(DbContextOptions<BattleManagementSystemDbContext> options, IConfiguration configuration) : DbContext(options), IBattleManagementSystemDbContext
+    public class BattleManagementSystemDbContext(DbContextOptions<BattleManagementSystemDbContext> options) : DbContext(options), IBattleManagementSystemDbContext
     {
         public DbSet<Account> Account { get; set; }
         public DbSet<Battle> Battle { get; set; }
@@ -21,11 +21,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Entities
         public ChangeTracker ChangeTracker => base.ChangeTracker;
         public DbContextId ContextId => base.ContextId;
         public IModel Model => base.Model;
-
-        public override EntityEntry<TEntity> Entry<TEntity>(TEntity entity)
-        {
-            return base.Entry(entity);
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -81,18 +76,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Entities
                 .WithMany()
                 .HasForeignKey(playerLocation => playerLocation.RoomId)
                 .OnDelete(DeleteBehavior.NoAction);
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
-
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                throw new Exception("Database connection string is missing.");
-            }
-
-            optionsBuilder.UseSqlServer(connectionString);
         }
     }
 }
