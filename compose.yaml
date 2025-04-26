@@ -10,6 +10,7 @@ services:
     ports:
       - 8080:8080
     environment:
+      DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: false
       ConnectionStrings__DefaultConnection: "Server=database,1433;Database=AirsoftBattleManagementSystem;User Id=SA;Password=K0ciaki!;Encrypt=False;"
     depends_on:
       - database
@@ -22,6 +23,7 @@ services:
     ports:
       - 8080:8080
     environment:
+      DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: false
       ConnectionStrings__DefaultConnection: "Server=database,1433;Database=AirsoftBattleManagementSystem;User Id=SA;Password=K0ciaki!;Encrypt=False;"
     depends_on:
       - database

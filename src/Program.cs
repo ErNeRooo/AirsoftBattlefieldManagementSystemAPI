@@ -94,7 +94,17 @@ namespace AirsoftBattlefieldManagementSystemAPI
 
             builder.Services.AddDbContext<IBattleManagementSystemDbContext, BattleManagementSystemDbContext>(
                 options =>
-                    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+                {
+                    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+                    if (string.IsNullOrEmpty(connectionString))
+                    {
+                        throw new Exception("Database connection string is missing");
+                    }
+                    
+                    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+                }
+                    
             );
             
             var app = builder.Build();

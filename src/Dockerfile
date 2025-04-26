@@ -11,12 +11,11 @@ ARG TARGETARCH
 RUN --mount=type=cache,id=nuget,target=/root/.nuget/packages \
     dotnet publish -a ${TARGETARCH/amd64/x64} --use-current-runtime --self-contained false -o /app
 
-RUN dotnet publish -a ${TARGETARCH/amd64/x64} --use-current-runtime --self-contained false -o /app
-
-
 # final
 FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS final
 WORKDIR /app
+
+RUN apk add --no-cache icu-libs
 
 COPY --from=build /app .
 
@@ -32,6 +31,7 @@ WORKDIR /app
 COPY ["./AirsoftBattlefieldManagementSystemAPI.sln", "./"]
 COPY ["src/AirsoftBattlefieldManagementSystemAPI.csproj", "./src/"]
 COPY ["tests/AirsoftBattlefieldManagementSystemAPI.Tests/AirsoftBattlefieldManagementSystemAPI.Tests.csproj", "tests/AirsoftBattlefieldManagementSystemAPI.Tests/"]
+COPY ["tests/AirsoftBattlefieldManagementSystemAPI.IntegrationTests/AirsoftBattlefieldManagementSystemAPI.IntegrationTests.csproj", "tests/AirsoftBattlefieldManagementSystemAPI.IntegrationTests/"]
 
 RUN dotnet nuget locals all --clear && dotnet restore "AirsoftBattlefieldManagementSystemAPI.sln"
 
