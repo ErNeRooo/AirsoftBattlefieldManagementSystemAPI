@@ -26,14 +26,19 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
             var context = scope.ServiceProvider.GetRequiredService<BattleManagementSystemDbContext>();
             
             context.Database.EnsureCreated();
+
+            bool isDbEmpty = context.Account.Count() == 0;
             
-            context.Account.Add(new Account
+            if (isDbEmpty)
             {
-                AccountId = 2137,
-                Email = "test@test.com",
-                PasswordHash = ""
-            });
-            context.SaveChanges();
+                context.Account.Add(new Account
+                {
+                    AccountId = 2137,
+                    Email = "test@test.com",
+                    PasswordHash = ""
+                });
+                context.SaveChanges();
+            }
         });
     }
         
