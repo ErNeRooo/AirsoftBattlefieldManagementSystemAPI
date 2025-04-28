@@ -34,8 +34,21 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                 context.Account.Add(new Account
                 {
                     AccountId = 2137,
-                    Email = "test@test.com",
-                    PasswordHash = ""
+                    Email = "seededEmail1@test.com",
+                    PasswordHash = "dsadasdwefx"
+                });
+                context.Account.Add(new Account
+                {
+                    AccountId = 1,
+                    Email = "seededEmail2@test.com",
+                    PasswordHash = "fafarafa"
+                });
+
+                context.Player.Add(new Player
+                {
+                    PlayerId = 1,
+                    Name = "Seeded Name",
+                    IsDead = false
                 });
                 context.SaveChanges();
             }

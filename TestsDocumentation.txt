@@ -10,23 +10,23 @@ Info
 		! => bug found
 
 All
-	- No Authorization header (returns 401 Unauthorized)
-	- Wrong JWT token (returns 401 Unauthorized)
+e	- No Authorization header (returns 401 Unauthorized)
+e	- Wrong JWT token (returns 401 Unauthorized)
 
 Account
   1. Get
 i   + Valid id for existing account (returns AccountDto in body and 200 Ok)
-e   ! Everything correct request from other player (returns AccountDto in body and 200 Ok)
-i		+ Account do not exist (returns 404 Not Found)
-i		+ Id from route is not int type (returns 400 Bad Request)
+e  !- Everything correct request from other player (returns AccountDto in body and 200 Ok)
+i		+ Valid id for not existing account (returns 404 Not Found)
+i		+ Not valid id (returns 400 Bad Request)
   2. Post (Anonymous)
-		- Everything correct (returns location header and 201 Created)
-		- Wrong email format (returns 400 Bad Request)
-		- Email is empty (returns 400 Bad Request)
-		- Email is occupied (returns 400 Bad Request)
-		- Password is empty (returns 400 Bad Request)
-		- Password is too short (returns 400 Bad Request)
-    ! Create second account for one player (returns 409 Conflict)
+i		+ Valid json (returns location header and 201 Created)
+i		+ Wrong email format (returns 400 Bad Request)
+i		+ Email is missing (returns 400 Bad Request)
+i		+ Email is occupied (returns 400 Bad Request)
+i		+ Password is missing (returns 400 Bad Request)
+i		+ Password is too short (returns 400 Bad Request)
+i  !+ Create second account for one player (returns 409 Conflict)
   3. Put
     - Everything correct (returns 200 Ok)
     - Everything correct given only specific fields (returns 200 Ok)
