@@ -13,7 +13,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Validators
             RuleFor(a => a.Email).NotEmpty().EmailAddress().Custom((value, context) =>
             {
                 bool isExiting = dbContext.Account.Any(p => p.Email == value);
-
+                
                 if (isExiting)
                 {
                     context.AddFailure("Email", $"There is already account with email {value}");

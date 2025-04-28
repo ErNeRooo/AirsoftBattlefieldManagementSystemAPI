@@ -1,4 +1,5 @@
-﻿using AirsoftBattlefieldManagementSystemAPI.Exceptions;
+﻿using System.Security.Claims;
+using AirsoftBattlefieldManagementSystemAPI.Exceptions;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
@@ -22,16 +23,26 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return accountDto;
         }
 
-        public int Create(PostAccountDto accountDto)
+        public int Create(PostAccountDto accountDto, ClaimsPrincipal user)
         {
+            int userId = int.Parse(user.Claims.FirstOrDefault(c => c.Type == "playerId").Value);
+            Player player = dbContext.Player.FirstOrDefault(p => p.PlayerId == userId);
+            bool accountExists = player.AccountId is not null;
+            
+            if(accountExists) throw new OnePlayerCannotHaveTwoAccountsException("You already have an account");
+            
             Account account = mapper.Map<Account>(accountDto);
-
+            
             var hash = passwordHasher.HashPassword(account, account.PasswordHash);
             account.PasswordHash = hash;
-
+            
             dbContext.Account.Add(account);
             dbContext.SaveChanges();
 
+            player.AccountId = account.AccountId;
+            dbContext.Player.Update(player);
+            dbContext.SaveChanges();
+            
             return account.AccountId;
         }
 

@@ -20,6 +20,11 @@ namespace AirsoftBattlefieldManagementSystemAPI.Middleware
                 context.Response.StatusCode = 400;
                 await context.Response.WriteAsync(e.Message);
             }
+            catch (OnePlayerCannotHaveTwoAccountsException e)
+            {
+                context.Response.StatusCode = 409;
+                await context.Response.WriteAsync(e.Message);
+            }
             catch (NotASingleAvailableJoinCodeException e)
             {
                 logger.LogError(e, e.Message);
