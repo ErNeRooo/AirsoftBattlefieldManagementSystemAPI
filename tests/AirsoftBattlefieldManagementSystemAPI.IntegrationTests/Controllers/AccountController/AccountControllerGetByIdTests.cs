@@ -11,12 +11,13 @@ namespace AirsoftBattlefieldManagementSystemAPI.IntegrationTests
     public class AccountControllerGetByIdTests : IClassFixture<WebApplicationFactory<Program>>
     {
         private HttpClient _client;
-        
+
         public AccountControllerGetByIdTests()
         {
-            _client = new CustomWebApplicationFactory<Program>().CreateClient();
+            CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
+            _client = factory.CreateClient();
         }
-        
+
         [Theory]
         [InlineData("2137")]
         public async Task GetById_ValidIdForExistingAccount_ReturnsOkAndAccountDto(string id)

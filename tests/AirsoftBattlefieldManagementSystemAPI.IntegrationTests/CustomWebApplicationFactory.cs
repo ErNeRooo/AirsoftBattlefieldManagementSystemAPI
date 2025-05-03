@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -10,6 +11,11 @@ namespace AirsoftBattlefieldManagementSystemAPI.IntegrationTests;
 
 public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
 {
+    private string _testMethodCallerName;
+    public CustomWebApplicationFactory([CallerMemberName] string? testMethodCallerName = null)
+    {
+        _testMethodCallerName = testMethodCallerName;
+    }
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureTestServices(services =>
@@ -19,7 +25,8 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
             services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
             services.AddMvc(options => options.Filters.Add(new FakeUserFilter()));
             
-            services.AddDbContext<BattleManagementSystemDbContext>(options => options.UseInMemoryDatabase("InMemoryDatabase"));
+            string databaseUniqueName = Guid.NewGuid().ToString();
+            services.AddDbContext<BattleManagementSystemDbContext>(options => options.UseInMemoryDatabase(databaseUniqueName));
             var serviceProvider = services.BuildServiceProvider(); 
             
             var scope = serviceProvider.CreateScope();
@@ -41,6 +48,18 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                 {
                     AccountId = 1,
                     Email = "seededEmail2@test.com",
+                    PasswordHash = "fafarafa"
+                });
+                context.Account.Add(new Account
+                {
+                    AccountId = 2,
+                    Email = "seededEmail3@test.com",
+                    PasswordHash = "fafarafa"
+                });
+                context.Account.Add(new Account
+                {
+                    AccountId = 3,
+                    Email = "seededEmail4@test.com",
                     PasswordHash = "fafarafa"
                 });
 

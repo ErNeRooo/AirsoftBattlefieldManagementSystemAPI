@@ -9,10 +9,11 @@ namespace AirsoftBattlefieldManagementSystemAPI.IntegrationTests;
 public class AccountControllerCreateTests
 {
     private HttpClient _client;
-        
+
     public AccountControllerCreateTests()
     {
-        _client = new CustomWebApplicationFactory<Program>().CreateClient();
+        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
+        _client = factory.CreateClient();
     }
     
     [Fact]

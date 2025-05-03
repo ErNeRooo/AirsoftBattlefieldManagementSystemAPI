@@ -13,15 +13,13 @@ namespace AirsoftBattlefieldManagementSystemAPI.IntegrationTests;
 public class AccountControllerUpdateTests
 {
     private HttpClient _client;
-    private BattleManagementSystemDbContext _server;
-    
+
     public AccountControllerUpdateTests()
     {
-        var r = new CustomWebApplicationFactory<Program>();
-        //_server = r.Services.GetService<BattleManagementSystemDbContext>();
-        _client = r.CreateClient();
+        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
+        _client = factory.CreateClient();
     }
-
+    
     [Fact]
     public async Task Update_AllFieldsSpecified_ReturnsOk()
     {
@@ -39,8 +37,7 @@ public class AccountControllerUpdateTests
         var id = 2137;
 
         var response = await _client.PutAsync($"/account/id/{id}", httpContent);
-
-        var a = await response.Content.ReadAsStringAsync();
+        
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
     } 
     
