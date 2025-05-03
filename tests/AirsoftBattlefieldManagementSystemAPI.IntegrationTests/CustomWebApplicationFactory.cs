@@ -67,8 +67,21 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                 {
                     PlayerId = 1,
                     Name = "Seeded Name",
-                    IsDead = false
+                    RoomId = 1
                 });
+                context.Player.Add(new Player
+                {
+                    PlayerId = 2,
+                    Name = "Seeded Name",
+                    RoomId = 1
+                });
+                context.Player.Add(new Player
+                {
+                    PlayerId = 3,
+                    Name = "Seeded Name",
+                    RoomId = 2
+                });
+                
                 context.SaveChanges();
             }
         });
