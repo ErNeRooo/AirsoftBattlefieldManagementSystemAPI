@@ -20,7 +20,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.IntegrationTests
 
         [Theory]
         [InlineData("2137")]
-        public async Task GetById_ValidIdForExistingAccount_ReturnsOkAndAccountDto(string id)
+        public async Task GetById_ValidIdForExistingAccount_ReturnsOk(string id)
         {
             // act
             var response = await _client.GetAsync($"/account/id/{id}");

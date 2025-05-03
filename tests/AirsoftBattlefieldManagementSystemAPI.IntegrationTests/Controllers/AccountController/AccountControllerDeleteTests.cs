@@ -16,30 +16,30 @@ public class AccountControllerDeleteTests
     [Fact]
     public async Task Delete_ValidId_ReturnsNoContent()
     {
-        var id = 2137;
-
-        var response = await _client.DeleteAsync($"/account/id/{id}");
+        // act
+        var response = await _client.DeleteAsync($"/account/id/{2137}");
         
+        // assert
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
     } 
     
     [Fact]
-    public async Task Delete_AccountDoNotExist_ReturnsNotFound()
+    public async Task Delete_AccountDoesNotExist_ReturnsNotFound()
     {
-        var id = 12491938;
-
-        var response = await _client.DeleteAsync($"/account/id/{id}");
+        // act
+        var response = await _client.DeleteAsync($"/account/id/{12491938}");
         
+        // assert
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     } 
     
     [Fact]
     public async Task Delete_NotValidId_ReturnsBadRequest()
     {
-        var id = "2 esdw";
-
-        var response = await _client.DeleteAsync($"/account/id/{id}");
+        // act
+        var response = await _client.DeleteAsync($"/account/id/{"2 esdw"}");
         
+        // assert
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     } 
 }

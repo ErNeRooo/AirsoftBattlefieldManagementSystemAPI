@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text;
+using AirsoftBattlefieldManagementSystemAPI.IntegrationTests.Helpers;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
 using Newtonsoft.Json;
 using Shouldly;
@@ -17,7 +18,7 @@ public class AccountControllerCreateTests
     }
     
     [Fact]
-    public async Task Create_ValidJson_ReturnsCreatedAndLocationInHeader()
+    public async Task Create_ValidJson_ReturnsCreated()
     {
         // arrange
         var model = new PostAccountDto
@@ -25,12 +26,9 @@ public class AccountControllerCreateTests
             Email = "dqsf2de3ed3@test.com",
             Password = "$troNg-P4SSw0rd"
         };
-        
-        var json = JsonConvert.SerializeObject(model);
-        var httpContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
-        
+
         // act
-        var response = await _client.PostAsync($"/account", httpContent);
+        var response = await _client.PostAsync($"/account", model.ToJsonHttpContent());
 
         // assert
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
@@ -53,11 +51,8 @@ public class AccountControllerCreateTests
             Password = "$troNg-P4SSw0rd"
         };
         
-        var json = JsonConvert.SerializeObject(model);
-        var httpContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
-        
         // act
-        var response = await _client.PostAsync($"/account", httpContent);
+        var response = await _client.PostAsync($"/account", model.ToJsonHttpContent());
 
         // assert
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -71,12 +66,9 @@ public class AccountControllerCreateTests
         {
             Password = "$troNg-P4SSw0rd"
         };
-        
-        var json = JsonConvert.SerializeObject(model);
-        var httpContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
-        
+
         // act
-        var response = await _client.PostAsync($"/account", httpContent);
+        var response = await _client.PostAsync($"/account", model.ToJsonHttpContent());
 
         // assert
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -94,11 +86,8 @@ public class AccountControllerCreateTests
             Password = "$troNg-P4SSw0rd"
         };
         
-        var json = JsonConvert.SerializeObject(model);
-        var httpContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
-        
         // act
-        var response = await _client.PostAsync($"/account", httpContent);
+        var response = await _client.PostAsync($"/account", model.ToJsonHttpContent());
 
         // assert
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -112,12 +101,9 @@ public class AccountControllerCreateTests
         {
             Email = "dqgokkrjief@test.com",
         };
-        
-        var json = JsonConvert.SerializeObject(model);
-        var httpContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
-        
+
         // act
-        var response = await _client.PostAsync($"/account", httpContent);
+        var response = await _client.PostAsync($"/account", model.ToJsonHttpContent());
 
         // assert
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -136,12 +122,9 @@ public class AccountControllerCreateTests
             Email = "ddfwfief@test.com",
             Password = password
         };
-        
-        var json = JsonConvert.SerializeObject(model);
-        var httpContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
-        
+
         // act
-        var response = await _client.PostAsync($"/account", httpContent);
+        var response = await _client.PostAsync($"/account", model.ToJsonHttpContent());
 
         // assert
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -161,16 +144,10 @@ public class AccountControllerCreateTests
             Email = "second@test.com",
             Password = "second@test.com"
         };
-        
-        var firstJson = JsonConvert.SerializeObject(firstModel);
-        var secondJson = JsonConvert.SerializeObject(secondModel);
-        
-        var firstHttpContent = new StringContent(firstJson, UnicodeEncoding.UTF8, "application/json");
-        var secondHttpContent = new StringContent(secondJson, UnicodeEncoding.UTF8, "application/json");
-        
+
         // act
-        await _client.PostAsync($"/account", firstHttpContent);
-        var response = await _client.PostAsync($"/account", secondHttpContent);
+        await _client.PostAsync($"/account", firstModel.ToJsonHttpContent());
+        var response = await _client.PostAsync($"/account", secondModel.ToJsonHttpContent());
         
         // assert
         response.StatusCode.ShouldBe(HttpStatusCode.Conflict);

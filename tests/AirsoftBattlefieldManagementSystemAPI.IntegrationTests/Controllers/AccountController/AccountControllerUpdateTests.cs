@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text;
+using AirsoftBattlefieldManagementSystemAPI.IntegrationTests.Helpers;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
@@ -23,59 +24,49 @@ public class AccountControllerUpdateTests
     [Fact]
     public async Task Update_AllFieldsSpecified_ReturnsOk()
     {
-        string email = "seededEmaillll@gmail.com";
-        string password = "StrongPassword";
-        
+        // arrange
         var model = new PutAccountDto()
         {
-            Email = email,
-            Password = password
+            Email = "seededEmaillll@gmail.com",
+            Password = "StrongPassword"
         };
 
-        var json = JsonConvert.SerializeObject(model);
-        var httpContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
-        var id = 2137;
-
-        var response = await _client.PutAsync($"/account/id/{id}", httpContent);
+        // act
+        var response = await _client.PutAsync($"/account/id/{2137}", model.ToJsonHttpContent());
         
+        // assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
     } 
     
     [Fact]
     public async Task Update_OnlyEmailSpecified_ReturnsOk()
     {
-        string email = "seededEmail@gmail.com";
-        
+        // arrange
         var model = new PutAccountDto()
         {
-            Email = email
+            Email = "seededEmail@gmail.com"
         };
-
-        var json = JsonConvert.SerializeObject(model);
-        var httpContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
-        var id = 2137;
         
-        var response = await _client.PutAsync($"/account/id/{id}", httpContent);
+        // act
+        var response = await _client.PutAsync($"/account/id/{2137}", model.ToJsonHttpContent());
         
+        // assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
     } 
     
     [Fact]
     public async Task Update_OnlyPasswordSpecified_ReturnsOk()
     {
-        string password = "veryStrongPassword";
-        
+        // arrange
         var model = new PutAccountDto()
         {
-            Password = password
+            Password = "veryStrongPassword"
         };
-
-        var json = JsonConvert.SerializeObject(model);
-        var httpContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
-        var id = 2137;
         
-        var response = await _client.PutAsync($"/account/id/{id}", httpContent);
+        // act
+        var response = await _client.PutAsync($"/account/id/{2137}", model.ToJsonHttpContent());
         
+        // assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
     } 
     
@@ -88,74 +79,64 @@ public class AccountControllerUpdateTests
     [InlineData("")]
     public async Task Update_WrongEmailFormat_ReturnsBadRequest(string email)
     {
+        // arrange
         var model = new PutAccountDto()
         {
             Email = email
         };
-
-        var json = JsonConvert.SerializeObject(model);
-        var httpContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
-        var id = 2137;
         
-        var response = await _client.PutAsync($"/account/id/{id}", httpContent);
+        // act
+        var response = await _client.PutAsync($"/account/id/{2137}", model.ToJsonHttpContent());
         
+        // assert
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     } 
     
     [Fact]
     public async Task Update_EmailIsOccupied_ReturnsBadRequest()
     {
-        string email = "seededEmail2@test.com";
-        
+        // arrange
         var model = new PutAccountDto()
         {
-            Email = email
+            Email = "seededEmail2@test.com"
         };
-
-        var json = JsonConvert.SerializeObject(model);
-        var httpContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
-        var id = 2137;
         
-        var response = await _client.PutAsync($"/account/id/{id}", httpContent);
+        // act
+        var response = await _client.PutAsync($"/account/id/{2137}", model.Email.ToJsonHttpContent());
         
+        // assert
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     } 
     
     [Fact]
     public async Task Update_PasswordIsTooShort_ReturnsBadRequest()
     {
-        string password = "123456789";
-        
+        // arrange
         var model = new PutAccountDto()
         {
-            Password = password
+            Password = "123456789"
         };
-
-        var json = JsonConvert.SerializeObject(model);
-        var httpContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
-        var id = 2137;
         
-        var response = await _client.PutAsync($"/account/id/{id}", httpContent);
+        // act
+        var response = await _client.PutAsync($"/account/id/{2137}", model.ToJsonHttpContent());
         
+        // assert
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     } 
 
     [Fact]
-    public async Task Update_AccountDoNotExist_ReturnsNotFound()
+    public async Task Update_AccountDoesNotExist_ReturnsNotFound()
     {
-        string password = "veryStrongPassword";
-        
+        // arrange
         var model = new PutAccountDto()
         {
-            Password = password
+            Password = "veryStrongPassword"
         };
-
-        var json = JsonConvert.SerializeObject(model);
-        var httpContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
-        var id = 7472562;
         
-        var response = await _client.PutAsync($"/account/id/{id}", httpContent);
+        // act
+        var response = await _client.PutAsync($"/account/id/{7472562}", model.ToJsonHttpContent());
         
+        // assert
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     } 
 }
