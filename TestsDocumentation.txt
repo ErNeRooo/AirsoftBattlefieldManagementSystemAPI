@@ -35,9 +35,9 @@ i  !+ Create second account for one player (returns 409 Conflict)
 		+ Password is too short (returns 400 Bad Request)
 		+ Account not exist (returns 404 Not Found)
   4. Delete
-    - Everything correct (returns 204 No Content)
-		- Account do not exist (returns 404 Not Found)
-		- Id from route is not int type (returns 400 Bad Request)
+    + Everything correct (returns 204 No Content)
+		+ Account do not exist (returns 404 Not Found)
+		+ Id from route is not int type (returns 400 Bad Request)
 	 
 Player
     1. Get
