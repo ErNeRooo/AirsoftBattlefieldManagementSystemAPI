@@ -34,7 +34,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpPut("id/{id}")]
-        public ActionResult<string> PutPlayer(int id, [FromBody] PutPlayerDto playerDto)
+        public ActionResult<string> Update(int id, [FromBody] PutPlayerDto playerDto)
         {
             playerService.Update(id, playerDto, User);
 
@@ -58,7 +58,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpDelete("id/{id}")]
-        public ActionResult<string> DeletePlayer(int id)
+        public ActionResult<string> Delete(int id)
         {
             playerService.DeleteById(id, User);
 

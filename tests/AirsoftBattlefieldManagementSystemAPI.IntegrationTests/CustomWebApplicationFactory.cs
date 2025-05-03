@@ -67,19 +67,61 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                 {
                     PlayerId = 1,
                     Name = "Seeded Name",
-                    RoomId = 1
+                    RoomId = 1,
+                    TeamId = 1,
                 });
                 context.Player.Add(new Player
                 {
                     PlayerId = 2,
                     Name = "Seeded Name",
-                    RoomId = 1
+                    RoomId = 1,
+                    TeamId = 2,
                 });
                 context.Player.Add(new Player
                 {
                     PlayerId = 3,
                     Name = "Seeded Name",
-                    RoomId = 2
+                    RoomId = 2,
+                    TeamId = 3
+                });
+                
+                context.Room.Add(new Room
+                {
+                    RoomId = 1,
+                    JoinCode = "123456",
+                    MaxPlayers = 100,
+                    AdminPlayerId = 1,
+                    PasswordHash = "fafarafa"
+                });
+                context.Room.Add(new Room
+                {
+                    RoomId = 2,
+                    JoinCode = "213700",
+                    MaxPlayers = 2,
+                    AdminPlayerId = 2,
+                    PasswordHash = "fafarafa"
+                });
+                
+                context.Team.Add(new Team
+                {
+                    Name = "Jednorozec",
+                    TeamId = 1,
+                    RoomId = 1,
+                    OfficerPlayerId = 1
+                });
+                context.Team.Add(new Team
+                {
+                    Name = "Pogorzel",
+                    TeamId = 2,
+                    RoomId = 1,
+                    OfficerPlayerId = 2
+                });
+                context.Team.Add(new Team
+                {
+                    Name = "Blue",
+                    TeamId = 3,
+                    RoomId = 2,
+                    OfficerPlayerId = 3
                 });
                 
                 context.SaveChanges();

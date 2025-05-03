@@ -51,15 +51,16 @@ i   + Id from route is not int type (returns 400 Bad Request)
     + Name is empty (returns 400 Bad Request)
     + Name is too long (returns 400 Bad Request)
   3. Put
-    - Everything correct (returns 200 Ok)
-    !- Everything correct given only specific fields (returns 200 Ok)
-    - Name is too long (returns 400 Bad Request)
-    - IsDead is not bool type
+    + Everything correct (returns 200 Ok)
+    !+ Everything correct given only specific fields (returns 200 Ok)
+    + Name is too long (returns 400 Bad Request)
+    + IsDead is not bool type
   4. Patch (Player Join Room)
     - Everything correct (returns 200 Ok)
-	- Room does not exist (returns 404 Not Found)
+	  - Room does not exist (returns 404 Not Found)
     - JoinCode wrong format (returns 400 Bad Request)
     - Wrong password (returns 403 Forbidden)
+    - Room is full (returns 403 Forbidden)
   5. Patch (Player Leave Room)
     - Everything correct (returns 200 Ok)
   6. Delete	
