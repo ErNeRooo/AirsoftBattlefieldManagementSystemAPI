@@ -1,5 +1,6 @@
 ﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Login;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
@@ -23,9 +24,19 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpPost]
+        [Route("signup")]
         public ActionResult Create([FromBody] PostAccountDto accountDto)
         {
             int id = accountService.Create(accountDto, User);
+
+            return Created($"/Account/id/{id}", null);
+        }
+
+        [HttpPost]
+        [Route("login")]
+        public ActionResult LogIn([FromBody] LoginAccountDto accountDto)
+        {
+            int id = accountService.LogIn(accountDto, User);
 
             return Created($"/Account/id/{id}", null);
         }

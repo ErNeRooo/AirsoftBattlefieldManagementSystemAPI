@@ -2,6 +2,7 @@
 using AirsoftBattlefieldManagementSystemAPI.Exceptions;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Login;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
@@ -44,6 +45,35 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             dbContext.SaveChanges();
             
             return account.AccountId;
+        }
+
+        public int LogIn(LoginAccountDto accountDto, ClaimsPrincipal user)
+        {
+            string playerId = user.Claims.FirstOrDefault(c => c.Type == "playerId").Value;
+
+            bool isParsingSuccessfull = int.TryParse(playerId, out int id);
+
+            if (!isParsingSuccessfull) throw new ForbidException($"Invalid claim playerId");
+
+            Player? player = dbContext.Player.FirstOrDefault(p => p.PlayerId == id);
+            Account? account = dbContext.Account.FirstOrDefault(a => a.Email == accountDto.Email);
+
+            if (account is null) throw new NotFoundException($"Account with email {accountDto.Email} not found");
+
+            var verificationResult = passwordHasher.VerifyHashedPassword(account, account.PasswordHash, accountDto.Password);
+
+            if (verificationResult == PasswordVerificationResult.Success || verificationResult == PasswordVerificationResult.SuccessRehashNeeded)
+            {
+                player.AccountId = account.AccountId;
+                dbContext.Player.Update(player);
+                dbContext.SaveChanges();
+
+                return account.AccountId;
+            }
+            else
+            {
+                throw new WrongPasswordException("Wrong account password");
+            }
         }
 
         public void Update(int id, PutAccountDto accountDto)

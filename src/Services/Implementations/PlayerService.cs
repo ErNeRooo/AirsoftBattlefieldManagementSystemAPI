@@ -71,9 +71,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             string password = roomDto.Password;
             
             string? claimPlayerId = user.Claims.FirstOrDefault(c => c.Type == "playerId").Value;
-            bool isSuccessfull = int.TryParse(claimPlayerId, out int playerId);
+            bool isParsingSuccessfull = int.TryParse(claimPlayerId, out int playerId);
             
-            if (!isSuccessfull) throw new ForbidException("Invalid claim playerId");
+            if (!isParsingSuccessfull) throw new ForbidException("Invalid claim playerId");
 
             Room room = dbContext.Room.FirstOrDefault(r => r.JoinCode == joinCode);
             Player? player = dbContext.Player.FirstOrDefault(p => p.PlayerId == playerId);

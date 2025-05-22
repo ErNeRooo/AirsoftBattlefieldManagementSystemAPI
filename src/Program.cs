@@ -92,6 +92,8 @@ namespace AirsoftBattlefieldManagementSystemAPI
             builder.Services.AddFluentValidationAutoValidation();
             builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
+            builder.WebHost.UseUrls("http://0.0.0.0:8080");
+            
             builder.Services.AddDbContext<IBattleManagementSystemDbContext, BattleManagementSystemDbContext>(
                 options =>
                 {
@@ -120,7 +122,7 @@ namespace AirsoftBattlefieldManagementSystemAPI
                 {
                     options
                         .WithTheme(ScalarTheme.DeepSpace)
-                        .WithDefaultHttpClient(ScalarTarget.Kotlin, ScalarClient.OkHttp);
+                        .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
                 });
             }
 
