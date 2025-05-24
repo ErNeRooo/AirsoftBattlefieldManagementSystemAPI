@@ -18,14 +18,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles
                     memberOptions: opt => opt.Ignore()
                 )
                 .ForMember(
-                    destinationMember: dest => dest.Account,
-                    memberOptions: opt => opt.Ignore()
-                )
-                .ForMember(
-                    destinationMember: dest => dest.AccountId,
-                    memberOptions: opt => opt.Ignore()
-                )
-                .ForMember(
                     destinationMember: dest => dest.Team,
                     memberOptions: opt => opt.Ignore()
                 )
@@ -45,14 +37,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles
             CreateMap<PutPlayerDto, Player>()
                 .ForMember(
                     destinationMember: dest => dest.PlayerId,
-                    memberOptions: opt => opt.Ignore()
-                )
-                .ForMember(
-                    destinationMember: dest => dest.Account,
-                    memberOptions: opt => opt.Ignore()
-                )
-                .ForMember(
-                    destinationMember: dest => dest.AccountId,
                     memberOptions: opt => opt.Ignore()
                 )
                 .ForMember(

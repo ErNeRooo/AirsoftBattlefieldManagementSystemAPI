@@ -30,6 +30,13 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Entities
                 .HasMaxLength(320);
 
             modelBuilder
+                .Entity<Account>()
+                .HasOne(a => a.Player)
+                .WithOne(p => p.Account)
+                .HasForeignKey<Account>(a => a.PlayerId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder
                 .Entity<Team>()
                 .Property(a => a.Name)
                 .HasMaxLength(60);

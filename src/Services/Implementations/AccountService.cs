@@ -26,22 +26,19 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 
         public int Create(PostAccountDto accountDto, ClaimsPrincipal user)
         {
-            int userId = int.Parse(user.Claims.FirstOrDefault(c => c.Type == "playerId").Value);
-            Player player = dbContext.Player.FirstOrDefault(p => p.PlayerId == userId);
-            bool accountExists = player.AccountId is not null;
+            int playerId = int.Parse(user.Claims.FirstOrDefault(c => c.Type == "playerId").Value);
             
-            if(accountExists) throw new OnePlayerCannotHaveTwoAccountsException("You already have an account");
+            bool hasAccount = dbContext.Account.Any(a => a.PlayerId == playerId);
+            
+            if(hasAccount) throw new OnePlayerCannotHaveTwoAccountsException("You already have an account");
             
             Account account = mapper.Map<Account>(accountDto);
             
             var hash = passwordHasher.HashPassword(account, account.PasswordHash);
             account.PasswordHash = hash;
+            account.PlayerId = playerId;
             
             dbContext.Account.Add(account);
-            dbContext.SaveChanges();
-
-            player.AccountId = account.AccountId;
-            dbContext.Player.Update(player);
             dbContext.SaveChanges();
             
             return account.AccountId;
@@ -49,13 +46,12 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 
         public int LogIn(LoginAccountDto accountDto, ClaimsPrincipal user)
         {
-            string playerId = user.Claims.FirstOrDefault(c => c.Type == "playerId").Value;
+            string stringPlayerId = user.Claims.FirstOrDefault(c => c.Type == "playerId").Value;
 
-            bool isParsingSuccessfull = int.TryParse(playerId, out int id);
+            bool isParsingSuccessfull = int.TryParse(stringPlayerId, out int playerId);
 
             if (!isParsingSuccessfull) throw new ForbidException($"Invalid claim playerId");
-
-            Player? player = dbContext.Player.FirstOrDefault(p => p.PlayerId == id);
+            
             Account? account = dbContext.Account.FirstOrDefault(a => a.Email == accountDto.Email);
 
             if (account is null) throw new NotFoundException($"Account with email {accountDto.Email} not found");
@@ -64,16 +60,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 
             if (verificationResult == PasswordVerificationResult.Success || verificationResult == PasswordVerificationResult.SuccessRehashNeeded)
             {
-                player.AccountId = account.AccountId;
-                dbContext.Player.Update(player);
+                account.PlayerId = playerId;
+                dbContext.Account.Update(account);
                 dbContext.SaveChanges();
 
                 return account.AccountId;
             }
-            else
-            {
-                throw new WrongPasswordException("Wrong account password");
-            }
+            
+            throw new WrongPasswordException("Wrong account password");
         }
 
         public void Update(int id, PutAccountDto accountDto)
