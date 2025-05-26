@@ -1,8 +1,6 @@
-﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
-using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
-using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
+﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Location;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
-using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
+using AirsoftBattlefieldManagementSystemAPI.Services.LocationService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

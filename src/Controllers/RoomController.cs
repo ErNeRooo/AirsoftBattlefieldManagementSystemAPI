@@ -1,9 +1,6 @@
-﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
-using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
-using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Login;
-using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
-using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
+﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Room;
 using AirsoftBattlefieldManagementSystemAPI.Services.Implementations;
+using AirsoftBattlefieldManagementSystemAPI.Services.RoomService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,9 +1,7 @@
-﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
-using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
-using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
+﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Kill;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
-using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
 using AirsoftBattlefieldManagementSystemAPI.Services.Implementations;
+using AirsoftBattlefieldManagementSystemAPI.Services.KillService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,4 +1,4 @@
-using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
+using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
 using Microsoft.EntityFrameworkCore;
 
 namespace AirsoftBattlefieldManagementSystemAPI.IntegrationTests;

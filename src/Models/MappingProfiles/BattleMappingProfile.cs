@@ -1,6 +1,4 @@
-﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
-using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
-using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
+﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Battle;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AutoMapper;
 

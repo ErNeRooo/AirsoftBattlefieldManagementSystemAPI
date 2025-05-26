@@ -1,10 +1,6 @@
-﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
-using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
-using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
-using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
-using AirsoftBattlefieldManagementSystemAPI.Services.Implementations;
+﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Battle;
+using AirsoftBattlefieldManagementSystemAPI.Services.BattleService;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Controllers
