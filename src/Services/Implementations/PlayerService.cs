@@ -65,50 +65,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             dbContext.SaveChanges();
         }
 
-        public void JoinRoom(LoginRoomDto roomDto, ClaimsPrincipal user)
-        {
-            string joinCode = roomDto.JoinCode;
-            string password = roomDto.Password;
-            
-            string? claimPlayerId = user.Claims.FirstOrDefault(c => c.Type == "playerId").Value;
-            bool isParsingSuccessfull = int.TryParse(claimPlayerId, out int playerId);
-            
-            if (!isParsingSuccessfull) throw new ForbidException("Invalid claim playerId");
-
-            Room room = dbContext.Room.FirstOrDefault(r => r.JoinCode == joinCode);
-            Player? player = dbContext.Player.FirstOrDefault(p => p.PlayerId == playerId);
-
-            if (player is null) throw new NotFoundException($"Player with id {playerId} not found");
-
-            var verificationResult = passwordHasher.VerifyHashedPassword(room, room.PasswordHash, password);
-
-            if (verificationResult == PasswordVerificationResult.Success || verificationResult == PasswordVerificationResult.SuccessRehashNeeded)
-            {
-                player.RoomId = room.RoomId;
-                dbContext.Player.Update(player);
-                dbContext.SaveChanges();
-            }
-            else
-            {
-                throw new WrongPasswordException("Wrong room password");
-            }
-        }
-
-        public void LeaveRoom(ClaimsPrincipal user)
-        {
-            string? claimPlayerId = user.Claims.FirstOrDefault(c => c.Type == "playerId").Value;
-            bool isSuccessfull = int.TryParse(claimPlayerId, out int playerId);
-            
-            if (!isSuccessfull) throw new ForbidException("Invalid claim playerId");
-
-            Player player = dbContext.Player.FirstOrDefault(p => p.PlayerId == playerId);
-            
-            player.RoomId = null;
-            
-            dbContext.Player.Update(player);
-            dbContext.SaveChanges();
-        }
-
         public void DeleteById(int id, ClaimsPrincipal user)
         {
             var authorizationResult =

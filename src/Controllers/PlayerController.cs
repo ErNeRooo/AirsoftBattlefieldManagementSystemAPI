@@ -41,22 +41,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
             return Ok();
         }
 
-        [HttpPatch("join-room")]
-        public ActionResult<string> JoinRoom([FromBody] LoginRoomDto roomDto)
-        {
-            playerService.JoinRoom(roomDto, User);
-
-            return Ok();
-        }
-        
-        [HttpPatch("leave-room")]
-        public ActionResult<string> LeaveRoom()
-        {
-            playerService.LeaveRoom(User);
-
-            return Ok();
-        }
-
         [HttpDelete("id/{id}")]
         public ActionResult<string> Delete(int id)
         {

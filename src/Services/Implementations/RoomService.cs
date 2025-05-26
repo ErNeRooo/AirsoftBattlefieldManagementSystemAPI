@@ -4,6 +4,7 @@ using AirsoftBattlefieldManagementSystemAPI.Enums;
 using AirsoftBattlefieldManagementSystemAPI.Exceptions;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Login;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
@@ -56,7 +57,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             dbContext.Room.Add(room);
             dbContext.SaveChanges();
 
-            return room.RoomId.ToString();
+            return room.JoinCode.ToString();
         }
 
         public void Update(int id, PutRoomDto roomDto, ClaimsPrincipal user)
@@ -101,6 +102,50 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             if (!playerOwnsResourceResult.Succeeded || !playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
 
             dbContext.Room.Remove(room);
+            dbContext.SaveChanges();
+        }
+
+        public void Join(LoginRoomDto roomDto, ClaimsPrincipal user)
+        {
+            string joinCode = roomDto.JoinCode;
+            string password = roomDto.Password;
+
+            string? claimPlayerId = user.Claims.FirstOrDefault(c => c.Type == "playerId").Value;
+            bool isParsingSuccessfull = int.TryParse(claimPlayerId, out int playerId);
+
+            if (!isParsingSuccessfull) throw new ForbidException("Invalid claim playerId");
+
+            Room room = dbContext.Room.FirstOrDefault(r => r.JoinCode == joinCode);
+            Player? player = dbContext.Player.FirstOrDefault(p => p.PlayerId == playerId);
+
+            if (player is null) throw new NotFoundException($"Player with id {playerId} not found");
+
+            var verificationResult = passwordHasher.VerifyHashedPassword(room, room.PasswordHash, password);
+
+            if (verificationResult == PasswordVerificationResult.Success || verificationResult == PasswordVerificationResult.SuccessRehashNeeded)
+            {
+                player.RoomId = room.RoomId;
+                dbContext.Player.Update(player);
+                dbContext.SaveChanges();
+            }
+            else
+            {
+                throw new WrongPasswordException("Wrong room password");
+            }
+        }
+
+        public void Leave(ClaimsPrincipal user)
+        {
+            string? claimPlayerId = user.Claims.FirstOrDefault(c => c.Type == "playerId").Value;
+            bool isSuccessfull = int.TryParse(claimPlayerId, out int playerId);
+
+            if (!isSuccessfull) throw new ForbidException("Invalid claim playerId");
+
+            Player player = dbContext.Player.FirstOrDefault(p => p.PlayerId == playerId);
+
+            player.RoomId = null;
+
+            dbContext.Player.Update(player);
             dbContext.SaveChanges();
         }
     }

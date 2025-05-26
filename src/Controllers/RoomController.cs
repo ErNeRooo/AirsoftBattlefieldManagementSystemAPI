@@ -1,7 +1,9 @@
 ﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Login;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
 using AirsoftBattlefieldManagementSystemAPI.Services.Abstractions;
+using AirsoftBattlefieldManagementSystemAPI.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -51,6 +53,21 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
             roomService.DeleteById(id, User);
 
             return NoContent();
+        }
+
+        [HttpPost("join")]
+        public ActionResult<string> JoinRoom([FromBody] LoginRoomDto roomDto)
+        {
+            roomService.Join(roomDto, User);
+            return Ok();
+        }
+
+        [HttpPost("leave")]
+        public ActionResult<string> LeaveRoom()
+        {
+            roomService.Leave(User);
+
+            return Ok();
         }
     }
 }
