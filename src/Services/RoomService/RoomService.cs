@@ -36,7 +36,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return roomDto;
         }
 
-        public string Create(PostRoomDto roomDto, ClaimsPrincipal user)
+        public int Create(PostRoomDto roomDto, ClaimsPrincipal user)
         {
             if (roomDto.JoinCode is null)
             {
@@ -56,7 +56,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             dbContext.Room.Add(room);
             dbContext.SaveChanges();
 
-            return room.JoinCode.ToString();
+            return room.RoomId;
         }
 
         public void Update(int id, PutRoomDto roomDto, ClaimsPrincipal user)
@@ -104,7 +104,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             dbContext.SaveChanges();
         }
 
-        public void Join(LoginRoomDto roomDto, ClaimsPrincipal user)
+        public int Join(LoginRoomDto roomDto, ClaimsPrincipal user)
         {
             string joinCode = roomDto.JoinCode;
             string password = roomDto.Password;
@@ -121,16 +121,16 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 
             var verificationResult = passwordHasher.VerifyHashedPassword(room, room.PasswordHash, password);
 
-            if (verificationResult == PasswordVerificationResult.Success || verificationResult == PasswordVerificationResult.SuccessRehashNeeded)
+            if (verificationResult == PasswordVerificationResult.Success || verificationResult == PasswordVerificationResult.SuccessRehashNeeded || room.AdminPlayerId == player.PlayerId)
             {
                 player.RoomId = room.RoomId;
                 dbContext.Player.Update(player);
                 dbContext.SaveChanges();
+
+                return room.RoomId;
             }
-            else
-            {
-                throw new WrongPasswordException("Wrong room password");
-            }
+            
+            throw new WrongPasswordException("Wrong room password");
         }
 
         public void Leave(ClaimsPrincipal user)

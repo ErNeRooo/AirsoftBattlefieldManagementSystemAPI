@@ -31,9 +31,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [HttpPost("")]
         public ActionResult PostRoom([FromBody] PostRoomDto roomDto)
         {
-            string joinCode = roomService.Create(roomDto, User);
+            int id = roomService.Create(roomDto, User);
 
-            return Created($"/room/join-code/{joinCode}", null);
+            return Created($"/room/id/{id}", null);
         }
 
         [HttpPut("id/{id}")]
