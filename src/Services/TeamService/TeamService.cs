@@ -11,7 +11,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.TeamService
 {
     public class TeamService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IAuthorizationService authorizationService) : ITeamService
     {
-        public TeamDto? GetById(int id, ClaimsPrincipal user)
+        public TeamDto GetById(int id, ClaimsPrincipal user)
         {
             Team? team = dbContext.Team.FirstOrDefault(t => t.TeamId == id);
 
@@ -27,7 +27,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.TeamService
             return teamDto;
         }
 
-        public int Create(PostTeamDto teamDto, ClaimsPrincipal user)
+        public TeamDto Create(PostTeamDto teamDto, ClaimsPrincipal user)
         {
             var playerIsInTheSameRoomAsResourceResult =
                 authorizationService.AuthorizeAsync(user, teamDto.RoomId,
@@ -44,10 +44,10 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.TeamService
             dbContext.Team.Add(team);
             dbContext.SaveChanges();
 
-            return team.TeamId;
+            return mapper.Map<TeamDto>(team);
         }
 
-        public void Update(int id, PutTeamDto teamDto, ClaimsPrincipal user)
+        public TeamDto Update(int id, PutTeamDto teamDto, ClaimsPrincipal user)
         {
             Team? previousTeam = dbContext.Team.FirstOrDefault(t => t.TeamId == id);
 
@@ -66,6 +66,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.TeamService
             mapper.Map(teamDto, previousTeam);
             dbContext.Team.Update(previousTeam);
             dbContext.SaveChanges();
+            
+            return mapper.Map<TeamDto>(previousTeam);
         }
 
         public void DeleteById(int id, ClaimsPrincipal user)

@@ -7,8 +7,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
     {
         public LocationDto GetById(int id, ClaimsPrincipal user);
         public List<LocationDto> GetAllOfPlayerWithId(int playerId, ClaimsPrincipal user);
-        public int Create(int playerId, PostLocationDto postLocationDto, ClaimsPrincipal user);
-        public void Update(int id, PutLocationDto locationDto, ClaimsPrincipal user);
+        public LocationDto Create(int playerId, PostLocationDto postLocationDto, ClaimsPrincipal user);
+        public LocationDto Update(int id, PutLocationDto locationDto, ClaimsPrincipal user);
         public void DeleteById(int id, ClaimsPrincipal user);
     }
 }

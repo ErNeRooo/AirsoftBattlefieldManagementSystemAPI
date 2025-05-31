@@ -13,7 +13,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.KillService
 {
     public class KillService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IAuthorizationService authorizationService) : IKillService
     {
-        public KillDto? GetById(int id, ClaimsPrincipal user)
+        public KillDto GetById(int id, ClaimsPrincipal user)
         {
             Kill? kill = dbContext.Kill.Include(k=> k.Location).FirstOrDefault(t => t.KillId == id);
 
@@ -57,7 +57,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.KillService
             return killDtos;
         }
 
-        public int Create(int playerId, PostKillDto killDto, ClaimsPrincipal user)
+        public KillDto Create(int playerId, PostKillDto killDto, ClaimsPrincipal user)
         {
             Player? player = dbContext.Player.FirstOrDefault(p => p.PlayerId == playerId);
 
@@ -86,10 +86,10 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.KillService
 
             dbContext.SaveChanges();
 
-            return kill.KillId;
+            return mapper.Map<KillDto>(kill);
         }
 
-        public void Update(int id, PutKillDto killDto, ClaimsPrincipal user)
+        public KillDto Update(int id, PutKillDto killDto, ClaimsPrincipal user)
         {
             Kill? previousKill = dbContext.Kill
                 .Include(k => k.Location)
@@ -110,6 +110,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.KillService
             Location updatedLocation = mapper.Map(killDto, previousKill.Location);
             dbContext.Location.Update(updatedLocation);
             dbContext.SaveChanges();
+            
+            return mapper.Map<KillDto>(previousKill);   
         }
 
         public void DeleteById(int id, ClaimsPrincipal user)

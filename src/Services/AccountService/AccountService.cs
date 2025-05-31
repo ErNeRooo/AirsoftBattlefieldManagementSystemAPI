@@ -10,7 +10,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.AccountService
 {
     public class AccountService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IPasswordHasher<Account> passwordHasher) : IAccountService
     {
-        public AccountDto? GetById(int id)
+        public AccountDto GetById(int id)
         {
             Account? account = dbContext.Account.FirstOrDefault(t => t.AccountId == id);
 
@@ -21,7 +21,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.AccountService
             return accountDto;
         }
 
-        public int Create(PostAccountDto accountDto, ClaimsPrincipal user)
+        public AccountDto Create(PostAccountDto accountDto, ClaimsPrincipal user)
         {
             int playerId = int.Parse(user.Claims.FirstOrDefault(c => c.Type == "playerId").Value);
             
@@ -38,10 +38,10 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.AccountService
             dbContext.Account.Add(account);
             dbContext.SaveChanges();
             
-            return account.AccountId;
+            return mapper.Map<AccountDto>(account);
         }
 
-        public int LogIn(LoginAccountDto accountDto, ClaimsPrincipal user)
+        public AccountDto LogIn(LoginAccountDto accountDto, ClaimsPrincipal user)
         {
             string stringPlayerId = user.Claims.FirstOrDefault(c => c.Type == "playerId").Value;
 
@@ -61,13 +61,13 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.AccountService
                 dbContext.Account.Update(account);
                 dbContext.SaveChanges();
 
-                return account.AccountId;
+                return mapper.Map<AccountDto>(account);
             }
             
             throw new WrongPasswordException("Wrong account password");
         }
 
-        public void Update(int id, PutAccountDto accountDto)
+        public AccountDto Update(int id, PutAccountDto accountDto)
         {
             Account? previousAccount = dbContext.Account.FirstOrDefault(t => t.AccountId == id);
 
@@ -80,6 +80,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.AccountService
 
             dbContext.Account.Update(previousAccount);
             dbContext.SaveChanges();
+            
+            return mapper.Map<AccountDto>(previousAccount);
         }
 
         public void DeleteById(int id)

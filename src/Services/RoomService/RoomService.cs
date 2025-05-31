@@ -36,7 +36,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             return roomDto;
         }
 
-        public int Create(PostRoomDto roomDto, ClaimsPrincipal user)
+        public RoomDto Create(PostRoomDto roomDto, ClaimsPrincipal user)
         {
             if (roomDto.JoinCode is null)
             {
@@ -56,10 +56,10 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             dbContext.Room.Add(room);
             dbContext.SaveChanges();
 
-            return room.RoomId;
+            return mapper.Map<RoomDto>(room);
         }
 
-        public void Update(int id, PutRoomDto roomDto, ClaimsPrincipal user)
+        public RoomDto Update(int id, PutRoomDto roomDto, ClaimsPrincipal user)
         {
             Room? previousRoom = dbContext.Room.FirstOrDefault(r => r.RoomId == id);
 
@@ -82,6 +82,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             
             dbContext.Room.Update(updatedRoom);
             dbContext.SaveChanges();
+            
+            return mapper.Map<RoomDto>(updatedRoom);
         }
 
         public void DeleteById(int id, ClaimsPrincipal user)
@@ -104,7 +106,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             dbContext.SaveChanges();
         }
 
-        public int Join(LoginRoomDto roomDto, ClaimsPrincipal user)
+        public RoomDto Join(LoginRoomDto roomDto, ClaimsPrincipal user)
         {
             string joinCode = roomDto.JoinCode;
             string password = roomDto.Password;
@@ -127,7 +129,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
                 dbContext.Player.Update(player);
                 dbContext.SaveChanges();
 
-                return room.RoomId;
+                return mapper.Map<RoomDto>(room);
             }
             
             throw new WrongPasswordException("Wrong room password");

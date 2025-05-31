@@ -13,7 +13,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.DeathService
 {
     public class DeathService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IAuthorizationService authorizationService) : IDeathService
     {
-        public DeathDto? GetById(int id, ClaimsPrincipal user)
+        public DeathDto GetById(int id, ClaimsPrincipal user)
         {
             Death? death = dbContext.Death.Include(k=> k.Location).FirstOrDefault(t => t.DeathId == id);
 
@@ -30,7 +30,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.DeathService
             return deathDto;
         }
 
-        public List<DeathDto>? GetAllOfPlayerWithId(int playerId, ClaimsPrincipal user)
+        public List<DeathDto> GetAllOfPlayerWithId(int playerId, ClaimsPrincipal user)
         {
             Player? player = dbContext.Player.FirstOrDefault(t => t.PlayerId == playerId);
             
@@ -56,7 +56,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.DeathService
             return deathDtos;
         }
 
-        public int Create(int playerId, PostDeathDto deathDto, ClaimsPrincipal user)
+        public DeathDto Create(int playerId, PostDeathDto deathDto, ClaimsPrincipal user)
         {
             var authorizationResult =
                 authorizationService.AuthorizeAsync(user, playerId,
@@ -81,10 +81,10 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.DeathService
 
             dbContext.SaveChanges();
 
-            return death.DeathId;
+            return mapper.Map<DeathDto>(death);
         }
 
-        public void Update(int id, PutDeathDto deathDto, ClaimsPrincipal user)
+        public DeathDto Update(int id, PutDeathDto deathDto, ClaimsPrincipal user)
         {
             Death? previousDeath = dbContext.Death
                 .Include(k => k.Location)
@@ -105,6 +105,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.DeathService
             mapper.Map(deathDto, previousDeath.Location);
             dbContext.Location.Update(previousDeath.Location);
             dbContext.SaveChanges();
+            
+            return mapper.Map<DeathDto>(previousDeath);
         }
 
         public void DeleteById(int id, ClaimsPrincipal user)

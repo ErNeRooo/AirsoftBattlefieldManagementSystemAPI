@@ -32,20 +32,20 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
 
         [HttpPost]
         [Route("playerId/{playerId}")]
-        public ActionResult Create(int playerId, [FromBody] PostDeathDto deathDto)
+        public ActionResult<DeathDto> Create(int playerId, [FromBody] PostDeathDto deathDto)
         {
-            int id = deathService.Create(playerId, deathDto, User);
+            DeathDto resultDeath = deathService.Create(playerId, deathDto, User);
 
-            return Created($"/Death/id/{id}", null);
+            return Created($"/Death/id/{resultDeath.DeathId}", resultDeath);
         }
 
         [HttpPut]
         [Route("id/{id}")]
-        public ActionResult Update(int id, [FromBody] PutDeathDto deathDto)
+        public ActionResult<DeathDto> Update(int id, [FromBody] PutDeathDto deathDto)
         {
-            deathService.Update(id, deathDto, User);
+            DeathDto resultDeath = deathService.Update(id, deathDto, User);
 
-            return Ok();
+            return Ok(resultDeath);
         }
 
         [HttpDelete]

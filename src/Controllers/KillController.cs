@@ -1,6 +1,4 @@
 ﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Kill;
-using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
-using AirsoftBattlefieldManagementSystemAPI.Services.Implementations;
 using AirsoftBattlefieldManagementSystemAPI.Services.KillService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,20 +30,20 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
 
         [HttpPost]
         [Route("playerId/{playerId}")]
-        public ActionResult Create(int playerId, [FromBody] PostKillDto KillDto)
+        public ActionResult<KillDto> Create(int playerId, [FromBody] PostKillDto killDto)
         {
-            int id = killService.Create(playerId, KillDto, User);
+            KillDto resultKill = killService.Create(playerId, killDto, User);
 
-            return Created($"/Kill/id/{id}", null);
+            return Created($"/Kill/id/{resultKill.KillId}", resultKill);
         }
 
         [HttpPut]
         [Route("id/{id}")]
-        public ActionResult Update(int id, [FromBody] PutKillDto killDto)
+        public ActionResult<KillDto> Update(int id, [FromBody] PutKillDto killDto)
         {
-            killService.Update(id, killDto, User);
+            KillDto resultKill = killService.Update(id, killDto, User);
 
-            return Ok();
+            return Ok(resultKill);
         }
 
         [HttpDelete]

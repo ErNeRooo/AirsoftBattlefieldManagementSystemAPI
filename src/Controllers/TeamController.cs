@@ -21,20 +21,20 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create([FromBody] PostTeamDto teamDto)
+        public ActionResult<TeamDto> Create([FromBody] PostTeamDto teamDto)
         {
-            int teamId = teamService.Create(teamDto, User);
+            TeamDto resultTeam = teamService.Create(teamDto, User);
 
-            return Created($"/team/id/{teamId}", null);
+            return Created($"/team/id/{resultTeam.TeamId}", resultTeam);
         }
 
         [HttpPut]
         [Route("id/{id}")]
-        public ActionResult Update(int id, [FromBody] PutTeamDto teamDto)
+        public ActionResult<TeamDto> Update(int id, [FromBody] PutTeamDto teamDto)
         {
-            teamService.Update(id, teamDto, User);
+            TeamDto resultTeam = teamService.Update(id, teamDto, User);
 
-            return Ok();
+            return Ok(resultTeam);
         }
 
         [HttpDelete]

@@ -14,7 +14,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
 {
     public class LocationService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IAuthorizationService authorizationService) : ILocationService
     {
-        public LocationDto? GetById(int id, ClaimsPrincipal user)
+        public LocationDto GetById(int id, ClaimsPrincipal user)
         {
             Location? location = dbContext.Location.FirstOrDefault(t => t.LocationId == id);
             PlayerLocation? playerLocation = dbContext.PlayerLocation.FirstOrDefault(t => t.LocationId == id);
@@ -41,7 +41,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
             return locationDto;
         }
 
-        public List<LocationDto>? GetAllOfPlayerWithId(int playerId, ClaimsPrincipal user)
+        public List<LocationDto> GetAllOfPlayerWithId(int playerId, ClaimsPrincipal user)
         {
             Player? player = dbContext.Player.FirstOrDefault(p => p.PlayerId == playerId);
             
@@ -78,7 +78,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
             return locationDtos;
         }
 
-        public int Create(int playerId, PostLocationDto locationDto, ClaimsPrincipal user)
+        public LocationDto Create(int playerId, PostLocationDto locationDto, ClaimsPrincipal user)
         {
             var authorizationResult =
                 authorizationService.AuthorizeAsync(user, playerId,
@@ -103,13 +103,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
 
             dbContext.SaveChanges();
 
-            return location.LocationId;
+            return mapper.Map<LocationDto>(location);
         }
 
-        public void Update(int id, PutLocationDto locationDto, ClaimsPrincipal user)
+        public LocationDto Update(int id, PutLocationDto locationDto, ClaimsPrincipal user)
         {
             Location? oldLocation = dbContext.Location.FirstOrDefault(t => t.LocationId == id);
-            PlayerLocation? playerLocation = dbContext.PlayerLocation.FirstOrDefault(playerLocation => playerLocation.LocationId == id);
+            PlayerLocation? playerLocation =
+                dbContext.PlayerLocation.FirstOrDefault(playerLocation => playerLocation.LocationId == id);
 
             if (oldLocation is null) throw new NotFoundException($"Location with id {id} not found");
             if (playerLocation is null) throw new NotFoundException($"Location to player reference not found");
@@ -117,16 +118,19 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
             var playerOwnsResourceResult =
                 authorizationService.AuthorizeAsync(user, playerLocation.PlayerId,
                     new PlayerOwnsResourceRequirement()).Result;
-            
+
             var playerIsInTheSameRoomAsResourceResult =
                 authorizationService.AuthorizeAsync(user, playerLocation.RoomId,
                     new PlayerIsInTheSameRoomAsResourceRequirement()).Result;
 
-            if (!playerOwnsResourceResult.Succeeded || !playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
+            if (!playerOwnsResourceResult.Succeeded || !playerIsInTheSameRoomAsResourceResult.Succeeded)
+                throw new ForbidException($"You're unauthorize to manipulate this resource");
 
             mapper.Map(locationDto, oldLocation);
             dbContext.Location.Update(oldLocation);
             dbContext.SaveChanges();
+
+            return mapper.Map<LocationDto>(locationDto);
         }
 
         public void DeleteById(int id, ClaimsPrincipal user)

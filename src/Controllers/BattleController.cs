@@ -20,20 +20,20 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create([FromBody] PostBattleDto battleDto)
+        public ActionResult<BattleDto> Create([FromBody] PostBattleDto battleDto)
         {
-            int battleId = battleService.Create(battleDto, User);
+            BattleDto battleResult = battleService.Create(battleDto, User);
 
-            return Created($"/Battle/id/{battleId}", null);
+            return Created($"/Battle/id/{battleResult.BattleId}", battleResult);
         }
 
         [HttpPut]
         [Route("id/{id}")]
-        public ActionResult Update(int id, [FromBody] PutBattleDto battleDto)
+        public ActionResult<BattleDto> Update(int id, [FromBody] PutBattleDto battleDto)
         {
-            battleService.Update(id, battleDto, User);
+            BattleDto battleResult = battleService.Update(id, battleDto, User);
 
-            return Ok();
+            return Ok(battleResult);
         }
 
         [HttpDelete]

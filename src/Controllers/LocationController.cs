@@ -33,18 +33,18 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [Route("playerId/{playerId}")]
         public ActionResult Create(int playerId, [FromBody] PostLocationDto locationDto)
         {
-            int id = locationService.Create(playerId, locationDto, User);
+            LocationDto resultLocation = locationService.Create(playerId, locationDto, User);
 
-            return Created($"/Location/id/{id}", null);
+            return Created($"/Location/id/{resultLocation.LocationId}", resultLocation);
         }
 
         [HttpPut]
         [Route("id/{id}")]
         public ActionResult Update(int id, [FromBody] PutLocationDto locationDto)
         {
-            locationService.Update(id, locationDto, User);
+            LocationDto resultLocation = locationService.Update(id, locationDto, User);
 
-            return Ok();
+            return Ok(resultLocation);
         }
 
         [HttpDelete]

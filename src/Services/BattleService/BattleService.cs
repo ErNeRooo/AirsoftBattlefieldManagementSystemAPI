@@ -12,7 +12,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.BattleService
 {
     public class BattleService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IAuthorizationService authorizationService) : IBattleService
     {
-        public BattleDto? GetById(int id, ClaimsPrincipal user)
+        public BattleDto GetById(int id, ClaimsPrincipal user)
         {
             Battle? battle = dbContext.Battle.FirstOrDefault(t => t.BattleId == id);
 
@@ -29,7 +29,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.BattleService
             return battleDto;
         }
 
-        public int Create(PostBattleDto battleDto, ClaimsPrincipal user)
+        public BattleDto Create(PostBattleDto battleDto, ClaimsPrincipal user)
         {
             Room room = dbContext.Room.FirstOrDefault(r => r.RoomId == battleDto.RoomId);
             
@@ -46,10 +46,11 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.BattleService
             Battle battle = mapper.Map<Battle>(battleDto);
             dbContext.Battle.Add(battle);
             dbContext.SaveChanges();
-            return battle.BattleId;
+            
+            return mapper.Map<BattleDto>(battle);
         }
 
-        public void Update(int id, PutBattleDto battleDto, ClaimsPrincipal user)
+        public BattleDto Update(int id, PutBattleDto battleDto, ClaimsPrincipal user)
         {
             Battle? previousBattle = dbContext.Battle.FirstOrDefault(t => t.BattleId == id);
 
@@ -70,6 +71,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.BattleService
             mapper.Map(battleDto, previousBattle);
             dbContext.Battle.Update(previousBattle);
             dbContext.SaveChanges();
+            
+            return mapper.Map<BattleDto>(previousBattle);
         }
 
         public void DeleteById(int id, ClaimsPrincipal user)

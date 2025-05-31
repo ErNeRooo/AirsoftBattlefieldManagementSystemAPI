@@ -32,17 +32,17 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
             return playerDto;
         }
 
-        public int Create(PostPlayerDto playerDto)
+        public PlayerDto Create(PostPlayerDto playerDto)
         {
             var player = mapper.Map<Player>(playerDto);
 
             dbContext.Player.Add(player);
             dbContext.SaveChanges();
 
-            return player.PlayerId;
+            return mapper.Map<PlayerDto>(player);
         }
 
-        public void Update(int id, PutPlayerDto playerDto, ClaimsPrincipal user)
+        public PlayerDto Update(int id, PutPlayerDto playerDto, ClaimsPrincipal user)
         {
             var authorizationResult =
                 authorizationService.AuthorizeAsync(user, id,
@@ -57,6 +57,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
             mapper.Map(playerDto, previousPlayer);
             dbContext.Player.Update(previousPlayer);
             dbContext.SaveChanges();
+            
+            return mapper.Map<PlayerDto>(previousPlayer);
         }
 
         public void DeleteById(int id, ClaimsPrincipal user)

@@ -22,18 +22,18 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [AllowAnonymous]
         public ActionResult<string> Register([FromBody] PostPlayerDto playerDto)
         {
-            int playerId = playerService.Create(playerDto);
-            string jwtToken = playerService.GenerateJwt(playerId);
+            PlayerDto resultPlayer = playerService.Create(playerDto);
+            string jwtToken = playerService.GenerateJwt(resultPlayer.PlayerId);
 
-            return Created($"/player/id/{playerId}", jwtToken);
+            return Created($"/player/id/{resultPlayer.PlayerId}", jwtToken);
         }
 
         [HttpPut("id/{id}")]
-        public ActionResult<string> Update(int id, [FromBody] PutPlayerDto playerDto)
+        public ActionResult<PlayerDto> Update(int id, [FromBody] PutPlayerDto playerDto)
         {
-            playerService.Update(id, playerDto, User);
+            PlayerDto player = playerService.Update(id, playerDto, User);
 
-            return Ok();
+            return Ok(player);
         }
 
         [HttpDelete("id/{id}")]

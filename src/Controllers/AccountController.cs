@@ -21,29 +21,29 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
 
         [HttpPost]
         [Route("signup")]
-        public ActionResult Create([FromBody] PostAccountDto accountDto)
+        public ActionResult<AccountDto> Create([FromBody] PostAccountDto accountDto)
         {
-            int id = accountService.Create(accountDto, User);
+            AccountDto resultAccount = accountService.Create(accountDto, User);
 
-            return Created($"/Account/id/{id}", null);
+            return Created($"/Account/id/{resultAccount.AccountId}", resultAccount);
         }
 
         [HttpPost]
         [Route("login")]
-        public ActionResult LogIn([FromBody] LoginAccountDto accountDto)
+        public ActionResult<AccountDto> LogIn([FromBody] LoginAccountDto accountDto)
         {
-            int id = accountService.LogIn(accountDto, User);
+            AccountDto resultAccount = accountService.LogIn(accountDto, User);
 
-            return Created($"/Account/id/{id}", null);
+            return Created($"/Account/id/{resultAccount.AccountId}", resultAccount);
         }
 
         [HttpPut]
         [Route("id/{id}")]
-        public ActionResult Update(int id, [FromBody] PutAccountDto accountDto)
+        public ActionResult<AccountDto> Update(int id, [FromBody] PutAccountDto accountDto)
         {
-            accountService.Update(id, accountDto);
+            AccountDto resultAccount = accountService.Update(id, accountDto);
 
-            return Ok();
+            return Ok(resultAccount);
 
         }
 

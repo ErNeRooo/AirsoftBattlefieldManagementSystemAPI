@@ -1,4 +1,5 @@
 ﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Room;
+using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Services.Implementations;
 using AirsoftBattlefieldManagementSystemAPI.Services.RoomService;
 using Microsoft.AspNetCore.Authorization;
@@ -29,19 +30,19 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpPost("")]
-        public ActionResult PostRoom([FromBody] PostRoomDto roomDto)
+        public ActionResult<RoomDto> PostRoom([FromBody] PostRoomDto roomDto)
         {
-            int id = roomService.Create(roomDto, User);
+            RoomDto resultRoom = roomService.Create(roomDto, User);
 
-            return Created($"/room/id/{id}", null);
+            return Created($"/room/id/{resultRoom.RoomId}", resultRoom);
         }
 
         [HttpPut("id/{id}")]
-        public ActionResult PutRoom(int id, [FromBody] PutRoomDto roomDto)
+        public ActionResult<RoomDto> PutRoom(int id, [FromBody] PutRoomDto roomDto)
         {
-            roomService.Update(id, roomDto, User);
+            RoomDto resultRoom = roomService.Update(id, roomDto, User);
 
-            return Ok();
+            return Ok(resultRoom);
         }
 
         [HttpDelete("id/{id}")]
@@ -53,10 +54,10 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpPost("join")]
-        public ActionResult<string> JoinRoom([FromBody] LoginRoomDto roomDto)
+        public ActionResult<RoomDto> JoinRoom([FromBody] LoginRoomDto roomDto)
         {
-            roomService.Join(roomDto, User);
-            return Ok();
+            RoomDto resultRoom = roomService.Join(roomDto, User);
+            return Ok(resultRoom);
         }
 
         [HttpPost("leave")]
