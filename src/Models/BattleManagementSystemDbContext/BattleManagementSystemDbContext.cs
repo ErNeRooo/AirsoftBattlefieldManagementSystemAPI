@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext
 {
-    public class BattleManagementSystemDbContext(DbContextOptions<BattleManagementSystemDbContext> options) : DbContext, IBattleManagementSystemDbContext
+    public class BattleManagementSystemDbContext(DbContextOptions<BattleManagementSystemDbContext> options) : DbContext(options), IBattleManagementSystemDbContext
     {
         public DbSet<Account> Account { get; set; }
         public DbSet<Battle> Battle { get; set; }

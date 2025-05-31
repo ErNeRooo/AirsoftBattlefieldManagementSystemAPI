@@ -111,7 +111,7 @@ namespace AirsoftBattlefieldManagementSystemAPI
                         throw new Exception("Database connection string is missing");
                     }
                     
-                    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+                    options.UseSqlServer(connectionString);
                 }
                     
             );
