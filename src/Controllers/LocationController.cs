@@ -24,7 +24,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [Route("playerId/{playerId}")]
         public ActionResult<List<LocationDto>> GetLocationsOfPlayerWithId(int playerId)
         {
-            List<LocationDto> locationDtos = locationService.GetAllOfPlayerWithId(playerId, User);
+            List<LocationDto> locationDtos = locationService.GetAllLocationsOfPlayerWithId(playerId, User);
 
             return Ok(locationDtos);
         }

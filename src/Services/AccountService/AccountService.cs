@@ -3,18 +3,18 @@ using AirsoftBattlefieldManagementSystemAPI.Exceptions;
 using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Account;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
+using AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperService;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.AccountService
 {
-    public class AccountService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IPasswordHasher<Account> passwordHasher) : IAccountService
+    public class AccountService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IPasswordHasher<Account> passwordHasher, IAuthorizationHelperService authorizationHelper, IDbContextHelperService dbHelper) : IAccountService
     {
         public AccountDto GetById(int id)
         {
-            Account? account = dbContext.Account.FirstOrDefault(t => t.AccountId == id);
-
-            if (account is null) throw new NotFoundException($"Account with id {id} not found");
+            Account account = dbHelper.FindAccountById(id);
 
             AccountDto accountDto = mapper.Map<AccountDto>(account);
 
@@ -23,7 +23,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.AccountService
 
         public AccountDto Create(PostAccountDto accountDto, ClaimsPrincipal user)
         {
-            int playerId = int.Parse(user.Claims.FirstOrDefault(c => c.Type == "playerId").Value);
+            int playerId = GetPlayerIdFromClaims(user);
             
             bool hasAccount = dbContext.Account.Any(a => a.PlayerId == playerId);
             
@@ -43,15 +43,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.AccountService
 
         public AccountDto LogIn(LoginAccountDto accountDto, ClaimsPrincipal user)
         {
-            string stringPlayerId = user.Claims.FirstOrDefault(c => c.Type == "playerId").Value;
-
-            bool isParsingSuccessfull = int.TryParse(stringPlayerId, out int playerId);
-
-            if (!isParsingSuccessfull) throw new ForbidException($"Invalid claim playerId");
+            int playerId = GetPlayerIdFromClaims(user);
             
-            Account? account = dbContext.Account.FirstOrDefault(a => a.Email == accountDto.Email);
-
-            if (account is null) throw new NotFoundException($"Account with email {accountDto.Email} not found");
+            Account account = dbHelper.FindAccountById(playerId);
 
             var verificationResult = passwordHasher.VerifyHashedPassword(account, account.PasswordHash, accountDto.Password);
 
@@ -69,9 +63,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.AccountService
 
         public AccountDto Update(int id, PutAccountDto accountDto)
         {
-            Account? previousAccount = dbContext.Account.FirstOrDefault(t => t.AccountId == id);
-
-            if (previousAccount is null) throw new NotFoundException($"Account with id {id} not found");
+            Account previousAccount = dbHelper.FindAccountById(id);
 
             mapper.Map(accountDto, previousAccount);
 
@@ -86,12 +78,21 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.AccountService
 
         public void DeleteById(int id)
         {
-            Account? account = dbContext.Account.FirstOrDefault(t => t.AccountId == id);
-
-            if(account is null) throw new NotFoundException($"Account with id {id} not found");
+            Account account = dbHelper.FindAccountById(id);
 
             dbContext.Account.Remove(account);
             dbContext.SaveChanges();
+        }
+        
+        private int GetPlayerIdFromClaims(ClaimsPrincipal user)
+        {
+            var playerIdClaim = user.Claims.FirstOrDefault(c => c.Type == "playerId")?.Value;
+            
+            bool isParsingSuccessfull = int.TryParse(playerIdClaim, out int playerId);
+            
+            if (!isParsingSuccessfull) throw new ForbidException("Invalid claim playerId");
+            
+            return playerId;
         }
     }
 }

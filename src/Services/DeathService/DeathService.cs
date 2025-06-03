@@ -4,6 +4,8 @@ using AirsoftBattlefieldManagementSystemAPI.Exceptions;
 using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Death;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
+using AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperService;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -11,19 +13,13 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.DeathService
 {
-    public class DeathService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IAuthorizationService authorizationService) : IDeathService
+    public class DeathService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IAuthorizationHelperService authorizationHelper, IDbContextHelperService dbHelper) : IDeathService
     {
         public DeathDto GetById(int id, ClaimsPrincipal user)
         {
-            Death? death = dbContext.Death.Include(k=> k.Location).FirstOrDefault(t => t.DeathId == id);
+            Death death = dbHelper.FindDeathById(id);
 
-            if (death is null) throw new NotFoundException($"Death with id {id} not found");
-
-            var playerIsInTheSameRoomAsResourceResult =
-                authorizationService.AuthorizeAsync(user, death.RoomId,
-                    new PlayerIsInTheSameRoomAsResourceRequirement()).Result;
-
-            if (!playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
+            authorizationHelper.CheckPlayerIsInTheSameRoomAsResource(user, death.RoomId);
             
             DeathDto deathDto = mapper.Map<DeathDto>(death);
 
@@ -32,18 +28,11 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.DeathService
 
         public List<DeathDto> GetAllOfPlayerWithId(int playerId, ClaimsPrincipal user)
         {
-            Player? player = dbContext.Player.FirstOrDefault(t => t.PlayerId == playerId);
+            Player player = dbHelper.FindPlayerById(playerId);
             
-            if (player is null) throw new NotFoundException($"Player with id {playerId} not found");
+            authorizationHelper.CheckPlayerIsInTheSameRoomAsResource(user, player.RoomId);
             
-            var playerIsInTheSameRoomAsResourceResult =
-                authorizationService.AuthorizeAsync(user, player.RoomId,
-                    new PlayerIsInTheSameRoomAsResourceRequirement()).Result;
-
-            if (!playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
-            
-            var deaths = dbContext.Death.Include(k => k.Location)
-                .Where(death => death.PlayerId == playerId && death.RoomId == player.RoomId).ToList();
+            var deaths = dbHelper.FindAllDeathsOfPlayer(player);
 
             List<DeathDto> deathDtos = deaths.Select(location =>
             {
@@ -58,15 +47,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.DeathService
 
         public DeathDto Create(int playerId, PostDeathDto deathDto, ClaimsPrincipal user)
         {
-            var authorizationResult =
-                authorizationService.AuthorizeAsync(user, playerId,
-                    new PlayerOwnsResourceRequirement()).Result;
-
-            if (!authorizationResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
-            
-            Player? player = dbContext.Player.FirstOrDefault(p => p.PlayerId == playerId);
-
-            if(player is null) throw new NotFoundException($"Player with id {playerId} not found");
+            Player player = dbHelper.FindPlayerById(playerId);
 
             Location location = mapper.Map<Location>(deathDto);
             dbContext.Location.Add(location);
@@ -86,22 +67,10 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.DeathService
 
         public DeathDto Update(int id, PutDeathDto deathDto, ClaimsPrincipal user)
         {
-            Death? previousDeath = dbContext.Death
-                .Include(k => k.Location)
-                .FirstOrDefault(t => t.DeathId == id);
-
-            if (previousDeath is null) throw new NotFoundException($"Death with id {id} not found");
+            Death previousDeath = dbHelper.FindDeathById(id);
             
-            var playerOwnsResourceResult =
-                authorizationService.AuthorizeAsync(user, previousDeath.PlayerId,
-                    new PlayerOwnsResourceRequirement()).Result;
+            authorizationHelper.CheckPlayerOwnsResource(user, previousDeath.PlayerId);
             
-            var playerIsInTheSameRoomAsResourceResult =
-                authorizationService.AuthorizeAsync(user, previousDeath.RoomId,
-                    new PlayerIsInTheSameRoomAsResourceRequirement()).Result;
-
-            if (!playerOwnsResourceResult.Succeeded || !playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
-
             mapper.Map(deathDto, previousDeath.Location);
             dbContext.Location.Update(previousDeath.Location);
             dbContext.SaveChanges();
@@ -111,19 +80,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.DeathService
 
         public void DeleteById(int id, ClaimsPrincipal user)
         {
-            Death? death = dbContext.Death.FirstOrDefault(t => t.DeathId == id);
-
-            if(death is null) throw new NotFoundException($"Death with id {id} not found");
-
-            var playerOwnsResourceResult =
-                authorizationService.AuthorizeAsync(user, death.PlayerId,
-                    new PlayerOwnsResourceRequirement()).Result;
+            Death death = dbHelper.FindDeathById(id);
             
-            var playerIsInTheSameRoomAsResourceResult =
-                authorizationService.AuthorizeAsync(user, death.RoomId,
-                    new PlayerIsInTheSameRoomAsResourceRequirement()).Result;
-
-            if (!playerOwnsResourceResult.Succeeded || !playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
+            authorizationHelper.CheckPlayerOwnsResource(user, death.PlayerId);
 
             dbContext.Death.Remove(death);
             dbContext.SaveChanges();

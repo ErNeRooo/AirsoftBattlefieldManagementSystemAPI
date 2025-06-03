@@ -5,7 +5,9 @@ using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbConte
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles;
 using AirsoftBattlefieldManagementSystemAPI.Services.AccountService;
+using AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.BattleService;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.DeathService;
 using AirsoftBattlefieldManagementSystemAPI.Services.Implementations;
 using AirsoftBattlefieldManagementSystemAPI.Services.JoinCodeService;
@@ -90,6 +92,8 @@ namespace AirsoftBattlefieldManagementSystemAPI
             builder.Services.AddScoped<IKillService, KillService>();
             builder.Services.AddScoped<IDeathService, DeathService>();
             builder.Services.AddScoped<IJoinCodeService, JoinCodeService>();
+            builder.Services.AddScoped<IAuthorizationHelperService, AuthorizationHelperService>();
+            builder.Services.AddScoped<IDbContextHelperService, DbContextHelperService>();
 
             builder.Services.AddTransient<ErrorHandlingMiddleware>();
 

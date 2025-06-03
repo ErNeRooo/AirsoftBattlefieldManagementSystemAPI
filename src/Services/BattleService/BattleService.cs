@@ -4,25 +4,21 @@ using AirsoftBattlefieldManagementSystemAPI.Exceptions;
 using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Battle;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
+using AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperService;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.BattleService
 {
-    public class BattleService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IAuthorizationService authorizationService) : IBattleService
+    public class BattleService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IAuthorizationHelperService authorizationHelper, IDbContextHelperService dbHelper) : IBattleService
     {
         public BattleDto GetById(int id, ClaimsPrincipal user)
         {
-            Battle? battle = dbContext.Battle.FirstOrDefault(t => t.BattleId == id);
+            Battle battle = dbHelper.FindBattleById(id);
 
-            if (battle is null) throw new NotFoundException($"Battle with id {id} not found");
-
-            var playerIsInTheSameRoomAsResourceResult =
-                authorizationService.AuthorizeAsync(user, battle.RoomId,
-                    new PlayerIsInTheSameRoomAsResourceRequirement()).Result;
-
-            if (!playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
+            authorizationHelper.CheckPlayerIsInTheSameRoomAsResource(user, battle.RoomId);
             
             BattleDto battleDto = mapper.Map<BattleDto>(battle);
 
@@ -31,18 +27,10 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.BattleService
 
         public BattleDto Create(PostBattleDto battleDto, ClaimsPrincipal user)
         {
-            Room room = dbContext.Room.FirstOrDefault(r => r.RoomId == battleDto.RoomId);
+            Room room = dbHelper.FindRoomById(battleDto.RoomId);
             
-            var playerOwnsResourceResult =
-                authorizationService.AuthorizeAsync(user, room.AdminPlayerId,
-                    new PlayerOwnsResourceRequirement()).Result;
+            authorizationHelper.CheckPlayerOwnsResource(user, room.AdminPlayerId);
             
-            var playerIsInTheSameRoomAsResourceResult =
-                authorizationService.AuthorizeAsync(user, battleDto.RoomId,
-                    new PlayerIsInTheSameRoomAsResourceRequirement()).Result;
-
-            if (!playerOwnsResourceResult.Succeeded || !playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
-
             Battle battle = mapper.Map<Battle>(battleDto);
             dbContext.Battle.Add(battle);
             dbContext.SaveChanges();
@@ -52,22 +40,12 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.BattleService
 
         public BattleDto Update(int id, PutBattleDto battleDto, ClaimsPrincipal user)
         {
-            Battle? previousBattle = dbContext.Battle.FirstOrDefault(t => t.BattleId == id);
-
-            if (previousBattle is null) throw new NotFoundException($"Battle with id {id} not found");
+            Battle previousBattle = dbHelper.FindBattleById(id);
             
-            Room room = dbContext.Room.FirstOrDefault(r => r.RoomId == previousBattle.RoomId);
+            Room room = dbHelper.FindRoomById(previousBattle.RoomId);
             
-            var playerOwnsResourceResult =
-                authorizationService.AuthorizeAsync(user, room.AdminPlayerId,
-                    new PlayerOwnsResourceRequirement()).Result;
+            authorizationHelper.CheckPlayerOwnsResource(user, room.AdminPlayerId);
             
-            var playerIsInTheSameRoomAsResourceResult =
-                authorizationService.AuthorizeAsync(user, previousBattle.RoomId,
-                    new PlayerIsInTheSameRoomAsResourceRequirement()).Result;
-
-            if (!playerOwnsResourceResult.Succeeded || !playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
-
             mapper.Map(battleDto, previousBattle);
             dbContext.Battle.Update(previousBattle);
             dbContext.SaveChanges();
@@ -77,22 +55,12 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.BattleService
 
         public void DeleteById(int id, ClaimsPrincipal user)
         {
-            Battle? battle = dbContext.Battle.FirstOrDefault(t => t.BattleId == id);
+            Battle battle = dbHelper.FindBattleById(id);
 
-            if (battle is null) throw new NotFoundException($"Battle with id {id} not found");
-
-            Room room = dbContext.Room.FirstOrDefault(r => r.RoomId == battle.RoomId);
+            Room room = dbHelper.FindRoomById(battle.RoomId);
             
-            var playerOwnsResourceResult =
-                authorizationService.AuthorizeAsync(user, room.AdminPlayerId,
-                    new PlayerOwnsResourceRequirement()).Result;
+            authorizationHelper.CheckPlayerOwnsResource(user, room.AdminPlayerId);
             
-            var playerIsInTheSameRoomAsResourceResult =
-                authorizationService.AuthorizeAsync(user, battle.RoomId,
-                    new PlayerIsInTheSameRoomAsResourceRequirement()).Result;
-
-            if (!playerOwnsResourceResult.Succeeded || !playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
-
             dbContext.Battle.Remove(battle);
             dbContext.SaveChanges();
         }

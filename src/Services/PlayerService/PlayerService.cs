@@ -10,22 +10,18 @@ using Microsoft.IdentityModel.Tokens;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Player;
 using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
+using AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperService;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
 {
-    public class PlayerService(IBattleManagementSystemDbContext dbContext, IMapper mapper, IAuthenticationSettings authenticationSettings, IPasswordHasher<Room> passwordHasher, IAuthorizationService authorizationService) : IPlayerService
+    public class PlayerService(IBattleManagementSystemDbContext dbContext, IMapper mapper, IAuthenticationSettings authenticationSettings, IAuthorizationHelperService authorizationHelper, IDbContextHelperService dbHelper) : IPlayerService
     {
         public PlayerDto GetById(int id, ClaimsPrincipal user)
         {
-            Player? player = dbContext.Player.FirstOrDefault(p => p.PlayerId == id);
+            Player player = dbHelper.FindPlayerById(id);
 
-            if (player is null) throw new NotFoundException($"Player with id {id} not found");
-
-            var playerIsInTheSameRoomAsResourceResult =
-                authorizationService.AuthorizeAsync(user, player.RoomId,
-                    new PlayerIsInTheSameRoomAsResourceRequirement()).Result;
-
-            if (!playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
+            authorizationHelper.CheckPlayerIsInTheSameRoomAsResource(user, player.RoomId);
             
             PlayerDto playerDto = mapper.Map<PlayerDto>(player);
 
@@ -44,15 +40,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
 
         public PlayerDto Update(int id, PutPlayerDto playerDto, ClaimsPrincipal user)
         {
-            var authorizationResult =
-                authorizationService.AuthorizeAsync(user, id,
-                    new PlayerOwnsResourceRequirement()).Result;
+            authorizationHelper.CheckPlayerOwnsResource(user, id);
 
-            if (!authorizationResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate player with id {id}");
-
-            Player? previousPlayer = dbContext.Player.FirstOrDefault(p => p.PlayerId == id);
-
-            if (previousPlayer is null) throw new NotFoundException($"Player with id {id} not found");
+            Player previousPlayer = dbHelper.FindPlayerById(id);
 
             mapper.Map(playerDto, previousPlayer);
             dbContext.Player.Update(previousPlayer);
@@ -63,15 +53,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
 
         public void DeleteById(int id, ClaimsPrincipal user)
         {
-            var authorizationResult =
-                authorizationService.AuthorizeAsync(user, id,
-                    new PlayerOwnsResourceRequirement()).Result;
+            authorizationHelper.CheckPlayerOwnsResource(user, id);
 
-            if (!authorizationResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate player with id {id}");
-
-            var player = dbContext.Player.FirstOrDefault(p => p.PlayerId == id);
-
-            if (player is null) throw new NotFoundException($"Player with id {id} not found");
+            Player player = dbHelper.FindPlayerById(id);
 
             dbContext.Player.Remove(player);
             dbContext.SaveChanges();
