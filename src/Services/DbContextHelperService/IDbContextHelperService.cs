@@ -14,6 +14,7 @@ public interface IDbContextHelperService
     public Death FindDeathById(int id);
     public List<Death> FindAllDeathsOfPlayer(Player player);
     public Account FindAccountById(int id);
+    public Account FindAccountByEmail(string email);
     public Battle FindBattleById(int id);
     public Room FindRoomById(int id);
     public Room FindRoomByIJoinCode(string joinCode);

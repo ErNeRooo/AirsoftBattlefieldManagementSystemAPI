@@ -1,22 +1,19 @@
 ﻿using System.Security.Claims;
-using AirsoftBattlefieldManagementSystemAPI.Authorization;
 using AirsoftBattlefieldManagementSystemAPI.Enums;
 using AirsoftBattlefieldManagementSystemAPI.Exceptions;
 using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Room;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperService;
+using AirsoftBattlefieldManagementSystemAPI.Services.ClaimsHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.JoinCodeService;
-using AirsoftBattlefieldManagementSystemAPI.Services.RoomService;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
-namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
+namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
 {
-    public class RoomService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IDbContextHelperService dbHelper, IPasswordHasher<Room> passwordHasher, IJoinCodeService joinCodeService, IAuthorizationHelperService authorizationHelperService) : IRoomService
+    public class RoomService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IDbContextHelperService dbHelper, IPasswordHasher<Room> passwordHasher, IJoinCodeService joinCodeService, IAuthorizationHelperService authorizationHelperService, IClaimsHelperService claimsHelper) : IRoomService
     {
         public RoomDto GetById(int id)
         {
@@ -43,7 +40,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 
             Room room = mapper.Map<Room>(roomDto);
             
-            room.AdminPlayerId = GetPlayerIdFromClaims(user);
+            room.AdminPlayerId = claimsHelper.GetIntegerClaimValue("playerId", user);
 
             var hash = passwordHasher.HashPassword(room, room.PasswordHash);
             room.PasswordHash = hash;
@@ -86,9 +83,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
             string joinCode = roomDto.JoinCode;
             string password = roomDto.Password;
 
-            int playerId = GetPlayerIdFromClaims(user);
+            int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
 
-            Room room = dbContext.Room.FirstOrDefault(r => r.JoinCode == joinCode);
+            Room room = dbHelper.FindRoomByIJoinCode(joinCode);
             Player player = dbHelper.FindPlayerById(playerId);
 
             var verificationResult = passwordHasher.VerifyHashedPassword(room, room.PasswordHash, password);
@@ -107,7 +104,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 
         public void Leave(ClaimsPrincipal user)
         {
-            int playerId = GetPlayerIdFromClaims(user);
+            int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
 
             Player player = dbHelper.FindPlayerById(playerId);
 
@@ -115,17 +112,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.Implementations
 
             dbContext.Player.Update(player);
             dbContext.SaveChanges();
-        }
-
-        private int GetPlayerIdFromClaims(ClaimsPrincipal user)
-        {
-            var playerIdClaim = user.Claims.FirstOrDefault(c => c.Type == "playerId")?.Value;
-            
-            bool isParsingSuccessfull = int.TryParse(playerIdClaim, out int playerId);
-            
-            if (!isParsingSuccessfull) throw new ForbidException("Invalid claim playerId");
-            
-            return playerId;
         }
     }
 }

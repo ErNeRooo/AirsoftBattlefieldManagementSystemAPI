@@ -4,13 +4,14 @@ using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbConte
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Account;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperService;
+using AirsoftBattlefieldManagementSystemAPI.Services.ClaimsHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.AccountService
 {
-    public class AccountService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IPasswordHasher<Account> passwordHasher, IAuthorizationHelperService authorizationHelper, IDbContextHelperService dbHelper) : IAccountService
+    public class AccountService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IPasswordHasher<Account> passwordHasher, IAuthorizationHelperService authorizationHelper, IDbContextHelperService dbHelper, IClaimsHelperService claimsHelper) : IAccountService
     {
         public AccountDto GetById(int id)
         {
@@ -23,7 +24,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.AccountService
 
         public AccountDto Create(PostAccountDto accountDto, ClaimsPrincipal user)
         {
-            int playerId = GetPlayerIdFromClaims(user);
+            int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
             
             bool hasAccount = dbContext.Account.Any(a => a.PlayerId == playerId);
             
@@ -43,9 +44,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.AccountService
 
         public AccountDto LogIn(LoginAccountDto accountDto, ClaimsPrincipal user)
         {
-            int playerId = GetPlayerIdFromClaims(user);
+            int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
             
-            Account account = dbHelper.FindAccountById(playerId);
+            Account account = dbHelper.FindAccountByEmail(accountDto.Email);
 
             var verificationResult = passwordHasher.VerifyHashedPassword(account, account.PasswordHash, accountDto.Password);
 
@@ -82,17 +83,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.AccountService
 
             dbContext.Account.Remove(account);
             dbContext.SaveChanges();
-        }
-        
-        private int GetPlayerIdFromClaims(ClaimsPrincipal user)
-        {
-            var playerIdClaim = user.Claims.FirstOrDefault(c => c.Type == "playerId")?.Value;
-            
-            bool isParsingSuccessfull = int.TryParse(playerIdClaim, out int playerId);
-            
-            if (!isParsingSuccessfull) throw new ForbidException("Invalid claim playerId");
-            
-            return playerId;
         }
     }
 }

@@ -101,6 +101,15 @@ public class DbContextHelperService(IBattleManagementSystemDbContext dbContext) 
         return account;
     }
     
+    public Account FindAccountByEmail(string email)
+    {
+        Account? account = dbContext.Account.FirstOrDefault(t => t.Email == email);
+
+        if(account is null) throw new NotFoundException($"Account with email {email} not found");
+            
+        return account;
+    }
+    
     public Battle FindBattleById(int id)
     {
         Battle? battle = dbContext.Battle.FirstOrDefault(t => t.BattleId == id);

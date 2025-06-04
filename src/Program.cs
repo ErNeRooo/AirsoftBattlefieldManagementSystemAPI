@@ -1,5 +1,7 @@
 using System.Text;
-using AirsoftBattlefieldManagementSystemAPI.Authorization;
+using AirsoftBattlefieldManagementSystemAPI.Authorization.JwtPlayerIdHasExistingPlayerEntity;
+using AirsoftBattlefieldManagementSystemAPI.Authorization.PlayerIsInTheSameRoomAsResource;
+using AirsoftBattlefieldManagementSystemAPI.Authorization.PlayerOwnsResource;
 using AirsoftBattlefieldManagementSystemAPI.Middleware;
 using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
@@ -7,9 +9,9 @@ using AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles;
 using AirsoftBattlefieldManagementSystemAPI.Services.AccountService;
 using AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.BattleService;
+using AirsoftBattlefieldManagementSystemAPI.Services.ClaimsHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.DeathService;
-using AirsoftBattlefieldManagementSystemAPI.Services.Implementations;
 using AirsoftBattlefieldManagementSystemAPI.Services.JoinCodeService;
 using AirsoftBattlefieldManagementSystemAPI.Services.KillService;
 using AirsoftBattlefieldManagementSystemAPI.Services.LocationService;
@@ -21,6 +23,7 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NLog.Web;
@@ -61,12 +64,22 @@ namespace AirsoftBattlefieldManagementSystemAPI
 
             builder.Services.AddAuthorization(options =>
             {
-                
+                options.AddPolicy("PlayerIdFromClaimExistsInDatabase", policy => 
+                    policy.Requirements.Add(new JwtPlayerIdHasExistingPlayerEntityRequirement()));
             });
 
             builder.Services.AddScoped<IAuthorizationHandler, PlayerOwnsResourceHandler>();
             builder.Services.AddScoped<IAuthorizationHandler, PlayerIsInTheSameRoomAsResourceHandler>();
-            builder.Services.AddControllers();
+            builder.Services.AddScoped<IAuthorizationHandler, JwtPlayerIdHasExistingPlayerEntityHandler>();
+            builder.Services.AddControllers(options =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .AddRequirements(new JwtPlayerIdHasExistingPlayerEntityRequirement())
+                    .Build();
+
+                options.Filters.Add(new AuthorizeFilter(policy));
+            });
             builder.Services.AddOpenApi();
             builder.Services.AddSingleton<IMapper>(sp =>
             {
@@ -94,6 +107,7 @@ namespace AirsoftBattlefieldManagementSystemAPI
             builder.Services.AddScoped<IJoinCodeService, JoinCodeService>();
             builder.Services.AddScoped<IAuthorizationHelperService, AuthorizationHelperService>();
             builder.Services.AddScoped<IDbContextHelperService, DbContextHelperService>();
+            builder.Services.AddScoped<IClaimsHelperService, ClaimsHelperService>();
 
             builder.Services.AddTransient<ErrorHandlingMiddleware>();
 

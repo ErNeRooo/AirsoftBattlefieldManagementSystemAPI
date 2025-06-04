@@ -1,7 +1,6 @@
 ﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Death;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Services.DeathService;
-using AirsoftBattlefieldManagementSystemAPI.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
