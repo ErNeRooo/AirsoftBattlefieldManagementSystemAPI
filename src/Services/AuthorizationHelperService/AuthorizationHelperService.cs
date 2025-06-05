@@ -14,13 +14,13 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperServ
         public void CheckPlayerIsInTheSameRoomAsResource(ClaimsPrincipal user, int? roomId)
         {
             var playerIsInTheSameRoomAsResourceResult =
-            authorizationService.AuthorizeAsync(user, roomId,
+            authorizationService.AuthorizeAsync(user, roomId ?? 0,
                 new PlayerIsInTheSameRoomAsResourceRequirement()).Result;
 
             if (!playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're must be in the same room as target resource");
         }
 
-        public void CheckPlayerOwnsResource(ClaimsPrincipal user, int playerId)
+        public void CheckPlayerOwnsResource(ClaimsPrincipal user, int? playerId)
         {
             var authorizationResult =
                 authorizationService.AuthorizeAsync(user, playerId,

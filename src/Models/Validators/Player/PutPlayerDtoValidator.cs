@@ -11,6 +11,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Validators.Player
             RuleFor(p => p.Name).MaximumLength(20);
             RuleFor(p => p.TeamId).Custom((value, context) =>
             {
+                if(value is null) return;
+                
                 bool isNotExiting = !dbContext.Team.Any(p => p.TeamId == value);
 
                 if (isNotExiting)

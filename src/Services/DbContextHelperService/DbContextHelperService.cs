@@ -7,7 +7,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService;
 
 public class DbContextHelperService(IBattleManagementSystemDbContext dbContext) : IDbContextHelperService
 {
-    public Location FindLocationById(int id)
+    public Location FindLocationById(int? id)
     {
         Location? location = dbContext.Location.FirstOrDefault(p => p.LocationId == id);
 
@@ -29,7 +29,7 @@ public class DbContextHelperService(IBattleManagementSystemDbContext dbContext) 
         return locations;
     }
         
-    public PlayerLocation FindPlayerLocationById(int id)
+    public PlayerLocation FindPlayerLocationById(int? id)
     {
         PlayerLocation? playerLocation = dbContext.PlayerLocation.FirstOrDefault(p => p.LocationId == id);
 
@@ -38,7 +38,7 @@ public class DbContextHelperService(IBattleManagementSystemDbContext dbContext) 
         return playerLocation;
     }
     
-    public Player FindPlayerById(int id)
+    public Player FindPlayerById(int? id)
     {
         Player? player = dbContext.Player.FirstOrDefault(p => p.PlayerId == id);
 
@@ -47,7 +47,7 @@ public class DbContextHelperService(IBattleManagementSystemDbContext dbContext) 
         return player;
     }
     
-    public Team FindTeamById(int id)
+    public Team FindTeamById(int? id)
     {
         Team? team = dbContext.Team.FirstOrDefault(t => t.TeamId == id);
 
@@ -56,7 +56,7 @@ public class DbContextHelperService(IBattleManagementSystemDbContext dbContext) 
         return team;
     }
     
-    public Kill FindKillById(int id)
+    public Kill FindKillById(int? id)
     {
         Kill? kill = dbContext.Kill.Include(k => k.Location).FirstOrDefault(t => t.KillId == id);
 
@@ -74,7 +74,7 @@ public class DbContextHelperService(IBattleManagementSystemDbContext dbContext) 
         return kills;
     }
     
-    public Death FindDeathById(int id)
+    public Death FindDeathById(int? id)
     {
         Death? death = dbContext.Death.Include(k => k.Location).FirstOrDefault(t => t.DeathId == id);
 
@@ -92,7 +92,7 @@ public class DbContextHelperService(IBattleManagementSystemDbContext dbContext) 
         return deaths;
     }
     
-    public Account FindAccountById(int id)
+    public Account FindAccountById(int? id)
     {
         Account? account = dbContext.Account.FirstOrDefault(t => t.AccountId == id);
 
@@ -110,7 +110,7 @@ public class DbContextHelperService(IBattleManagementSystemDbContext dbContext) 
         return account;
     }
     
-    public Battle FindBattleById(int id)
+    public Battle FindBattleById(int? id)
     {
         Battle? battle = dbContext.Battle.FirstOrDefault(t => t.BattleId == id);
 
@@ -119,7 +119,7 @@ public class DbContextHelperService(IBattleManagementSystemDbContext dbContext) 
         return battle;
     }
     
-    public Room FindRoomById(int id)
+    public Room FindRoomById(int? id)
     {
         Room? room = dbContext.Room.FirstOrDefault(r => r.RoomId == id);
 

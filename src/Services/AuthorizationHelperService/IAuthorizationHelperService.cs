@@ -6,6 +6,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperServ
     {
         public void CheckPlayerIsInTheSameRoomAsResource(ClaimsPrincipal user, int? roomId);
 
-        public void CheckPlayerOwnsResource(ClaimsPrincipal user, int playerId);
+        public void CheckPlayerOwnsResource(ClaimsPrincipal user, int? playerId);
     }
 }
