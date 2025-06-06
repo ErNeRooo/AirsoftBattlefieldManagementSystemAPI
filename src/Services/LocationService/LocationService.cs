@@ -27,6 +27,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
             {
                 PlayerId = playerLocation.PlayerId,
                 LocationId = location.LocationId,
+                RoomId = playerLocation.RoomId,
                 Longitude = location.Longitude,
                 Latitude = location.Latitude,
                 Accuracy = location.Accuracy,
@@ -51,6 +52,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
                 {
                     PlayerId = playerId,
                     LocationId = l.LocationId,
+                    RoomId = player.RoomId,
                     Longitude = l.Longitude,
                     Latitude = l.Latitude,
                     Accuracy = l.Accuracy,
@@ -76,12 +78,24 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
             PlayerLocation playerLocation = new PlayerLocation();
             playerLocation.LocationId = location.LocationId;
             playerLocation.PlayerId = playerId;
-            playerLocation.RoomId = (int)player.RoomId;
+            playerLocation.RoomId = player.RoomId;
             dbContext.PlayerLocation.Add(playerLocation);
 
             dbContext.SaveChanges();
+            
+            LocationDto locationToReturn = new LocationDto
+            {
+                LocationId = location.LocationId,
+                PlayerId = playerId,
+                RoomId = player.RoomId,
+                Longitude = location.Longitude,
+                Latitude = location.Latitude,
+                Accuracy = location.Accuracy,
+                Bearing = location.Bearing,
+                Time = location.Time
+            };
 
-            return mapper.Map<LocationDto>(location);
+            return locationToReturn;
         }
 
         public LocationDto Update(int id, PutLocationDto locationDto, ClaimsPrincipal user)
@@ -94,8 +108,20 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
             mapper.Map(locationDto, oldLocation);
             dbContext.Location.Update(oldLocation);
             dbContext.SaveChanges();
+            
+            LocationDto locationToReturn = new LocationDto
+            {
+                LocationId = oldLocation.LocationId,
+                PlayerId = playerLocation.PlayerId,
+                RoomId = playerLocation.RoomId,
+                Longitude = oldLocation.Longitude,
+                Latitude = oldLocation.Latitude,
+                Accuracy = oldLocation.Accuracy,
+                Bearing = oldLocation.Bearing,
+                Time = oldLocation.Time
+            };
 
-            return mapper.Map<LocationDto>(locationDto);
+            return locationToReturn;
         }
 
         public void DeleteById(int id, ClaimsPrincipal user)
