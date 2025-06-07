@@ -1,9 +1,3 @@
-Info
-	Test type:
-		u => unit test
-		i => integration test
-		e => E2E test
-	
 	Implementation:
 		- => not implemented
 		+ => implemented
@@ -15,46 +9,46 @@ e	- Wrong JWT token (returns 401 Unauthorized)
 
 Account
   1. Get
-i   + Valid id for existing account (returns AccountDto in body and 200 Ok)
-i   !- Everything correct request from other player (returns AccountDto in body and 200 Ok)
-i   + Valid id for not existing account (returns 404 Not Found)
-i   + Not valid id (returns 400 Bad Request)
+    - Valid id for existing account (returns AccountDto in body and 200 Ok)
+    - Everything correct request from other player (returns AccountDto in body and 200 Ok)
+    - Valid id for not existing account (returns 404 Not Found)
+    - Not valid id (returns 400 Bad Request)
   2. Post
-i   + Valid json (returns location header and 201 Created)
-i   + Wrong email format (returns 400 Bad Request)
-i   + Email is missing (returns 400 Bad Request)
-i   + Email is occupied (returns 400 Bad Request)
-i   + Password is missing (returns 400 Bad Request)
-i   + Password is too short (returns 400 Bad Request)
-i   + Create second account for one player (returns 409 Conflict)
+    - Valid json (returns location header and 201 Created)
+    - Wrong email format (returns 400 Bad Request)
+    - Email is missing (returns 400 Bad Request)
+    - Email is occupied (returns 400 Bad Request)
+    - Password is missing (returns 400 Bad Request)
+    - Password is too short (returns 400 Bad Request)
+    - Create second account for one player (returns 409 Conflict)
   3. Put
-i   + Everything correct (returns 200 Ok)
-i   + Everything correct given only specific fields (returns 200 Ok)
-i   + Wrong email format (returns 400 Bad Request)
-i   + Email is occupied (returns 400 Bad Request)
-i   + Password is too short (returns 400 Bad Request)
-i   + Account does not exist (returns 404 Not Found)
+    - Everything correct (returns 200 Ok)
+    - Everything correct given only specific fields (returns 200 Ok)
+    - Wrong email format (returns 400 Bad Request)
+    - Email is occupied (returns 400 Bad Request)
+    - Password is too short (returns 400 Bad Request)
+    - Account does not exist (returns 404 Not Found)
   4. Delete
-i   + Everything correct (returns 204 No Content)
-i   + Account does not exist (returns 404 Not Found)
-i   + Id from route is not int type (returns 400 Bad Request)
+    - Everything correct (returns 204 No Content)
+    - Account does not exist (returns 404 Not Found)
+    - Id from route is not int type (returns 400 Bad Request)
 	 
 Player
   1. Get
-i   + Everything correct (returns PlayerDto in body and 200 Ok)
-i   + Everything correct request from other player in the same room (returns PlayerDto in body and 200 Ok)
-i   + request from player that is not in the same room (returns 403 Forbidden)
-i   + Player does not exist (returns 404 Not Found)
-i   + Id from route is not int type (returns 400 Bad Request)
+    - Everything correct (returns PlayerDto in body and 200 Ok)
+    - Everything correct request from other player in the same room (returns PlayerDto in body and 200 Ok)
+    - request from player that is not in the same room (returns 403 Forbidden)
+    - Player does not exist (returns 404 Not Found)
+    - Id from route is not int type (returns 400 Bad Request)
   2. Post (Anonymous)
-    + Everything correct (returns location header and 201 Created)
-    + Name is empty (returns 400 Bad Request)
-    + Name is too long (returns 400 Bad Request)
+    - Everything correct (returns location header and 201 Created)
+    - Name is empty (returns 400 Bad Request)
+    - Name is too long (returns 400 Bad Request)
   3. Put
-    + Everything correct (returns 200 Ok)
-    !+ Everything correct given only specific fields (returns 200 Ok)
-    + Name is too long (returns 400 Bad Request)
-    + IsDead is not bool type
+    - Everything correct (returns 200 Ok)
+    - Everything correct given only specific fields (returns 200 Ok)
+    - Name is too long (returns 400 Bad Request)
+    - IsDead is not bool type
   4. Patch (Player Join Room)
     - Everything correct (returns 200 Ok)
 	  - Room does not exist (returns 404 Not Found)
