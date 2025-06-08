@@ -8,16 +8,21 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Validators.Team
     {
         public PostTeamDtoValidator(IBattleManagementSystemDbContext dbContext)
         {
-            RuleFor(t => t.Name).NotEmpty().MinimumLength(1).MaximumLength(60);
-            RuleFor(t => t.RoomId).NotEmpty().Custom((value, context) =>
-            {
-                bool isNotExiting = !dbContext.Room.Any(p => p.RoomId == value);
-
-                if (isNotExiting)
+            RuleFor(t => t.Name)
+                .NotEmpty()
+                .MaximumLength(60);
+            
+            RuleFor(t => t.RoomId)
+                .NotEmpty()
+                .Custom((value, context) =>
                 {
-                    context.AddFailure("RoomId", $"Room with id {value} not found");
-                }
-            });
+                    bool isNotExiting = !dbContext.Room.Any(p => p.RoomId == value);
+
+                    if (isNotExiting)
+                    {
+                        context.AddFailure("RoomId", $"Room with id {value} not found");
+                    }
+                });
         }
     }
 }

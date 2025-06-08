@@ -8,16 +8,26 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Validators.Team
     {
         public PutTeamDtoValidator(IBattleManagementSystemDbContext dbContext)
         {
-            RuleFor(t => t.Name).MinimumLength(1).MaximumLength(60);
-            RuleFor(t => t.OfficerPlayerId).Custom((value, context) =>
-            {
-                bool isNotExiting = !dbContext.Player.Any(p => p.PlayerId == value);
-
-                if (isNotExiting)
+            RuleFor(t => t.Name)
+                .Custom((value, context) =>
                 {
-                    context.AddFailure("OfficerPlayerId", $"Player with id {value} not found");
-                }
-            });
+                    if(string.IsNullOrEmpty(value)) return;
+
+                    if (value.Length < 1 || value.Length > 60) context.AddFailure("Name must be between 1 and 60 characters.");
+                });
+            
+            RuleFor(t => t.OfficerPlayerId)
+                .Custom((value, context) =>
+                {
+                    if(value == null) return;
+                    
+                    bool isNotExiting = !dbContext.Player.Any(p => p.PlayerId == value);
+
+                    if (isNotExiting)
+                    {
+                        context.AddFailure("OfficerPlayerId", $"Player with id {value} not found");
+                    }
+                });
         }
     }
 }
