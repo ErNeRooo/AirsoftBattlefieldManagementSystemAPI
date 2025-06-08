@@ -9,7 +9,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.IntegrationTests.ValidatorsTests
 
 public class PutAccountDtoValidatorTests
 {
-        private BattleManagementSystemDbContext _dbContext;
+    private BattleManagementSystemDbContext _dbContext;
     
     public PutAccountDtoValidatorTests()
     {
