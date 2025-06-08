@@ -5,7 +5,7 @@ using AirsoftBattlefieldManagementSystemAPI.Models.Validators.Battle;
 using FluentValidation.TestHelper;
 using Microsoft.EntityFrameworkCore;
 
-namespace AirsoftBattlefieldManagementSystemAPI.IntegrationTests.Validators.BattleTests;
+namespace AirsoftBattlefieldManagementSystemAPI.IntegrationTests.ValidatorsTests.BattleTests;
 
 public class PostBattleDtoValidatorTests
 {

@@ -1,11 +1,8 @@
-using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Battle;
-using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Models.Validators.Battle;
 using FluentValidation.TestHelper;
-using Microsoft.EntityFrameworkCore;
 
-namespace AirsoftBattlefieldManagementSystemAPI.IntegrationTests.Validators.BattleTests;
+namespace AirsoftBattlefieldManagementSystemAPI.IntegrationTests.ValidatorsTests.BattleTests;
 
 public class PutBattleDtoValidatorTests
 {

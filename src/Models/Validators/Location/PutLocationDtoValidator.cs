@@ -7,28 +7,21 @@ using System.Text.RegularExpressions;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Models.Validators.Location
 {
-    public class PostLocationDtoValidator : AbstractValidator<PostLocationDto>
+    public class PutLocationDtoValidator : AbstractValidator<PutLocationDto>
     {
-        public PostLocationDtoValidator()
+        public PutLocationDtoValidator()
         {
             RuleFor(l => l.Latitude)
-                .NotEmpty()
                 .InclusiveBetween(-90, 90);
             
             RuleFor(l => l.Longitude)
-                .NotEmpty()
                 .InclusiveBetween(-180, 180);
 
             RuleFor(l => l.Accuracy)
-                .NotEmpty()
                 .GreaterThanOrEqualTo(0);
             
             RuleFor(l => l.Bearing)
-                .NotEmpty()
                 .InclusiveBetween((short)0, (short)360);
-            
-            RuleFor(l => l.Time)
-                .NotEmpty();
         }
     }
 }
