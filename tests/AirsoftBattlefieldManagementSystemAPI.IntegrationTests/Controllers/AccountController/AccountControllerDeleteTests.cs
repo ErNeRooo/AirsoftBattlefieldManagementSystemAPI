@@ -1,7 +1,7 @@
 using System.Net;
 using Shouldly;
 
-namespace AirsoftBattlefieldManagementSystemAPI.IntegrationTests;
+namespace AirsoftBattlefieldManagementSystemAPI.IntegrationTests.Controllers.AccountController;
 
 public class AccountControllerDeleteTests
 {

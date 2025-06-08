@@ -47,7 +47,7 @@ public class PlayerControllerGetPlayerByIdTests
     public async Task GetById_PlayerDoesNotExists_ReturnsNotFound()
     {
         // act
-        var response = await _client.GetAsync($"/player/id/{3}");
+        var response = await _client.GetAsync($"/player/id/{43535}");
 
         // assert
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);

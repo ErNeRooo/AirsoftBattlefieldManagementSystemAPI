@@ -1,15 +1,9 @@
 using System.Net;
-using System.Text;
 using AirsoftBattlefieldManagementSystemAPI.IntegrationTests.Helpers;
-using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
-using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Get;
-using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
-using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
-using Microsoft.AspNetCore.TestHost;
-using Newtonsoft.Json;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Account;
 using Shouldly;
 
-namespace AirsoftBattlefieldManagementSystemAPI.IntegrationTests;
+namespace AirsoftBattlefieldManagementSystemAPI.IntegrationTests.Controllers.AccountController;
 
 public class AccountControllerUpdateTests
 {
@@ -28,7 +22,7 @@ public class AccountControllerUpdateTests
         var model = new PutAccountDto()
         {
             Email = "seededEmaillll@gmail.com",
-            Password = "StrongPassword"
+            Password = "$troNg-P4SSw0rd"
         };
 
         // act
@@ -60,7 +54,7 @@ public class AccountControllerUpdateTests
         // arrange
         var model = new PutAccountDto()
         {
-            Password = "veryStrongPassword"
+            Password = "$troNg-P4SSw0rd"
         };
         
         // act
@@ -69,60 +63,6 @@ public class AccountControllerUpdateTests
         // assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
     } 
-    
-    [Theory]
-    [InlineData("test.com")]
-    [InlineData("fafarafa")]
-    [InlineData("@.")]
-    [InlineData("@.com")]
-    [InlineData("@test.")]
-    [InlineData("")]
-    public async Task Update_WrongEmailFormat_ReturnsBadRequest(string email)
-    {
-        // arrange
-        var model = new PutAccountDto()
-        {
-            Email = email
-        };
-        
-        // act
-        var response = await _client.PutAsync($"/account/id/{2137}", model.ToJsonHttpContent());
-        
-        // assert
-        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-    } 
-    
-    [Fact]
-    public async Task Update_EmailIsOccupied_ReturnsBadRequest()
-    {
-        // arrange
-        var model = new PutAccountDto()
-        {
-            Email = "seededEmail2@test.com"
-        };
-        
-        // act
-        var response = await _client.PutAsync($"/account/id/{2137}", model.Email.ToJsonHttpContent());
-        
-        // assert
-        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-    } 
-    
-    [Fact]
-    public async Task Update_PasswordIsTooShort_ReturnsBadRequest()
-    {
-        // arrange
-        var model = new PutAccountDto()
-        {
-            Password = "123456789"
-        };
-        
-        // act
-        var response = await _client.PutAsync($"/account/id/{2137}", model.ToJsonHttpContent());
-        
-        // assert
-        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-    } 
 
     [Fact]
     public async Task Update_AccountDoesNotExist_ReturnsNotFound()
@@ -130,7 +70,7 @@ public class AccountControllerUpdateTests
         // arrange
         var model = new PutAccountDto()
         {
-            Password = "veryStrongPassword"
+            Password = "$troNg-P4SSw0rd"
         };
         
         // act

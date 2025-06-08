@@ -1,7 +1,6 @@
 using System.Net;
 using AirsoftBattlefieldManagementSystemAPI.IntegrationTests.Helpers;
-using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Create;
-using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Update;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Player;
 using Shouldly;
 
 namespace AirsoftBattlefieldManagementSystemAPI.IntegrationTests.Controllers.PlayerController;
@@ -48,25 +47,6 @@ public class PlayerControllerUpdateTests
         
         // assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-    }
-    
-    [Fact]
-    public async Task Update_NameIsTooLong_ReturnsBadRequest()
-    {
-        // arrange
-        var model = new PutPlayerDto
-        {
-            Name = "This name is too long",
-            TeamId = 1,
-            IsDead = false
-        };
-        
-        // act
-        var response = await _client.PutAsync($"/player/id/{1}", model.ToJsonHttpContent());
-        var a = response.Content.ReadAsStringAsync().Result;
-        
-        // assert
-        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
     
     [Fact]

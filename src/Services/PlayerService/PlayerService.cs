@@ -11,17 +11,22 @@ using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Player;
 using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
 using AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperService;
+using AirsoftBattlefieldManagementSystemAPI.Services.ClaimsHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
 {
-    public class PlayerService(IBattleManagementSystemDbContext dbContext, IMapper mapper, IAuthenticationSettings authenticationSettings, IAuthorizationHelperService authorizationHelper, IDbContextHelperService dbHelper) : IPlayerService
+    public class PlayerService(IBattleManagementSystemDbContext dbContext, IMapper mapper, IAuthenticationSettings authenticationSettings, IAuthorizationHelperService authorizationHelper, IDbContextHelperService dbHelper, IClaimsHelperService claimsHelper) : IPlayerService
     {
         public PlayerDto GetById(int id, ClaimsPrincipal user)
         {
             Player player = dbHelper.FindPlayerById(id);
+            int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
 
-            authorizationHelper.CheckPlayerIsInTheSameRoomAsResource(user, player.RoomId);
+            if (playerId != id)
+            {
+                authorizationHelper.CheckPlayerIsInTheSameRoomAsResource(user, player.RoomId);
+            }
             
             PlayerDto playerDto = mapper.Map<PlayerDto>(player);
 

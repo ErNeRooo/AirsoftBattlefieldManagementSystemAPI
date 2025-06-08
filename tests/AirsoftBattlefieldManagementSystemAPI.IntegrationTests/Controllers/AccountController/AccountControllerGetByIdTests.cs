@@ -1,12 +1,8 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
-
-using Microsoft.EntityFrameworkCore;
-using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using Shouldly;
 
-namespace AirsoftBattlefieldManagementSystemAPI.IntegrationTests
+namespace AirsoftBattlefieldManagementSystemAPI.IntegrationTests.Controllers.AccountController
 {
     public class AccountControllerGetByIdTests : IClassFixture<WebApplicationFactory<Program>>
     {

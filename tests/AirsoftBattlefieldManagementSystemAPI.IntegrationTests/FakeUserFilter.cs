@@ -11,7 +11,7 @@ public class FakeUserFilter : IAsyncActionFilter
         
         claimsPrincipal.AddIdentity(new ClaimsIdentity(new[]
         {
-            new Claim("playerId", 1.ToString()),
+            new Claim("playerId", "1"),
         }));
         
         context.HttpContext.User = claimsPrincipal;

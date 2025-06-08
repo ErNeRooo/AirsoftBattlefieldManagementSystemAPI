@@ -15,7 +15,7 @@ public class PlayerIsInTheSameRoomAsResourceHandler(IClaimsHelperService claimsH
         
         Player player = dbHelper.FindPlayerById(playerId);
 
-        if (player.RoomId == roomId || player.PlayerId == playerId) context.Succeed(resourceRequirement);
+        if (player.RoomId == roomId) context.Succeed(resourceRequirement);
         else context.Fail();
 
         return Task.CompletedTask;
