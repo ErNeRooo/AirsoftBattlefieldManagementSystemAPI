@@ -11,30 +11,30 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperServ
 {
     public class AuthorizationHelperService(IAuthorizationService authorizationService) : IAuthorizationHelperService
     {
-        public void CheckPlayerIsInTheSameRoomAsResource(ClaimsPrincipal user, int? roomId)
+        public void CheckPlayerIsInTheSameRoomAsResource(ClaimsPrincipal user, int? roomId, string? message = null)
         {
             var playerIsInTheSameRoomAsResourceResult =
             authorizationService.AuthorizeAsync(user, roomId ?? 0,
                 new PlayerIsInTheSameRoomAsResourceRequirement()).Result;
 
-            if (!playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException($"You're must be in the same room as target resource");
+            if (!playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException(message ?? "You're must be in the same room as target resource");
         }
 
-        public void CheckPlayerOwnsResource(ClaimsPrincipal user, int? playerId)
+        public void CheckPlayerOwnsResource(ClaimsPrincipal user, int? playerId, string? message = null)
         {
             var authorizationResult =
                 authorizationService.AuthorizeAsync(user, playerId,
                     new PlayerOwnsResourceRequirement()).Result;
 
-            if (!authorizationResult.Succeeded) throw new ForbidException($"You're unauthorize to manipulate this resource");
+            if (!authorizationResult.Succeeded) throw new ForbidException(message ?? "You're unauthorize to manipulate this resource");
         }
         
-        public void CheckPlayerIdHasExistingEntity(ClaimsPrincipal user)
+        public void CheckPlayerIdHasExistingEntity(ClaimsPrincipal user, string? message = null)
         {
             var authorizationResult =
                 authorizationService.AuthorizeAsync(user, null, new JwtPlayerIdHasExistingPlayerEntityRequirement()).Result;
 
-            if (!authorizationResult.Succeeded) throw new ForbidException($"You do not exist player");
+            if (!authorizationResult.Succeeded) throw new ForbidException(message ?? "You do not exist player");
         }
     }
 }

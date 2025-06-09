@@ -46,7 +46,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
         public PlayerDto Update(int id, PutPlayerDto playerDto, ClaimsPrincipal user)
         {
             authorizationHelper.CheckPlayerOwnsResource(user, id);
-
+            
+            if(playerDto.TeamId is not null)
+            {
+                Team team = dbHelper.FindTeamById(playerDto.TeamId);
+                authorizationHelper.CheckPlayerIsInTheSameRoomAsResource(user, team.RoomId,
+                    $"Target team {team.TeamId} is not in the same room as player");
+            }
+            
             Player previousPlayer = dbHelper.FindPlayerById(id);
 
             mapper.Map(playerDto, previousPlayer);

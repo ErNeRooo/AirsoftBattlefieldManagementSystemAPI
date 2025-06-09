@@ -40,6 +40,23 @@ public class PlayerControllerUpdateTests
     }
     
     [Theory]
+    [InlineData(3)]
+    public async Task Update_GivenTeamIdOfForeignRoom_ReturnsForbidden(int teamId)
+    {
+        // arrange
+        var model = new PutPlayerDto
+        {
+            TeamId = teamId,
+        };
+        
+        // act
+        var response = await _client.PutAsync($"/player/id/{1}", model.ToJsonHttpContent());
+        
+        // assert
+        response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+    }
+    
+    [Theory]
     [InlineData(null, null, null)]
     [InlineData("Takina", null, null)]
     [InlineData(null, null, 2)]
