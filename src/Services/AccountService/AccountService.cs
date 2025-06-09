@@ -62,9 +62,11 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.AccountService
             throw new WrongPasswordException("Wrong account password");
         }
 
-        public AccountDto Update(int id, PutAccountDto accountDto)
+        public AccountDto Update(int id, PutAccountDto accountDto, ClaimsPrincipal user)
         {
             Account previousAccount = dbHelper.FindAccountById(id);
+            
+            authorizationHelper.CheckPlayerOwnsResource(user, previousAccount.PlayerId);
 
             mapper.Map(accountDto, previousAccount);
 
@@ -77,10 +79,12 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.AccountService
             return mapper.Map<AccountDto>(previousAccount);
         }
 
-        public void DeleteById(int id)
+        public void DeleteById(int id, ClaimsPrincipal user)
         {
             Account account = dbHelper.FindAccountById(id);
 
+            authorizationHelper.CheckPlayerOwnsResource(user, account.PlayerId);
+            
             dbContext.Account.Remove(account);
             dbContext.SaveChanges();
         }

@@ -12,10 +12,11 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests;
 
 public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
 {
-    private string _testMethodCallerName;
-    public CustomWebApplicationFactory([CallerMemberName] string? testMethodCallerName = null)
+    public int PlayerId { get; set; }
+    
+    public CustomWebApplicationFactory(int playerId = 1)
     {
-        _testMethodCallerName = testMethodCallerName;
+        PlayerId = playerId;
     }
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -24,7 +25,7 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
             services.RemoveAll(typeof(IDbContextOptionsConfiguration<BattleManagementSystemDbContext>));
 
             services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
-            services.AddMvc(options => options.Filters.Add(new FakeUserFilter()));
+            services.AddMvc(options => options.Filters.Add(new FakeUserFilter(PlayerId)));
             
             string databaseUniqueName = Guid.NewGuid().ToString();
             services.AddDbContext<BattleManagementSystemDbContext>(options => options.UseInMemoryDatabase(databaseUniqueName));
@@ -58,7 +59,6 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     AccountId = 2,
                     Email = "seededEmail3@test.com",
                     PasswordHash = "fafarafa",
-                    PlayerId = 3
                 });
 
                 context.Player.Add(new Player

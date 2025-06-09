@@ -10,7 +10,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Controllers.AccountControl
     public class AccountControllerGetByIdTests : IClassFixture<WebApplicationFactory<Program>>
     {
         private HttpClient _client;
-
+        private readonly string _endpoint = "/account/id/";
+        
         public AccountControllerGetByIdTests()
         {
             CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();

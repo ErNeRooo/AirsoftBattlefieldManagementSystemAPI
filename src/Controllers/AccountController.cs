@@ -41,7 +41,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [Route("id/{id}")]
         public ActionResult<AccountDto> Update(int id, [FromBody] PutAccountDto accountDto)
         {
-            AccountDto resultAccount = accountService.Update(id, accountDto);
+            AccountDto resultAccount = accountService.Update(id, accountDto, User);
 
             return Ok(resultAccount);
 
@@ -51,7 +51,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [Route("id/{id}")]
         public ActionResult Delete(int id)
         {
-            accountService.DeleteById(id);
+            accountService.DeleteById(id, User);
 
             return NoContent();
         }

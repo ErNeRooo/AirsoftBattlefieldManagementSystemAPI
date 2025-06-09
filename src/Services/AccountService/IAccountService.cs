@@ -8,7 +8,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.AccountService
         public AccountDto GetById(int id);
         public AccountDto Create(PostAccountDto accountDto, ClaimsPrincipal user);
         public AccountDto LogIn(LoginAccountDto accountDto, ClaimsPrincipal user);
-        public AccountDto Update(int id, PutAccountDto accountDto);
-        public void DeleteById(int id);
+        public AccountDto Update(int id, PutAccountDto accountDto, ClaimsPrincipal user);
+        public void DeleteById(int id, ClaimsPrincipal user);
     }
 }

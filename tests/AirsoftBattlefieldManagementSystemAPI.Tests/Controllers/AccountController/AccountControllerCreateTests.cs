@@ -8,8 +8,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Controllers.AccountControl
 
 public class AccountControllerCreateTests
 {
-    private HttpClient _client;
-    private string _endpoint = "account/signup";
+    private readonly HttpClient _client;
+    private readonly string _endpoint = "account/signup";
 
     public AccountControllerCreateTests()
     {
