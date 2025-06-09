@@ -65,10 +65,10 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
 
         public void DeleteById(int id, ClaimsPrincipal user)
         {
-            authorizationHelper.CheckPlayerOwnsResource(user, id);
-
             Player player = dbHelper.FindPlayerById(id);
 
+            authorizationHelper.CheckPlayerOwnsResource(user, id);
+            
             dbContext.Player.Remove(player);
             dbContext.SaveChanges();
         }
