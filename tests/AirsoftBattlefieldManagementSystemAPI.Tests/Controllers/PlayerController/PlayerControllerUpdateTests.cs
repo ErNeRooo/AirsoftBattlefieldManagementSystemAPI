@@ -8,6 +8,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Controllers.PlayerControll
 public class PlayerControllerUpdateTests
 {
     private HttpClient _client;
+    private readonly string _endpoint = "/player/id/";
 
     public PlayerControllerUpdateTests()
     {
@@ -29,7 +30,7 @@ public class PlayerControllerUpdateTests
         };
         
         // act
-        var response = await _client.PutAsync($"/player/id/{1}", model.ToJsonHttpContent());
+        var response = await _client.PutAsync($"{_endpoint}{1}", model.ToJsonHttpContent());
         var result = await response.Content.DeserializeFromHttpContentAsync<PlayerDto>();
         
         // assert
@@ -50,7 +51,7 @@ public class PlayerControllerUpdateTests
         };
         
         // act
-        var response = await _client.PutAsync($"/player/id/{1}", model.ToJsonHttpContent());
+        var response = await _client.PutAsync($"{_endpoint}{1}", model.ToJsonHttpContent());
         
         // assert
         response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
@@ -72,7 +73,7 @@ public class PlayerControllerUpdateTests
         };
         
         // act
-        var response = await _client.PutAsync($"/player/id/{1}", model.ToJsonHttpContent());
+        var response = await _client.PutAsync($"{_endpoint}{1}", model.ToJsonHttpContent());
         var result = await response.Content.DeserializeFromHttpContentAsync<PlayerDto>();
         
         // assert
@@ -96,7 +97,7 @@ public class PlayerControllerUpdateTests
         };
         
         // act
-        var response = await _client.PutAsync($"/player/id/{1}", model.ToJsonHttpContent());
+        var response = await _client.PutAsync($"{_endpoint}{1}", model.ToJsonHttpContent());
         
         // assert
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -114,9 +115,29 @@ public class PlayerControllerUpdateTests
         };
         
         // act
-        var response = await _client.PutAsync($"/player/id/{1}", model.ToJsonHttpContent());
+        var response = await _client.PutAsync($"{_endpoint}{1}", model.ToJsonHttpContent());
         
         // assert
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
+    
+    [Theory]
+    [InlineData(2, 1)]
+    [InlineData(1, 2)]
+    [InlineData(2, 4)]
+    [InlineData(3, 1)]
+    public async Task Update_OtherPlayer_ReturnsForbidden(int targetPlayerId, int senderPlayerId)
+    {
+        // arrange
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
+        _client = factory.CreateClient();
+
+        var model = new PutPlayerDto();
+        
+        // act
+        var response = await _client.PutAsync($"{_endpoint}{targetPlayerId}", model.ToJsonHttpContent());
+        
+        // assert
+        response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+    } 
 }

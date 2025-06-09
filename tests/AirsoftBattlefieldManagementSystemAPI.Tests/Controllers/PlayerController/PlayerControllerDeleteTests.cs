@@ -34,11 +34,19 @@ public class PlayerControllerDeleteTests
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     } 
     
-    [Fact]
-    public async Task Delete_OtherPlayer_ReturnsForbidden()
+    [Theory]
+    [InlineData(2, 1)]
+    [InlineData(1, 2)]
+    [InlineData(2, 4)]
+    [InlineData(3, 1)]
+    public async Task Delete_OtherPlayer_ReturnsForbidden(int targetPlayerId, int senderPlayerId)
     {
+        // arrange
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
+        _client = factory.CreateClient();
+        
         // act
-        var response = await _client.DeleteAsync($"{_endpoint}{2}");
+        var response = await _client.DeleteAsync($"{_endpoint}{targetPlayerId}");
         
         // assert
         response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
