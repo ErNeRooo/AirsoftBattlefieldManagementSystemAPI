@@ -7,6 +7,5 @@
         public bool IsDead { get; set; }
         public int TeamId { get; set; }
         public int RoomId { get; set; }
-        public int AccountId { get; set; }
     }
 }

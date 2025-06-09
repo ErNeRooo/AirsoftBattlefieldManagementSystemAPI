@@ -7,49 +7,63 @@ namespace AirsoftBattlefieldManagementSystemAPI.IntegrationTests.Controllers.Acc
 
 public class AccountControllerUpdateTests
 {
-    private HttpClient _client;
+    private readonly CustomWebApplicationFactory<Program> _factory;
+    private readonly HttpClient _client;
 
     public AccountControllerUpdateTests()
     {
         CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
+        _factory = factory;
         _client = factory.CreateClient();
     }
     
-    [Fact]
-    public async Task Update_AllFieldsSpecified_ReturnsOk()
+    [Theory]
+    [InlineData("seededEmaillll@gmail.com", "$troNg-P4SSw0rd")]
+    public async Task Update_AllFieldsSpecified_ReturnsOkAndAccountDto(string email, string password)
     {
         // arrange
         var model = new PutAccountDto()
         {
-            Email = "seededEmaillll@gmail.com",
-            Password = "$troNg-P4SSw0rd"
+            Email = email,
+            Password = password
         };
 
         // act
         var response = await _client.PutAsync($"/account/id/{2137}", model.ToJsonHttpContent());
+        var result = await response.Content.DeserializeFromHttpContentAsync<AccountDto>();
         
         // assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        result.ShouldNotBeNull();
+        result.Email.ShouldBe(email);
+        result.PlayerId.ShouldBe(2);
+        result.AccountId.ShouldBe(2137);
     } 
     
-    [Fact]
-    public async Task Update_OnlyEmailSpecified_ReturnsOk()
+    [Theory]
+    [InlineData("New.Email@gmail.com")]
+    public async Task Update_OnlyEmailSpecified_ReturnsOkAndAccountDto(string email)
     {
         // arrange
         var model = new PutAccountDto()
         {
-            Email = "seededEmail@gmail.com"
+            Email = email
         };
         
         // act
         var response = await _client.PutAsync($"/account/id/{2137}", model.ToJsonHttpContent());
+        var result = await response.Content.DeserializeFromHttpContentAsync<AccountDto>();
         
         // assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        result.ShouldNotBeNull();
+        result.Email.ShouldBe(email);
+        result.PlayerId.ShouldBe(2);
+        result.AccountId.ShouldBe(2137);
     } 
     
     [Fact]
-    public async Task Update_OnlyPasswordSpecified_ReturnsOk()
+    public async Task Update_OnlyPasswordSpecified_ReturnsOkAndAccountDto()
     {
         // arrange
         var model = new PutAccountDto()
@@ -59,9 +73,14 @@ public class AccountControllerUpdateTests
         
         // act
         var response = await _client.PutAsync($"/account/id/{2137}", model.ToJsonHttpContent());
+        var result = await response.Content.DeserializeFromHttpContentAsync<AccountDto>();
         
         // assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        result.ShouldNotBeNull();
+        result.Email.ShouldBe("seededEmail1@test.com");
+        result.PlayerId.ShouldBe(2);
+        result.AccountId.ShouldBe(2137);
     } 
 
     [Fact]

@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text.Json;
 using AirsoftBattlefieldManagementSystemAPI.IntegrationTests.Helpers;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Account;
 using Shouldly;
@@ -16,22 +17,28 @@ public class AccountControllerCreateTests
         _client = factory.CreateClient();
     }
     
-    [Fact]
-    public async Task Create_ValidJson_ReturnsCreated()
+    [Theory]
+    [InlineData("dqsf2d.e3ed3@test.com", "$troNg-P4SSw0rd")]
+    public async Task Create_ValidJson_ReturnsCreatedAndAccountDto(string email, string password)
     {
         // arrange
         var model = new PostAccountDto
         {
-            Email = "dqsf2de3ed3@test.com",
-            Password = "$troNg-P4SSw0rd"
+            Email = email,
+            Password = password
         };
 
         // act
         var response = await _client.PostAsync(_endpoint, model.ToJsonHttpContent());
-
+        var result = await response.Content.DeserializeFromHttpContentAsync<AccountDto>();
+        
         // assert
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
         response.Headers.Location.ShouldNotBeNull();
+        result.ShouldNotBeNull();
+        result.Email.ShouldBe("dqsf2d.e3ed3@test.com");
+        result.AccountId.ShouldNotBe(0);
+        result.PlayerId.ShouldBe(1);
     }
     
     [Fact]

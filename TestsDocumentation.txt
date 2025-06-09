@@ -15,11 +15,6 @@ Account
     - Not valid id (returns 400 Bad Request)
   2. Post
     - Valid json (returns location header and 201 Created)
-    - Wrong email format (returns 400 Bad Request)
-    - Email is missing (returns 400 Bad Request)
-    - Email is occupied (returns 400 Bad Request)
-    - Password is missing (returns 400 Bad Request)
-    - Password is too short (returns 400 Bad Request)
     - Create second account for one player (returns 409 Conflict)
   3. Put
     - Everything correct (returns 200 Ok)

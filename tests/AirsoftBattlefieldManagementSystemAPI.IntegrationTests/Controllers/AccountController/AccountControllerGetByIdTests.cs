@@ -1,4 +1,7 @@
 ﻿using System.Net;
+using AirsoftBattlefieldManagementSystemAPI.IntegrationTests.Helpers;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Account;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Shouldly;
 
@@ -15,14 +18,19 @@ namespace AirsoftBattlefieldManagementSystemAPI.IntegrationTests.Controllers.Acc
         }
 
         [Theory]
-        [InlineData("2137")]
-        public async Task GetById_ValidIdForExistingAccount_ReturnsOk(string id)
+        [InlineData(2137, "seededEmail1@test.com", 2)]
+        public async Task GetById_ValidIdForExistingAccount_ReturnsOkAndAccountDto(int accountId, string email, int playerId)
         {
             // act
-            var response = await _client.GetAsync($"/account/id/{id}");
+            var response = await _client.GetAsync($"/account/id/{accountId}");
+            var result = await response.Content.DeserializeFromHttpContentAsync<AccountDto>();
 
             // assert
             response.StatusCode.ShouldBe(HttpStatusCode.OK);
+            result.ShouldNotBeNull();
+            result.AccountId.ShouldBe(accountId);
+            result.Email.ShouldBe(email);
+            result.PlayerId.ShouldBe(playerId);
         }
         
         [Theory]
@@ -32,7 +40,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.IntegrationTests.Controllers.Acc
         {
             // act
             var response = await _client.GetAsync($"/account/id/{id}");
-
+            
             // assert
             response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
         }
@@ -45,7 +53,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.IntegrationTests.Controllers.Acc
         {
             // act
             var response = await _client.GetAsync($"/account/id/{id}");
-
+            
             // assert
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         } 

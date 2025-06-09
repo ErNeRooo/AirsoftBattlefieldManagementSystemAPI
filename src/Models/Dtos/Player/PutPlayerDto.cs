@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Player
+﻿namespace AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Player
 {
     public class PutPlayerDto
     {

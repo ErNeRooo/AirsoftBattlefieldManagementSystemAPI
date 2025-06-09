@@ -43,45 +43,49 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                 {
                     AccountId = 2137,
                     Email = "seededEmail1@test.com",
-                    PasswordHash = "dsadasdwefx"
+                    PasswordHash = "dsadasdwefx",
+                    PlayerId = 2
                 });
                 context.Account.Add(new Account
                 {
                     AccountId = 1,
                     Email = "seededEmail2@test.com",
-                    PasswordHash = "fafarafa"
+                    PasswordHash = "fafarafa",
+                    PlayerId = 4
                 });
                 context.Account.Add(new Account
                 {
                     AccountId = 2,
                     Email = "seededEmail3@test.com",
-                    PasswordHash = "fafarafa"
-                });
-                context.Account.Add(new Account
-                {
-                    AccountId = 3,
-                    Email = "seededEmail4@test.com",
-                    PasswordHash = "fafarafa"
+                    PasswordHash = "fafarafa",
+                    PlayerId = 3
                 });
 
                 context.Player.Add(new Player
                 {
                     PlayerId = 1,
-                    Name = "Seeded Name",
+                    Name = "Chisato",
                     RoomId = 1,
                     TeamId = 1,
                 });
                 context.Player.Add(new Player
                 {
                     PlayerId = 2,
-                    Name = "Seeded Name",
+                    Name = "Takina",
                     RoomId = 1,
                     TeamId = 2,
                 });
                 context.Player.Add(new Player
                 {
                     PlayerId = 3,
-                    Name = "Seeded Name",
+                    Name = "Ruby",
+                    RoomId = 2,
+                    TeamId = 3
+                });
+                context.Player.Add(new Player
+                {
+                    PlayerId = 4,
+                    Name = "Aqua",
                     RoomId = 2,
                     TeamId = 3
                 });
@@ -105,14 +109,14 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                 
                 context.Team.Add(new Team
                 {
-                    Name = "Jednorozec",
+                    Name = "Red",
                     TeamId = 1,
                     RoomId = 1,
                     OfficerPlayerId = 1
                 });
                 context.Team.Add(new Team
                 {
-                    Name = "Pogorzel",
+                    Name = "Blue",
                     TeamId = 2,
                     RoomId = 1,
                     OfficerPlayerId = 2
