@@ -1,4 +1,7 @@
 using System.Net;
+using AirsoftBattlefieldManagementSystemAPI.IntegrationTests.Helpers;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Account;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Player;
 using Shouldly;
 
 namespace AirsoftBattlefieldManagementSystemAPI.IntegrationTests.Controllers.PlayerController;
@@ -13,24 +16,23 @@ public class PlayerControllerGetPlayerByIdTests
         _client = factory.CreateClient();
     }
 
-    [Fact]
-    public async Task GetById_ValidId_ReturnsOk()
+    [Theory]
+    [InlineData(1, 1, 1, false, "Chisato")]
+    [InlineData(2, 2, 1, false, "Takina")]
+    public async Task GetById_ValidId_ReturnsOk(int playerId, int teamId, int roomId, bool isDead, string name)
     {
         // act
-        var response = await _client.GetAsync($"/player/id/{1}");
-
+        var response = await _client.GetAsync($"/player/id/{playerId}");
+        var result = await response.Content.DeserializeFromHttpContentAsync<PlayerDto>();
+        
         // assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-    }
-
-    [Fact]
-    public async Task GetById_IdOfDifferentPlayer_ReturnsOk()
-    {
-        // act
-        var response = await _client.GetAsync($"/player/id/{2}");
-
-        // assert
-        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        result.ShouldNotBeNull();
+        result.PlayerId.ShouldBe(playerId);
+        result.TeamId.ShouldBe(teamId);
+        result.RoomId.ShouldBe(roomId);
+        result.IsDead.ShouldBe(isDead);
+        result.Name.ShouldBe(name);
     }
     
     [Fact]

@@ -65,6 +65,7 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                 {
                     PlayerId = 1,
                     Name = "Chisato",
+                    IsDead = false,
                     RoomId = 1,
                     TeamId = 1,
                 });
@@ -72,6 +73,7 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                 {
                     PlayerId = 2,
                     Name = "Takina",
+                    IsDead = false,
                     RoomId = 1,
                     TeamId = 2,
                 });
@@ -79,6 +81,7 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                 {
                     PlayerId = 3,
                     Name = "Ruby",
+                    IsDead = true,
                     RoomId = 2,
                     TeamId = 3
                 });
@@ -86,6 +89,7 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                 {
                     PlayerId = 4,
                     Name = "Aqua",
+                    IsDead = true,
                     RoomId = 2,
                     TeamId = 3
                 });

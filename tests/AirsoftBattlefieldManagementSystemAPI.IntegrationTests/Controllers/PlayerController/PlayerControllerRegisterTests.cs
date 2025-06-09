@@ -15,13 +15,14 @@ public class PlayerControllerRegisterTests
         _client = factory.CreateClient();
     }
 
-    [Fact]
-    public async Task Register_ValidModel_ReturnsCreated()
+    [Theory]
+    [InlineData("ErNeRooo")]
+    public async Task Register_ValidModel_ReturnsCreatedAndAccountDto(string name)
     {
         // arrange
         var model = new PostPlayerDto
         {
-            Name = "Cool Name"
+            Name = name
         };
         
         // act
@@ -29,5 +30,7 @@ public class PlayerControllerRegisterTests
 
         // assert
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
+        response.Headers.Location.ShouldNotBeNull();
+        response.Content.ReadAsStringAsync().Result.ShouldNotBeNullOrEmpty();
     }
 }
