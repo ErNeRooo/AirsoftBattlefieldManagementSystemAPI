@@ -93,6 +93,14 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     RoomId = 2,
                     TeamId = 3
                 });
+                context.Player.Add(new Player
+                {
+                    PlayerId = 5,
+                    Name = "Nobody",
+                    IsDead = true,
+                    RoomId = 0,
+                    TeamId = 0
+                });
                 
                 context.Room.Add(new Room
                 {

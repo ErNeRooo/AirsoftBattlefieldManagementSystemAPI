@@ -13,7 +13,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
     public class RoomController(IRoomService roomService) : ControllerBase
     {
         [HttpGet("id/{id}")]
-        public ActionResult<RoomDto> GetRoom(int id)
+        public ActionResult<RoomDto> GetById(int id)
         {
             RoomDto roomDto = roomService.GetById(id);
 
@@ -21,7 +21,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpGet("join-code/{joinCode}")]
-        public ActionResult<RoomDto> GetRoomByJoinCode(string joinCode)
+        public ActionResult<RoomDto> GetByJoinCode(string joinCode)
         {
             RoomDto roomDto = roomService.GetByJoinCode(joinCode);
 
@@ -29,7 +29,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpPost("")]
-        public ActionResult<RoomDto> PostRoom([FromBody] PostRoomDto roomDto)
+        public ActionResult<RoomDto> Create([FromBody] PostRoomDto roomDto)
         {
             RoomDto resultRoom = roomService.Create(roomDto, User);
 
@@ -37,7 +37,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpPut("id/{id}")]
-        public ActionResult<RoomDto> PutRoom(int id, [FromBody] PutRoomDto roomDto)
+        public ActionResult<RoomDto> Update(int id, [FromBody] PutRoomDto roomDto)
         {
             RoomDto resultRoom = roomService.Update(id, roomDto, User);
 
@@ -45,7 +45,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpDelete("id/{id}")]
-        public ActionResult DeleteRoom(int id)
+        public ActionResult Delete(int id)
         {
             roomService.DeleteById(id, User);
 
@@ -53,14 +53,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpPost("join")]
-        public ActionResult<RoomDto> JoinRoom([FromBody] LoginRoomDto roomDto)
+        public ActionResult<RoomDto> Join([FromBody] LoginRoomDto roomDto)
         {
             RoomDto resultRoom = roomService.Join(roomDto, User);
             return Ok(resultRoom);
         }
 
         [HttpPost("leave")]
-        public ActionResult<string> LeaveRoom()
+        public ActionResult<string> Leave()
         {
             roomService.Leave(User);
 
