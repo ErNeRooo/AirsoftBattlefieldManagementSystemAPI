@@ -35,6 +35,12 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
 
         public RoomDto Create(PostRoomDto roomDto, ClaimsPrincipal user)
         {
+            int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
+            
+            Player player = dbHelper.FindPlayerById(playerId);
+            
+            if(player.RoomId is not null && player.RoomId != 0) throw new PlayerAlreadyInsideRoomException("You are already inside a room");
+            
             if (roomDto.JoinCode is null)
             {
                 roomDto.JoinCode = joinCodeService.Generate(JoinCodeFormat.From0to9, 6);
