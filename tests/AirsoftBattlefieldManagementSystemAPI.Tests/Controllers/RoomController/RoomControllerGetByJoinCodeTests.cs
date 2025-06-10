@@ -18,8 +18,8 @@ public class RoomControllerGetByJoinCodeTests
 
     [Theory]
     [InlineData(1, 1, "123456", 100, 1)]
-    [InlineData(1, 2, "213700", 2, 2)]
-    [InlineData(5, 2, "213700", 2, 2)]
+    [InlineData(1, 2, "213700", 2, 3)]
+    [InlineData(5, 2, "213700", 2, 3)]
     public async void GetByJoinCode_ForValidModel_ReturnsOKAndRoomDto(int senderPlayerId, int roomId, string joinCode, int maxPlayers, int adminPlayerId)
     {
         var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
@@ -39,7 +39,7 @@ public class RoomControllerGetByJoinCodeTests
     [Theory]
     [InlineData("873518")]
     [InlineData("d3w2da")]
-    [InlineData("@*%0)#")]
+    [InlineData("@*%0)o")]
     public async void GetByJoinCode_ForRoomThatDoesntExist_ReturnsNotFound(string joinCode)
     {
         var response = await _client.GetAsync($"{_endpoint}{joinCode}");

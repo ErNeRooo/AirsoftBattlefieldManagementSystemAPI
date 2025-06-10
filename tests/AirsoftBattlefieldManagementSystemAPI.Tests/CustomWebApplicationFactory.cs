@@ -115,7 +115,7 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     RoomId = 2,
                     JoinCode = "213700",
                     MaxPlayers = 2,
-                    AdminPlayerId = 2,
+                    AdminPlayerId = 3,
                     PasswordHash = "fafarafa"
                 });
                 
