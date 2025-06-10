@@ -25,6 +25,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
 
         public RoomDto GetByJoinCode(string joinCode)
         {
+            if(joinCode.Length != 6) throw new InvalidJoinCodeFormatException("Invalid join code");
+            
             Room? room = dbHelper.FindRoomByIJoinCode(joinCode);
 
             RoomDto roomDto = mapper.Map<RoomDto>(room);
