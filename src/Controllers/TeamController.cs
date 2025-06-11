@@ -41,7 +41,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         [Route("id/{id}")]
         public ActionResult Delete(int id)
         {
-            teamService.DeleteById(id, User);
+            teamService.Delete(id, User);
 
             return NoContent();
         }

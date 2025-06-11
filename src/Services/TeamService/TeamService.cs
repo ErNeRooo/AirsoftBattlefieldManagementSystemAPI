@@ -53,7 +53,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.TeamService
             return mapper.Map<TeamDto>(previousTeam);
         }
 
-        public void DeleteById(int id, ClaimsPrincipal user)
+        public void Delete(int id, ClaimsPrincipal user)
         {
             Team team = dbHelper.FindTeamById(id);
 

@@ -8,6 +8,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.TeamService
         public TeamDto GetById(int id, ClaimsPrincipal user);
         public TeamDto Create(PostTeamDto postTeamDto, ClaimsPrincipal user);
         public TeamDto Update(int id, PutTeamDto teamDto, ClaimsPrincipal user);
-        public void DeleteById(int id, ClaimsPrincipal user);
+        public void Delete(int id, ClaimsPrincipal user);
     }
 }
