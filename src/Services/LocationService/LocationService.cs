@@ -42,21 +42,23 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
             return locationDto;
         }
 
-        public List<LocationDto> GetAllLocationsOfPlayerWithId(int playerId, ClaimsPrincipal user)
+        public List<LocationDto> GetAllLocationsOfPlayerWithId(int targetPlayerId, ClaimsPrincipal user)
         {
+            int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
             Player player = dbHelper.FindPlayerById(playerId);
+            Player targetPlayer = dbHelper.FindPlayerById(targetPlayerId);
 
-            authorizationHelper.CheckPlayerIsInTheSameRoomAsResource(user, playerId);
-
-            List<Location> locations = dbHelper.FindAllLocationsOfPlayer(player);
+            authorizationHelper.CheckTargetPlayerIsInTheSameTeam(user, targetPlayerId, player.TeamId ?? 0);
+            
+            List<Location> locations = dbHelper.FindAllLocationsOfPlayer(targetPlayer);
 
             List<LocationDto> locationDtos = locations.Select(l =>
             {
                 return new LocationDto
                 {
-                    PlayerId = playerId,
+                    PlayerId = targetPlayerId,
                     LocationId = l.LocationId,
-                    RoomId = player.RoomId,
+                    RoomId = targetPlayer.RoomId,
                     Longitude = l.Longitude,
                     Latitude = l.Latitude,
                     Accuracy = l.Accuracy,
