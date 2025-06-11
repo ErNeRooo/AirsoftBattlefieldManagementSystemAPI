@@ -58,7 +58,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.TeamService
         {
             Team team = dbHelper.FindTeamById(id);
 
-            authorizationHelperService.CheckPlayerOwnsResource(user, team.OfficerPlayerId);
+            authorizationHelperService.CheckPlayerIsRoomAdminOrTargetTeamOfficer(user, id);
             
             dbContext.Team.Remove(team);
             dbContext.SaveChanges();
