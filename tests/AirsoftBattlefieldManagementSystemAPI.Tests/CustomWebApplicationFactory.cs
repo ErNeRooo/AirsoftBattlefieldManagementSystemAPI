@@ -156,6 +156,21 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     OfficerPlayerId = 6
                 });
                 
+                context.Battle.Add(new Battle
+                {
+                    BattleId = 1,
+                    IsActive = false,
+                    Name = "Kursk",
+                    RoomId = 1,
+                });
+                context.Battle.Add(new Battle
+                {
+                    BattleId = 2,
+                    IsActive = true,
+                    Name = "Rhine",
+                    RoomId = 2,
+                });
+                
                 context.SaveChanges();
             }
         });

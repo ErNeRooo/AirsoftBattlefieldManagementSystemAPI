@@ -1,14 +1,10 @@
 ﻿using System.Security.Claims;
-using AirsoftBattlefieldManagementSystemAPI.Authorization;
-using AirsoftBattlefieldManagementSystemAPI.Exceptions;
 using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Battle;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.BattleService
 {
@@ -53,7 +49,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.BattleService
             return mapper.Map<BattleDto>(previousBattle);
         }
 
-        public void DeleteById(int id, ClaimsPrincipal user)
+        public void Delete(int id, ClaimsPrincipal user)
         {
             Battle battle = dbHelper.FindBattleById(id);
 
