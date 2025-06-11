@@ -171,6 +171,122 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     RoomId = 2,
                 });
                 
+                context.PlayerLocation.Add(new PlayerLocation
+                {
+                    PlayerLocationId = 1,
+                    LocationId = 1,
+                    PlayerId = 1,
+                    RoomId = 1
+                });
+                context.Location.Add(new Location
+                {
+                    LocationId = 1,
+                    Longitude = 21,
+                    Latitude = 45,
+                    Accuracy = 10,
+                    Bearing = 45,
+                    Time = DateTime.Now,
+                });
+                context.PlayerLocation.Add(new PlayerLocation
+                {
+                    PlayerLocationId = 2,
+                    LocationId = 2,
+                    PlayerId = 1,
+                    RoomId = 1
+                });
+                context.Location.Add(new Location
+                {
+                    LocationId = 2,
+                    Longitude = 22.67m,
+                    Latitude = 46,
+                    Accuracy = 5,
+                    Bearing = 58,
+                    Time = DateTime.Now.AddSeconds(5),
+                });
+                context.PlayerLocation.Add(new PlayerLocation
+                {
+                    PlayerLocationId = 3,
+                    LocationId = 3,
+                    PlayerId = 1,
+                    RoomId = 1
+                });
+                context.Location.Add(new Location
+                {
+                    LocationId = 3,
+                    Longitude = 18.22m,
+                    Latitude = 46.4m,
+                    Accuracy = 15,
+                    Bearing = 58,
+                    Time = DateTime.Now.AddSeconds(10),
+                });
+
+                context.PlayerLocation.Add(new PlayerLocation
+                {
+                    PlayerLocationId = 4,
+                    LocationId = 4,
+                    PlayerId = 2,
+                    RoomId = 1
+                });
+                context.Location.Add(new Location
+                {
+                    LocationId = 4,
+                    Longitude = 32.02m,
+                    Latitude = 40.4m,
+                    Accuracy = 7,
+                    Bearing = 268,
+                    Time = DateTime.Now.AddSeconds(11),
+                });
+                
+                context.PlayerLocation.Add(new PlayerLocation
+                {
+                    PlayerLocationId = 5,
+                    LocationId = 5,
+                    PlayerId = 3,
+                    RoomId = 2
+                });
+                context.Location.Add(new Location
+                {
+                    LocationId = 5,
+                    Longitude = -32.02m,
+                    Latitude = -40.4m,
+                    Accuracy = 7,
+                    Bearing = 268,
+                    Time = DateTime.Now.AddSeconds(3),
+                });
+                context.PlayerLocation.Add(new PlayerLocation
+                {
+                    PlayerLocationId = 6,
+                    LocationId = 6,
+                    PlayerId = 3,
+                    RoomId = 2
+                });
+                context.Location.Add(new Location
+                {
+                    LocationId = 6,
+                    Longitude = -35.02m,
+                    Latitude = -39.42m,
+                    Accuracy = 1,
+                    Bearing = 230,
+                    Time = DateTime.Now.AddSeconds(6),
+                });
+                
+                context.PlayerLocation.Add(new PlayerLocation
+                {
+                    PlayerLocationId = 7,
+                    LocationId = 7,
+                    PlayerId = 6,
+                    RoomId = 2
+                });
+                context.Location.Add(new Location
+                {
+                    LocationId = 7,
+                    Longitude = -2.02m,
+                    Latitude = -4.42m,
+                    Accuracy = 1000,
+                    Bearing = 230,
+                    Time = DateTime.Now.AddSeconds(4),
+                });
+                
                 context.SaveChanges();
             }
         });

@@ -10,18 +10,22 @@ using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Location;
 using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
 using AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperService;
+using AirsoftBattlefieldManagementSystemAPI.Services.ClaimsHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
 {
-    public class LocationService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IAuthorizationHelperService authorizationHelper, IDbContextHelperService dbHelper) : ILocationService
+    public class LocationService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IClaimsHelperService claimsHelper, IAuthorizationHelperService authorizationHelper, IDbContextHelperService dbHelper) : ILocationService
     {
         public LocationDto GetById(int id, ClaimsPrincipal user)
         {
             Location location = dbHelper.FindLocationById(id);
             PlayerLocation playerLocation = dbHelper.FindPlayerLocationById(id);
+            
+            int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
+            Player player = dbHelper.FindPlayerById(playerId);
 
-            authorizationHelper.CheckPlayerIsInTheSameRoomAsResource(user, playerLocation.RoomId);
+            authorizationHelper.CheckTargetPlayerIsInTheSameTeam(user, playerLocation.PlayerId ?? 0, player.TeamId ?? 0);
 
             LocationDto locationDto = new LocationDto
             {
