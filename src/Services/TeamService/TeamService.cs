@@ -42,8 +42,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.TeamService
         public TeamDto Update(int id, PutTeamDto teamDto, ClaimsPrincipal user)
         {
             Team previousTeam = dbHelper.FindTeamById(id);
-
-            authorizationHelperService.CheckPlayerOwnsResource(user, previousTeam.OfficerPlayerId);
+            
+            authorizationHelperService.CheckPlayerIsRoomAdminOrTargetTeamOfficer(user, id);
+            if(teamDto.OfficerPlayerId is not null) authorizationHelperService.CheckTargetPlayerIsInTheSameTeam(user, (int)teamDto.OfficerPlayerId, id);
             
             mapper.Map(teamDto, previousTeam);
             

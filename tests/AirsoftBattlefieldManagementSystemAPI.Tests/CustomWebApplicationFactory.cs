@@ -101,6 +101,14 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     RoomId = 0,
                     TeamId = 0
                 });
+                context.Player.Add(new Player
+                {
+                    PlayerId = 6,
+                    Name = "Akane",
+                    IsDead = false,
+                    RoomId = 2,
+                    TeamId = 4
+                });
                 
                 context.Room.Add(new Room
                 {
@@ -139,6 +147,13 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     TeamId = 3,
                     RoomId = 2,
                     OfficerPlayerId = 3
+                });
+                context.Team.Add(new Team
+                {
+                    Name = "Navy",
+                    TeamId = 4,
+                    RoomId = 2,
+                    OfficerPlayerId = 6
                 });
                 
                 context.SaveChanges();
