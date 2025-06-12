@@ -10,12 +10,6 @@ public class RoomControllerGetByJoinCodeTests
     private HttpClient _client;
     private string _endpoint = "room/join-code/";
 
-    public RoomControllerGetByJoinCodeTests()
-    {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
-        _client = factory.CreateClient();
-    }
-
     [Theory]
     [InlineData(1, 1, "123456", 100, 1)]
     [InlineData(1, 2, "213700", 2, 3)]
@@ -42,6 +36,9 @@ public class RoomControllerGetByJoinCodeTests
     [InlineData("@*%0)o")]
     public async void GetByJoinCode_ForRoomThatDoesntExist_ReturnsNotFound(string joinCode)
     {
+        var factory = new CustomWebApplicationFactory<Program>();
+        _client = factory.CreateClient();
+        
         var response = await _client.GetAsync($"{_endpoint}{joinCode}");
         
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -51,8 +48,11 @@ public class RoomControllerGetByJoinCodeTests
     [InlineData("12")]
     [InlineData("gjtfd")]
     [InlineData("}5..24w")]
-    public async void GetByJoinCode_ForInvalidId_ReturnsBadRequest(string joinCode)
+    public async void GetByJoinCode_ForInvalidJoinCode_ReturnsBadRequest(string joinCode)
     {
+        var factory = new CustomWebApplicationFactory<Program>();
+        _client = factory.CreateClient();
+        
         var response = await _client.GetAsync($"{_endpoint}{joinCode}");
         
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);

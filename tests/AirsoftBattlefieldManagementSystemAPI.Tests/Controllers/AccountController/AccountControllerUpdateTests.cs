@@ -20,7 +20,6 @@ public class AccountControllerUpdateTests
     [InlineData("seededEmaillll@gmail.com", "$troNg-P4SSw0rd")]
     public async Task Update_AllFieldsSpecified_ReturnsOkAndAccountDto(string email, string password)
     {
-        // arrange
         var factory = new CustomWebApplicationFactory<Program>(2);
         _client = factory.CreateClient();
         
@@ -29,12 +28,10 @@ public class AccountControllerUpdateTests
             Email = email,
             Password = password
         };
-
-        // act
+        
         var response = await _client.PutAsync($"{_endpoint}", model.ToJsonHttpContent());
         var result = await response.Content.DeserializeFromHttpContentAsync<AccountDto>();
         
-        // assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         result.ShouldNotBeNull();
         result.Email.ShouldBe(email);
@@ -46,7 +43,6 @@ public class AccountControllerUpdateTests
     [InlineData("New.Email@gmail.com")]
     public async Task Update_OnlyEmailSpecified_ReturnsOkAndAccountDto(string email)
     {
-        // arrange
         var factory = new CustomWebApplicationFactory<Program>(2);
         _client = factory.CreateClient();
         
@@ -55,11 +51,9 @@ public class AccountControllerUpdateTests
             Email = email
         };
         
-        // act
         var response = await _client.PutAsync($"{_endpoint}", model.ToJsonHttpContent());
         var result = await response.Content.DeserializeFromHttpContentAsync<AccountDto>();
         
-        // assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         result.ShouldNotBeNull();
         result.Email.ShouldBe(email);
@@ -70,7 +64,6 @@ public class AccountControllerUpdateTests
     [Fact]
     public async Task Update_OnlyPasswordSpecified_ReturnsOkAndAccountDto()
     {
-        // arrange
         var factory = new CustomWebApplicationFactory<Program>(2);
         _client = factory.CreateClient();
         
@@ -79,11 +72,9 @@ public class AccountControllerUpdateTests
             Password = "$troNg-P4SSw0rd"
         };
         
-        // act
         var response = await _client.PutAsync($"{_endpoint}", model.ToJsonHttpContent());
         var result = await response.Content.DeserializeFromHttpContentAsync<AccountDto>();
         
-        // assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         result.ShouldNotBeNull();
         result.Email.ShouldBe("seededEmail1@test.com");
@@ -95,16 +86,12 @@ public class AccountControllerUpdateTests
     [InlineData(5)]
     public async Task Update_PlayerWithoutAccount_ReturnsNotFound(int senderPlayerId)
     {
-        // arrange
         var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
         _client = factory.CreateClient();
-
         var model = new PutAccountDto();
         
-        // act
         var response = await _client.PutAsync($"{_endpoint}", model.ToJsonHttpContent());
         
-        // assert
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 }

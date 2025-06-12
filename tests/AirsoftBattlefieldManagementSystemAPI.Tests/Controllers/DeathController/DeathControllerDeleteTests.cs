@@ -7,15 +7,7 @@ public class DeathControllerDeleteTests
 {
     private HttpClient _client;
     private string _endpoint = "death/id/";
-
-    public DeathControllerDeleteTests()
-    {
-        
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
-        _client = factory.CreateClient();
-    }
     
-        
     [Theory]
     [InlineData(1, 1)]
     [InlineData(1, 6)]
@@ -24,7 +16,7 @@ public class DeathControllerDeleteTests
     [InlineData(4, 7)]
     public async void Delete_ValidId_ReturnsNoContent(int senderPlayerId, int deathId)
     {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
         _client = factory.CreateClient();
         
         var response = await _client.DeleteAsync($"{_endpoint}{deathId}");
@@ -38,6 +30,9 @@ public class DeathControllerDeleteTests
     [InlineData(112354)]
     public async void Delete_NotExistingDeath_ReturnsNotFound(int deathId)
     {
+        var factory = new CustomWebApplicationFactory<Program>();
+        _client = factory.CreateClient();
+        
         var response = await _client.DeleteAsync($"{_endpoint}{deathId}");
         
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -55,7 +50,7 @@ public class DeathControllerDeleteTests
     [InlineData(5, 7)]
     public async void Delete_AsOtherPlayer_ReturnsForbidden(int senderPlayerId, int deathId)
     {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
         _client = factory.CreateClient();
         
         var response = await _client.DeleteAsync($"{_endpoint}{deathId}");

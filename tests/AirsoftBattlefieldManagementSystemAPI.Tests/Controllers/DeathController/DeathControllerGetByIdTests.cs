@@ -9,12 +9,6 @@ public class DeathControllerGetByIdTests
 {
     private HttpClient _client;
     private string _endpoint = "death/id/";
-    
-    public DeathControllerGetByIdTests()
-    {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
-        _client = factory.CreateClient();
-    }
         
     public class PlayerDeathTestData
     {
@@ -199,6 +193,9 @@ public class DeathControllerGetByIdTests
     [InlineData(-1)]
     public async void GetById_DeathDoesNotExist_ReturnsNotFound(int id)
     {
+        var factory = new CustomWebApplicationFactory<Program>();
+        _client = factory.CreateClient();
+        
         var response = await _client.GetAsync($"{_endpoint}{id}");
         
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);

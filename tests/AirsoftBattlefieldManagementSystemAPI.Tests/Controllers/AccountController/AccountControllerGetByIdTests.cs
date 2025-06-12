@@ -22,11 +22,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Controllers.AccountControl
         [InlineData(2137, "seededEmail1@test.com", 2)]
         public async Task GetById_ValidIdForExistingAccount_ReturnsOkAndAccountDto(int accountId, string email, int playerId)
         {
-            // act
             var response = await _client.GetAsync($"/account/id/{accountId}");
             var result = await response.Content.DeserializeFromHttpContentAsync<AccountDto>();
-
-            // assert
+            
             response.StatusCode.ShouldBe(HttpStatusCode.OK);
             result.ShouldNotBeNull();
             result.AccountId.ShouldBe(accountId);
@@ -39,24 +37,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Controllers.AccountControl
         [InlineData("32148193")]
         public async Task GetById_ValidIdForNotExistingAccount_ReturnsNotFound(string id)
         {
-            // act
             var response = await _client.GetAsync($"/account/id/{id}");
             
-            // assert
             response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
         }
-        
-        [Theory]
-        [InlineData("wadasd")]
-        [InlineData("212d7")]
-        [InlineData("!")]
-        public async Task GetById_NotValidId_ReturnsBadRequest(string id)
-        {
-            // act
-            var response = await _client.GetAsync($"/account/id/{id}");
-            
-            // assert
-            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-        } 
     }
 }

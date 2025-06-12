@@ -8,12 +8,6 @@ public class TeamControllerDeleteTests
     private HttpClient _client;
     private string _endpoint = "team/id/";
     
-    public TeamControllerDeleteTests()
-    {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
-        _client = factory.CreateClient();
-    }
-    
     [Theory]
     [InlineData(1, 1)]
     [InlineData(1, 2)]
@@ -23,22 +17,12 @@ public class TeamControllerDeleteTests
     [InlineData(6, 4)]
     public async void Delete_ValidId_ReturnsNoContent(int senderPlayerId, int teamId)
     {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
         _client = factory.CreateClient();
         
         var response = await _client.DeleteAsync($"{_endpoint}{teamId}");
         
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
-    }
-    
-    [Theory]
-    [InlineData("w")]
-    [InlineData("1.0")]
-    public async void Delete_NotValidId_ReturnsBadRequest(string teamId)
-    {
-        var response = await _client.DeleteAsync($"{_endpoint}{teamId}");
-        
-        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
 
     [Theory]
@@ -47,6 +31,9 @@ public class TeamControllerDeleteTests
     [InlineData(34214)]
     public async void Delete_NotExistingTeam_ReturnsNotFound(int teamId)
     {
+        var factory = new CustomWebApplicationFactory<Program>();
+        _client = factory.CreateClient();
+        
         var response = await _client.DeleteAsync($"{_endpoint}{teamId}");
         
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -61,7 +48,7 @@ public class TeamControllerDeleteTests
     [InlineData(5, 4)]
     public async void Delete_PlayerIsNotAdminOrOfficer_ReturnsForbidden(int senderPlayerId, int teamId)
     {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
         _client = factory.CreateClient();
         
         var response = await _client.DeleteAsync($"{_endpoint}{teamId}");

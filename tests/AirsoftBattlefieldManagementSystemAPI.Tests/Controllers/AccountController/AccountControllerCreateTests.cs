@@ -21,18 +21,15 @@ public class AccountControllerCreateTests
     [InlineData("dqsf2d.e3ed3@test.com", "$troNg-P4SSw0rd")]
     public async Task Create_ValidJson_ReturnsCreatedAndAccountDto(string email, string password)
     {
-        // arrange
         var model = new PostAccountDto
         {
             Email = email,
             Password = password
         };
-
-        // act
+        
         var response = await _client.PostAsync(_endpoint, model.ToJsonHttpContent());
         var result = await response.Content.DeserializeFromHttpContentAsync<AccountDto>();
         
-        // assert
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
         response.Headers.Location.ShouldNotBeNull();
         result.ShouldNotBeNull();
@@ -44,7 +41,6 @@ public class AccountControllerCreateTests
     [Fact]
     public async Task Create_SecondAccountForTheSamePlayer_ReturnsConflictForSecondAttempt()
     {
-        // arrange
         var firstModel = new PostAccountDto
         {
             Email = "first@test.com",
@@ -55,12 +51,10 @@ public class AccountControllerCreateTests
             Email = "second@test.com",
             Password = "$troNg-P4SSw0rd"
         };
-
-        // act
+        
         await _client.PostAsync(_endpoint, firstModel.ToJsonHttpContent());
         var response = await _client.PostAsync(_endpoint, secondModel.ToJsonHttpContent());
         
-        // assert
         response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
     }
 }

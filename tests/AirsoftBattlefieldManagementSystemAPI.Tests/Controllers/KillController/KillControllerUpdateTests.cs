@@ -7,14 +7,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Controllers.KillController
 
 public class KillControllerUpdateTests
 {
-        private HttpClient _client;
+    private HttpClient _client;
     private string _endpoint = "kill/id/";
-    
-    public KillControllerUpdateTests()
-    {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
-        _client = factory.CreateClient();
-    }
     
     public class PlayerKillTestData
     {
@@ -262,6 +256,9 @@ public class KillControllerUpdateTests
     [InlineData(-1)]
     public async void Update_NotExistingKill_ReturnsNotFound(int id)
     {
+        var factory = new CustomWebApplicationFactory<Program>();
+        _client = factory.CreateClient();
+        
         var model = new PutKillDto();
         
         var response = await _client.PutAsync($"{_endpoint}{id}", model.ToJsonHttpContent());

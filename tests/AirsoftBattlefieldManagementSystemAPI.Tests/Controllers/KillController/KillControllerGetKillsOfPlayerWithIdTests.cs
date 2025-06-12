@@ -8,13 +8,6 @@ public class KillControllerGetKillsOfPlayerWithIdTests
 {
     private HttpClient _client;
     private string _endpoint = "kill/playerid/";
-
-    
-    public KillControllerGetKillsOfPlayerWithIdTests()
-    {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
-        _client = factory.CreateClient();
-    }
     
     public static IEnumerable<object[]> GetPlayerKillsTests()
     {
@@ -126,8 +119,11 @@ public class KillControllerGetKillsOfPlayerWithIdTests
     [InlineData(0)]
     [InlineData(234641)]
     [InlineData(-1)]
-    public async void GetById_PlayerDoesNotExist_ReturnsNotFound(int id)
+    public async void GetKillsOfPlayerWithId_PlayerDoesNotExist_ReturnsNotFound(int id)
     {
+        var factory = new CustomWebApplicationFactory<Program>();
+        _client = factory.CreateClient();
+        
         var response = await _client.GetAsync($"{_endpoint}{id}");
         
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -144,7 +140,7 @@ public class KillControllerGetKillsOfPlayerWithIdTests
     [InlineData(5, 1)]
     [InlineData(5, 2)]
     [InlineData(5, 3)]
-    public async void GetById_PlayerIsInDifferentRoom_ReturnsForbidden(int senderPlayerId, int playerId)
+    public async void GetKillsOfPlayerWithId_PlayerIsInDifferentRoom_ReturnsForbidden(int senderPlayerId, int playerId)
     {
         var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
         _client = factory.CreateClient();

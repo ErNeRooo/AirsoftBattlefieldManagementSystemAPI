@@ -10,12 +10,6 @@ public class RoomControllerCreateTests
     private HttpClient _client;
     private string _endpoint = "room/";
 
-    public RoomControllerCreateTests()
-    {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
-        _client = factory.CreateClient();
-    }
-
     [Theory]
     [InlineData(5, "325543", 2, "")]
     public async void Create_ForValidModel_ReturnsCreatedAndRoomDto(int senderPlayerId, string joinCode, int maxPlayers, string password)

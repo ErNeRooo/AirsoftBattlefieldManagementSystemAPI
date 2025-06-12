@@ -7,14 +7,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Controllers.DeathControlle
 
 public class DeathControllerUpdateTests
 {
-        private HttpClient _client;
+    private HttpClient _client;
     private string _endpoint = "death/id/";
-    
-    public DeathControllerUpdateTests()
-    {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
-        _client = factory.CreateClient();
-    }
     
     public class PlayerDeathTestData
     {
@@ -262,6 +256,9 @@ public class DeathControllerUpdateTests
     [InlineData(-1)]
     public async void Update_NotExistingDeath_ReturnsNotFound(int id)
     {
+        var factory = new CustomWebApplicationFactory<Program>();
+        _client = factory.CreateClient();
+        
         var model = new PutDeathDto();
         
         var response = await _client.PutAsync($"{_endpoint}{id}", model.ToJsonHttpContent());

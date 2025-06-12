@@ -9,12 +9,6 @@ public class RoomControllerUpdateTests
 {
     private HttpClient _client;
     private string _endpoint = "room";
-
-    public RoomControllerUpdateTests()
-    {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
-        _client = factory.CreateClient();
-    }
     
     [Theory]
     [InlineData("325543", 2, "creeper", 2)]
@@ -26,6 +20,9 @@ public class RoomControllerUpdateTests
     [InlineData(null, null, null, 2)]
     public async void Update_ValidModel_ReturnsOkAndRoomDto(string? joinCode, int? maxPlayers, string? password, int? adminPlayerId)
     {
+        var factory = new CustomWebApplicationFactory<Program>();
+        _client = factory.CreateClient();
+        
         var model = new PutRoomDto
         {
             JoinCode = joinCode,

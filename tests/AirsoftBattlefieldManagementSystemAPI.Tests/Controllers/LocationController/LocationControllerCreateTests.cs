@@ -10,14 +10,8 @@ public class LocationControllerCreateTests
 {
     private HttpClient _client;
     private string _endpoint = "location/";
-
-    public LocationControllerCreateTests()
-    {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
-        _client = factory.CreateClient();
-    }
     
-        public static IEnumerable<object[]> GetTests()
+    public static IEnumerable<object[]> GetTests()
     {
         var datetime = DateTime.Now;
         var tests = new List<PlayerLocationTestData>

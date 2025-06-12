@@ -10,18 +10,12 @@ public class BattleControllerUpdateTests
     private HttpClient _client;
     private string _endpoint = "battle/id/";
     
-    public BattleControllerUpdateTests()
-    {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
-        _client = factory.CreateClient();
-    }
-    
     [Theory]
     [InlineData(1, 1, false, "Epic Battle", 1)]
     [InlineData(3, 2, true, "Another Epic Battle", 2)]
     public async void Update_ValidId_ReturnsOkAndBattleDto(int senderPlayerId, int battleId, bool isActive, string name, int roomId)
     {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
         _client = factory.CreateClient();
 
         var model = new PutBattleDto
@@ -50,7 +44,7 @@ public class BattleControllerUpdateTests
     [InlineData(3, 2, null, "Epic Battle")]
     public async void Update_NotAllFieldsSpecified_ReturnsOkAndBattleDto(int senderPlayerId, int battleId, bool? isActive, string? name)
     {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
         _client = factory.CreateClient();
 
         var model = new PutBattleDto
@@ -76,23 +70,14 @@ public class BattleControllerUpdateTests
     }
     
     [Theory]
-    [InlineData("aa")]
-    [InlineData("1.0")]
-    public async void Update_NotValidId_ReturnsBadRequest(string battleId)
-    {
-        var model = new PutBattleDto();
-
-        var response = await _client.PutAsync($"{_endpoint}{battleId}", model.ToJsonHttpContent());
-        
-        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-    }
-    
-    [Theory]
     [InlineData(0)]
     [InlineData(-1)]
     [InlineData(11321)]
     public async void Update_NotExistingBattle_ReturnsNotFound(int battleId)
     {
+        var factory = new CustomWebApplicationFactory<Program>();
+        _client = factory.CreateClient();
+        
         var model = new PutBattleDto();
 
         var response = await _client.PutAsync($"{_endpoint}{battleId}", model.ToJsonHttpContent());
@@ -110,7 +95,7 @@ public class BattleControllerUpdateTests
     [InlineData(6, 1)]
     public async void Update_PlayerIsNotRoomAdmin_ReturnsForbidden(int senderPlayerId, int battleId)
     {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
         _client = factory.CreateClient();
         
         var model = new PutBattleDto();

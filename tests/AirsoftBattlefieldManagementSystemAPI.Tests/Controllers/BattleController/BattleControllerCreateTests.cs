@@ -9,13 +9,6 @@ public class BattleControllerCreateTests
 {
     private HttpClient _client;
     private string _endpoint = "battle";
-    
-    public BattleControllerCreateTests()
-    {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
-        _client = factory.CreateClient();
-    }
-    
         
     [Theory]
     [InlineData(1, 1, "Monte Casino")]

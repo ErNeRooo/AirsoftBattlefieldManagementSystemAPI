@@ -10,12 +10,6 @@ public class LocationControllerGetByIdTests
     private HttpClient _client;
     private string _endpoint = "location/id/";
     
-    public LocationControllerGetByIdTests()
-    {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
-        _client = factory.CreateClient();
-    }
-    
     public static IEnumerable<object[]> GetTests()
     {
         var datetime = DateTime.Now;
@@ -145,6 +139,9 @@ public class LocationControllerGetByIdTests
     [InlineData(-1)]
     public async void GetById_LocationDoesNotExist_ReturnsNotFound(int id)
     {
+        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
+        _client = factory.CreateClient();
+        
         var response = await _client.GetAsync($"{_endpoint}{id}");
         
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);

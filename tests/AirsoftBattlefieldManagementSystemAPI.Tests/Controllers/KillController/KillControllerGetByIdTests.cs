@@ -9,12 +9,6 @@ public class KillControllerGetByIdTests
 {
     private HttpClient _client;
     private string _endpoint = "kill/id/";
-    
-    public KillControllerGetByIdTests()
-    {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
-        _client = factory.CreateClient();
-    }
         
     public class PlayerKillTestData
     {
@@ -199,6 +193,9 @@ public class KillControllerGetByIdTests
     [InlineData(-1)]
     public async void GetById_KillDoesNotExist_ReturnsNotFound(int id)
     {
+        var factory = new CustomWebApplicationFactory<Program>();
+        _client = factory.CreateClient();
+        
         var response = await _client.GetAsync($"{_endpoint}{id}");
         
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);

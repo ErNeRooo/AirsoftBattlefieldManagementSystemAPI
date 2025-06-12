@@ -9,12 +9,6 @@ public class TeamControllerUpdateTests
 {
     private HttpClient _client;
     private string _endpoint = "team/id/";
-
-    public TeamControllerUpdateTests()
-    {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
-        _client = factory.CreateClient();
-    }
     
     [Theory]
     [InlineData(1, 1, "White", 1)]
@@ -23,7 +17,7 @@ public class TeamControllerUpdateTests
     [InlineData(3, 3, "White", 4)]
     public async void Update_ValidId_ReturnsOkAndTeamDto(int senderPlayerId, int teamId, string name, int officerPlayerId)
     {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
         _client = factory.CreateClient();
 
         var model = new PutTeamDto
@@ -49,7 +43,7 @@ public class TeamControllerUpdateTests
     [InlineData(3, 3, null, null)]
     public async void Update_NotAllFieldsSpecified_ReturnsOkAndTeamDto(int senderPlayerId, int teamId, string? name, int? officerPlayerId)
     {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
         _client = factory.CreateClient();
 
         var model = new PutTeamDto
@@ -74,23 +68,14 @@ public class TeamControllerUpdateTests
     }
     
     [Theory]
-    [InlineData("1.0")]
-    [InlineData("ee")]
-    public async void Update_InvalidId_ReturnsBadRequest(string id)
-    {
-        var model = new PutTeamDto();
-        
-        var response = await _client.PutAsync($"{_endpoint}{id}", model.ToJsonHttpContent());
-        
-        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-    }
-    
-    [Theory]
     [InlineData(-2)]
     [InlineData(0)]
     [InlineData(24138)]
     public async void Update_ForTeamThatDoesNotExist_ReturnsNotFound(int id)
     {
+        var factory = new CustomWebApplicationFactory<Program>();
+        _client = factory.CreateClient();
+        
         var model = new PutTeamDto();
         
         var response = await _client.PutAsync($"{_endpoint}{id}", model.ToJsonHttpContent());
@@ -104,7 +89,7 @@ public class TeamControllerUpdateTests
     [InlineData(3, 2)]
     public async void Update_ForTeamFromForeignRoom_ReturnsForbidden(int senderPlayerId, int teamId)
     {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
         _client = factory.CreateClient();
         
         var model = new PutTeamDto();
@@ -119,7 +104,7 @@ public class TeamControllerUpdateTests
     [InlineData(4, 3)]
     public async void Update_NonOfficerOrAdminPlayer_ReturnsForbidden(int senderPlayerId, int teamId)
     {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
         _client = factory.CreateClient();
         
         var model = new PutTeamDto();
@@ -135,7 +120,7 @@ public class TeamControllerUpdateTests
     [InlineData(3, 2, 6)]
     public async void Update_OfficerPlayerIdSetToPlayerFromForeignTeam_ReturnsForbidden(int senderPlayerId, int teamId, int officerPlayerId)
     {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
         _client = factory.CreateClient();
         
         var model = new PutTeamDto

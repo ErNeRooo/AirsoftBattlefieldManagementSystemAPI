@@ -21,7 +21,6 @@ public class PlayerControllerUpdateTests
     [InlineData("Takina", false, 2)]
     public async Task Update_ValidModel_ReturnsOk(string name, bool isDead, int teamId)
     {
-        // arrange
         var model = new PutPlayerDto
         {
             Name = name,
@@ -29,11 +28,9 @@ public class PlayerControllerUpdateTests
             IsDead = isDead
         };
         
-        // act
         var response = await _client.PutAsync($"{_endpoint}", model.ToJsonHttpContent());
         var result = await response.Content.DeserializeFromHttpContentAsync<PlayerDto>();
         
-        // assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         result.Name.ShouldBe(name);
         result.TeamId.ShouldBe(teamId);
@@ -44,16 +41,13 @@ public class PlayerControllerUpdateTests
     [InlineData(3)]
     public async Task Update_GivenTeamIdOfForeignRoom_ReturnsForbidden(int teamId)
     {
-        // arrange
         var model = new PutPlayerDto
         {
             TeamId = teamId,
         };
         
-        // act
         var response = await _client.PutAsync($"{_endpoint}", model.ToJsonHttpContent());
         
-        // assert
         response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
     }
     
@@ -64,7 +58,6 @@ public class PlayerControllerUpdateTests
     [InlineData(null, true, null)]
     public async Task Update_GivenOnlySpecificField_ReturnsOk(string? name, bool? isDead, int? teamId)
     {
-        // arrange
         var model = new PutPlayerDto
         {
             Name = name,
@@ -72,11 +65,9 @@ public class PlayerControllerUpdateTests
             IsDead = isDead
         };
         
-        // act
         var response = await _client.PutAsync($"{_endpoint}", model.ToJsonHttpContent());
         var result = await response.Content.DeserializeFromHttpContentAsync<PlayerDto>();
         
-        // assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         result.PlayerId.ShouldBe(1);
         result.RoomId.ShouldBe(1);
@@ -88,25 +79,21 @@ public class PlayerControllerUpdateTests
     [Fact]
     public async Task Update_IsDeadFieldIsNotValid_ReturnsBadRequest()
     {
-        // arrange
         var model = new 
         {
             Name = "Namae",
             TeamId = 1,
             IsDead = "xd"
         };
-        
-        // act
+
         var response = await _client.PutAsync($"{_endpoint}", model.ToJsonHttpContent());
         
-        // assert
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
     
     [Fact]
     public async Task Update_TeamIdFieldIsNotValid_ReturnsBadRequest()
     {
-        // arrange
         var model = new 
         {
             Name = "Namae",
@@ -114,10 +101,8 @@ public class PlayerControllerUpdateTests
             IsDead = true
         };
         
-        // act
         var response = await _client.PutAsync($"{_endpoint}", model.ToJsonHttpContent());
         
-        // assert
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
 }

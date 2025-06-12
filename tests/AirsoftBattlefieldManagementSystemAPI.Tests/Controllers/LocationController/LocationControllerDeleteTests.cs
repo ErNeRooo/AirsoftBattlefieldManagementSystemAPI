@@ -7,14 +7,6 @@ public class LocationControllerDeleteTests
 {
     private HttpClient _client;
     private string _endpoint = "location/id/";
-
-    public LocationControllerDeleteTests()
-    {
-        
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
-        _client = factory.CreateClient();
-    }
-    
         
     [Theory]
     [InlineData(1, 1)]
@@ -24,7 +16,7 @@ public class LocationControllerDeleteTests
     [InlineData(6, 7)]
     public async void Delete_ValidId_ReturnsNoContent(int senderPlayerId, int locationId)
     {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
         _client = factory.CreateClient();
         
         var response = await _client.DeleteAsync($"{_endpoint}{locationId}");
@@ -38,6 +30,9 @@ public class LocationControllerDeleteTests
     [InlineData(112354)]
     public async void Delete_NotExistingLocation_ReturnsNotFound(int locationId)
     {
+        var factory = new CustomWebApplicationFactory<Program>();
+        _client = factory.CreateClient();
+        
         var response = await _client.DeleteAsync($"{_endpoint}{locationId}");
         
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);

@@ -10,15 +10,12 @@ public class RoomControllerDeleteTests
     private HttpClient _client;
     private string _endpoint = "room";
     
-    public RoomControllerDeleteTests()
-    {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
-        _client = factory.CreateClient();
-    }
-    
     [Fact]
     public async void Delete_ValidId_ReturnsNoContent()
     {
+        var factory = new CustomWebApplicationFactory<Program>();
+        _client = factory.CreateClient();
+        
         var response = await _client.DeleteAsync($"{_endpoint}");
         
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);

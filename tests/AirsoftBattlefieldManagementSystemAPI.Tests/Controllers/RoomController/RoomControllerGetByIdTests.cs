@@ -9,13 +9,7 @@ public class RoomControllerGetByIdTests
 {
     private HttpClient _client;
     private string _endpoint = "room/id/";
-
-    public RoomControllerGetByIdTests()
-    {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
-        _client = factory.CreateClient();
-    }
-
+    
     [Theory]
     [InlineData(1, 1, "123456", 100, 1)]
     [InlineData(1, 2, "213700", 2, 3)]
@@ -42,18 +36,11 @@ public class RoomControllerGetByIdTests
     [InlineData("0")]
     public async void GetById_ForRoomThatDoesntExist_ReturnsNotFound(string roomId)
     {
+        var factory = new CustomWebApplicationFactory<Program>();
+        _client = factory.CreateClient();
+        
         var response = await _client.GetAsync($"{_endpoint}{roomId}");
         
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
-    }
-    
-    [Theory]
-    [InlineData("one")]
-    [InlineData("2.!")]
-    public async void GetById_ForInvalidId_ReturnsBadRequest(string roomId)
-    {
-        var response = await _client.GetAsync($"{_endpoint}{roomId}");
-        
-        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
 }

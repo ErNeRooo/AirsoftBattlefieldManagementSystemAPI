@@ -20,14 +20,11 @@ public class AccountControllerDeleteTests
     [Fact]
     public async Task Delete_ValidId_ReturnsNoContent()
     {
-        // arrange
         var factory = new CustomWebApplicationFactory<Program>(2);
         _client = factory.CreateClient();
         
-        // act
         var response = await _client.DeleteAsync($"{_endpoint}");
         
-        // assert
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
     } 
     
@@ -35,14 +32,11 @@ public class AccountControllerDeleteTests
     [InlineData(5)]
     public async Task Delete_PlayerWithoutAccount_ReturnsNotFound(int senderPlayerId)
     {
-        // arrange
         var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
         _client = factory.CreateClient();
         
-        // act
         var response = await _client.DeleteAsync($"{_endpoint}");
         
-        // assert
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     } 
 }

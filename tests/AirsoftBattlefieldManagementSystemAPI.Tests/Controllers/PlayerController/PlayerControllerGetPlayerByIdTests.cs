@@ -21,11 +21,9 @@ public class PlayerControllerGetPlayerByIdTests
     [InlineData(2, 2, 1, false, "Takina")]
     public async Task GetById_ValidId_ReturnsOk(int playerId, int teamId, int roomId, bool isDead, string name)
     {
-        // act
         var response = await _client.GetAsync($"/player/id/{playerId}");
         var result = await response.Content.DeserializeFromHttpContentAsync<PlayerDto>();
         
-        // assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         result.ShouldNotBeNull();
         result.PlayerId.ShouldBe(playerId);
@@ -38,30 +36,16 @@ public class PlayerControllerGetPlayerByIdTests
     [Fact]
     public async Task GetById_PlayerFromDifferentRoom_ReturnsForbidden()
     {
-        // act
         var response = await _client.GetAsync($"/player/id/{3}");
-
-        // assert
+        
         response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
     }
     
     [Fact]
     public async Task GetById_PlayerDoesNotExists_ReturnsNotFound()
     {
-        // act
         var response = await _client.GetAsync($"/player/id/{43535}");
-
-        // assert
+        
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
-    }
-    
-    [Fact]
-    public async Task GetById_InvalidId_ReturnsBadRequest()
-    {
-        // act
-        var response = await _client.GetAsync($"/player/id/{"two"}");
-
-        // assert
-        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
 }

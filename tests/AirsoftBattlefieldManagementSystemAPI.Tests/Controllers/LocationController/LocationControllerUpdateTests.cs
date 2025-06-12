@@ -10,12 +10,6 @@ public class LocationControllerUpdateTests
     private HttpClient _client;
     private string _endpoint = "location/id/";
     
-    public LocationControllerUpdateTests()
-    {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
-        _client = factory.CreateClient();
-    }
-    
     public class PlayerLocationTestData
     {
         public int SenderPlayerId { get; set; }
@@ -262,6 +256,9 @@ public class LocationControllerUpdateTests
     [InlineData(-1)]
     public async void Update_NotExistingLocation_ReturnsNotFound(int id)
     {
+        var factory = new CustomWebApplicationFactory<Program>();
+        _client = factory.CreateClient();
+        
         var model = new PutLocationDto();
         
         var response = await _client.PutAsync($"{_endpoint}{id}", model.ToJsonHttpContent());

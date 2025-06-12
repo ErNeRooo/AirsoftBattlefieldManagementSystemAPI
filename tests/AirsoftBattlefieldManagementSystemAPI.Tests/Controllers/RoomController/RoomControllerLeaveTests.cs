@@ -7,12 +7,6 @@ public class RoomControllerLeaveTests
 {
     private HttpClient _client;
     private string _endpoint = "/room/leave";
-
-    public RoomControllerLeaveTests()
-    {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
-        _client = factory.CreateClient();
-    }
     
     [Theory]
     [InlineData(1)]
@@ -20,7 +14,7 @@ public class RoomControllerLeaveTests
     [InlineData(5)]
     public async void Leave_ValidId_ReturnsOk(int senderPlayerId)
     {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
         _client = factory.CreateClient();
         
         var response = await _client.PostAsync($"{_endpoint}", null);

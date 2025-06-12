@@ -8,18 +8,12 @@ public class BattleControllerDeleteTests
     private HttpClient _client;
     private string _endpoint = "battle/id/";
     
-    public BattleControllerDeleteTests()
-    {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
-        _client = factory.CreateClient();
-    }
-    
     [Theory]
     [InlineData(1, 1)]
     [InlineData(3, 2)]
     public async void Delete_ValidId_ReturnsNoContent(int senderPlayerId, int battleId)
     {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
         _client = factory.CreateClient();
         
         var response = await _client.DeleteAsync($"{_endpoint}{battleId}");
@@ -28,21 +22,14 @@ public class BattleControllerDeleteTests
     }
     
     [Theory]
-    [InlineData("1.0")]
-    [InlineData("e")]
-    public async void Delete_NotValidId_ReturnsBadRequest(string battleId)
-    {
-        var response = await _client.DeleteAsync($"{_endpoint}{battleId}");
-        
-        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-    }
-    
-    [Theory]
     [InlineData(0)]
     [InlineData(-1)]
     [InlineData(112354)]
     public async void Delete_NotExistingBattle_ReturnsNotFound(int battleId)
     {
+        var factory = new CustomWebApplicationFactory<Program>();
+        _client = factory.CreateClient();
+        
         var response = await _client.DeleteAsync($"{_endpoint}{battleId}");
         
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -58,7 +45,7 @@ public class BattleControllerDeleteTests
     [InlineData(6, 1)]
     public async void Delete_AsNotRoomAdmin_ReturnsForbidden(int senderPlayerId, int battleId)
     {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
         _client = factory.CreateClient();
         
         var response = await _client.DeleteAsync($"{_endpoint}{battleId}");

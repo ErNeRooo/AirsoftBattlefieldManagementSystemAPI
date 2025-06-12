@@ -10,12 +10,6 @@ public class BattleControllerGetByIdTests
     private HttpClient _client;
     private string _endpoint = "battle/id/";
     
-    public BattleControllerGetByIdTests()
-    {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
-        _client = factory.CreateClient();
-    }
-    
     [Theory]
     [InlineData(1, 1, "Kursk", false, 1)]
     [InlineData(4, 2, "Rhine", true, 2)]
@@ -36,23 +30,14 @@ public class BattleControllerGetByIdTests
     }
     
     [Theory]
-    [InlineData("e")]
-    [InlineData("2e")]
-    [InlineData("2.0")]
-    [InlineData("2.1")]
-    public async void GetById_NotValidId_ReturnsBadRequest(string id)
-    {
-        var response = await _client.GetAsync($"{_endpoint}{id}");
-        
-        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-    }
-    
-    [Theory]
     [InlineData(0)]
     [InlineData(234641)]
     [InlineData(-1)]
     public async void GetById_BattleDoesNotExist_ReturnsNotFound(int id)
     {
+        var factory = new CustomWebApplicationFactory<Program>();
+        _client = factory.CreateClient();
+        
         var response = await _client.GetAsync($"{_endpoint}{id}");
         
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);

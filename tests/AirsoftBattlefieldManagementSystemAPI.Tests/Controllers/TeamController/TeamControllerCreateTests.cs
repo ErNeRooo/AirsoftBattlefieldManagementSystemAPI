@@ -10,12 +10,6 @@ public class TeamControllerCreateTests
     private HttpClient _client;
     private string _endpoint = "team/";
     
-    public TeamControllerCreateTests()
-    {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
-        _client = factory.CreateClient();
-    }
-    
     [Theory]
     [InlineData(1, 1, "Green")]
     [InlineData(2, 1, "Black")]
