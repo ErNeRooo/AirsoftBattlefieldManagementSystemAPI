@@ -1,25 +1,25 @@
 using System.Net;
-using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Location;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Kill;
 using AirsoftBattlefieldManagementSystemAPI.Tests.Helpers;
 using Shouldly;
 
-namespace AirsoftBattlefieldManagementSystemAPI.Tests.Controllers.LocationController;
+namespace AirsoftBattlefieldManagementSystemAPI.Tests.Controllers.KillController;
 
-public class LocationControllerUpdateTests
+public class KillControllerUpdateTests
 {
-    private HttpClient _client;
-    private string _endpoint = "location/id/";
+        private HttpClient _client;
+    private string _endpoint = "kill/id/";
     
-    public LocationControllerUpdateTests()
+    public KillControllerUpdateTests()
     {
         CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
         _client = factory.CreateClient();
     }
     
-    public class PlayerLocationTestData
+    public class PlayerKillTestData
     {
         public int SenderPlayerId { get; set; }
-        public int LocationId { get; set; }
+        public int KillId { get; set; }
         public int RoomId { get; set; }
         public decimal? Longitude { get; set; }
         public decimal? Latitude { get; set; }
@@ -31,12 +31,12 @@ public class LocationControllerUpdateTests
     public static IEnumerable<object[]> GetDataFor_ValidModel()
     {
         var datetime = DateTime.Now;
-        var tests = new List<PlayerLocationTestData>
+        var tests = new List<PlayerKillTestData>
         {
             new()
             {
                 SenderPlayerId = 1,
-                LocationId = 1,
+                KillId = 1,
                 RoomId = 1,
                 Longitude = 86,
                 Latitude = 43,
@@ -47,7 +47,7 @@ public class LocationControllerUpdateTests
             new()
             {
                 SenderPlayerId = 1,
-                LocationId = 2,
+                KillId = 2,
                 RoomId = 1,
                 Longitude = 75,
                 Latitude = 46,
@@ -58,7 +58,7 @@ public class LocationControllerUpdateTests
             new()
             {
                 SenderPlayerId = 2,
-                LocationId = 4,
+                KillId = 3,
                 RoomId = 1,
                 Longitude = 86,
                 Latitude = 87,
@@ -69,7 +69,7 @@ public class LocationControllerUpdateTests
             new()
             {
                 SenderPlayerId = 3,
-                LocationId = 5,
+                KillId = 5,
                 RoomId = 2,
                 Longitude = 1,
                 Latitude = 1,
@@ -79,8 +79,8 @@ public class LocationControllerUpdateTests
             },
             new()
             {
-                SenderPlayerId = 6,
-                LocationId = 7,
+                SenderPlayerId = 4,
+                KillId = 7,
                 RoomId = 2,
                 Longitude = 6,
                 Latitude = 6,
@@ -96,12 +96,12 @@ public class LocationControllerUpdateTests
     public static IEnumerable<object[]> GetDataFor_NotAllFieldsSpecified()
     {
         var datetime = DateTime.Now;
-        var tests = new List<PlayerLocationTestData>
+        var tests = new List<PlayerKillTestData>
         {
             new()
             {
                 SenderPlayerId = 1,
-                LocationId = 1,
+                KillId = 1,
                 RoomId = 1,
                 Longitude = null,
                 Latitude = null,
@@ -112,7 +112,7 @@ public class LocationControllerUpdateTests
             new()
             {
                 SenderPlayerId = 3,
-                LocationId = 5,
+                KillId = 5,
                 RoomId = 2,
                 Longitude = null,
                 Latitude = null,
@@ -123,7 +123,7 @@ public class LocationControllerUpdateTests
             new()
             {
                 SenderPlayerId = 1,
-                LocationId = 2,
+                KillId = 2,
                 RoomId = 1,
                 Longitude = null,
                 Latitude = 24,
@@ -133,8 +133,8 @@ public class LocationControllerUpdateTests
             },
             new()
             {
-                SenderPlayerId = 6,
-                LocationId = 7,
+                SenderPlayerId = 4,
+                KillId = 7,
                 RoomId = 2,
                 Longitude = null,
                 Latitude = null,
@@ -145,7 +145,7 @@ public class LocationControllerUpdateTests
             new()
             {
                 SenderPlayerId = 1,
-                LocationId = 1,
+                KillId = 1,
                 RoomId = 1,
                 Longitude = 155,
                 Latitude = null,
@@ -156,7 +156,7 @@ public class LocationControllerUpdateTests
             new()
             {
                 SenderPlayerId = 1,
-                LocationId = 1,
+                KillId = 1,
                 RoomId = 1,
                 Longitude = null,
                 Latitude = null,
@@ -167,7 +167,7 @@ public class LocationControllerUpdateTests
             new()
             {
                 SenderPlayerId = 1,
-                LocationId = 1,
+                KillId = 1,
                 RoomId = 1,
                 Longitude = null,
                 Latitude = null,
@@ -178,7 +178,7 @@ public class LocationControllerUpdateTests
             new()
             {
                 SenderPlayerId = 1,
-                LocationId = 1,
+                KillId = 1,
                 RoomId = 1,
                 Longitude = null,
                 Latitude = null,
@@ -193,12 +193,12 @@ public class LocationControllerUpdateTests
     
     [Theory]
     [MemberData(nameof(GetDataFor_ValidModel))]
-    public async void Update_ValidModel_ReturnsCreatedAndBattleDto(PlayerLocationTestData testData)
+    public async void Update_ValidModel_ReturnsCreatedAndBattleDto(PlayerKillTestData testData)
     {
         var factory = new CustomWebApplicationFactory<Program>(testData.SenderPlayerId);
         _client = factory.CreateClient();
 
-        var model = new PutLocationDto()
+        var model = new PutKillDto()
         {
             Latitude = testData.Latitude,
             Longitude = testData.Longitude,
@@ -207,11 +207,11 @@ public class LocationControllerUpdateTests
             Time = testData.Time,
         };
         
-        var response = await _client.PutAsync($"{_endpoint}{testData.LocationId}", model.ToJsonHttpContent());
-        var result = await response.Content.DeserializeFromHttpContentAsync<LocationDto>();
+        var response = await _client.PutAsync($"{_endpoint}{testData.KillId}", model.ToJsonHttpContent());
+        var result = await response.Content.DeserializeFromHttpContentAsync<KillDto>();
         
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        result.LocationId.ShouldNotBe(0);
+        result.KillId.ShouldNotBe(0);
         result.RoomId.ShouldBe(testData.RoomId);
         result.PlayerId.ShouldBe(testData.SenderPlayerId);
         result.Longitude.ShouldBe((int)testData.Longitude);
@@ -223,12 +223,12 @@ public class LocationControllerUpdateTests
     
     [Theory]
     [MemberData(nameof(GetDataFor_NotAllFieldsSpecified))]
-    public async void Update_NotAllFieldsSpecified_ReturnsOkAndLocationDto(PlayerLocationTestData testData)
+    public async void Update_NotAllFieldsSpecified_ReturnsOkAndKillDto(PlayerKillTestData testData)
     {
         var factory = new CustomWebApplicationFactory<Program>(testData.SenderPlayerId);
         _client = factory.CreateClient();
 
-        var model = new PutLocationDto()
+        var model = new PutKillDto()
         {
             Latitude = testData.Latitude,
             Longitude = testData.Longitude,
@@ -237,16 +237,16 @@ public class LocationControllerUpdateTests
             Time = testData.Time,
         };
         
-        var responseFromGet = await _client.GetAsync($"{_endpoint}{testData.LocationId}");
-        var resultFromGet = await responseFromGet.Content.DeserializeFromHttpContentAsync<LocationDto>();
+        var responseFromGet = await _client.GetAsync($"{_endpoint}{testData.KillId}");
+        var resultFromGet = await responseFromGet.Content.DeserializeFromHttpContentAsync<KillDto>();
         
         responseFromGet.StatusCode.ShouldBe(HttpStatusCode.OK);
         
-        var response = await _client.PutAsync($"{_endpoint}{testData.LocationId}", model.ToJsonHttpContent());
-        var result = await response.Content.DeserializeFromHttpContentAsync<LocationDto>();
+        var response = await _client.PutAsync($"{_endpoint}{testData.KillId}", model.ToJsonHttpContent());
+        var result = await response.Content.DeserializeFromHttpContentAsync<KillDto>();
         
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        result.LocationId.ShouldNotBe(0);
+        result.KillId.ShouldNotBe(0);
         result.RoomId.ShouldBe(testData.RoomId);
         result.PlayerId.ShouldBe(testData.SenderPlayerId);
         result.Longitude.ShouldBe(testData.Longitude ?? resultFromGet.Longitude);
@@ -260,9 +260,9 @@ public class LocationControllerUpdateTests
     [InlineData(0)]
     [InlineData(234641)]
     [InlineData(-1)]
-    public async void Update_NotExistingLocation_ReturnsNotFound(int id)
+    public async void Update_NotExistingKill_ReturnsNotFound(int id)
     {
-        var model = new PutLocationDto();
+        var model = new PutKillDto();
         
         var response = await _client.PutAsync($"{_endpoint}{id}", model.ToJsonHttpContent());
         
@@ -279,14 +279,14 @@ public class LocationControllerUpdateTests
     [InlineData(6, 4)]
     [InlineData(5, 4)]
     [InlineData(5, 7)]
-    public async void Update_LocationOfOtherPlayer_ReturnsForbidden(int senderPlayerId, int locationId)
+    public async void Update_KillOfOtherPlayer_ReturnsForbidden(int senderPlayerId, int killId)
     {
         var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
         _client = factory.CreateClient();
         
-        var model = new PutLocationDto();
+        var model = new PutKillDto();
         
-        var response = await _client.PutAsync($"{_endpoint}{locationId}", model.ToJsonHttpContent());
+        var response = await _client.PutAsync($"{_endpoint}{killId}", model.ToJsonHttpContent());
         
         response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
     }
