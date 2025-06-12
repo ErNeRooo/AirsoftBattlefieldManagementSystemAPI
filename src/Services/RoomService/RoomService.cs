@@ -59,9 +59,11 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
             return mapper.Map<RoomDto>(room);
         }
 
-        public RoomDto Update(int id, PutRoomDto roomDto, ClaimsPrincipal user)
+        public RoomDto Update(PutRoomDto roomDto, ClaimsPrincipal user)
         {
-            Room previousRoom = dbHelper.FindRoomById(id);
+            int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
+            Player player = dbHelper.FindPlayerById(playerId);
+            Room previousRoom = dbHelper.FindRoomById(player.RoomId);
 
             authorizationHelperService.CheckPlayerOwnsResource(user, previousRoom.AdminPlayerId);
             
@@ -76,9 +78,11 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
             return mapper.Map<RoomDto>(updatedRoom);
         }
 
-        public void DeleteById(int id, ClaimsPrincipal user)
+        public void Delete(ClaimsPrincipal user)
         {
-            Room room = dbHelper.FindRoomById(id);
+            int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
+            Player player = dbHelper.FindPlayerById(playerId);
+            Room room = dbHelper.FindRoomById(player.RoomId);
 
             authorizationHelperService.CheckPlayerOwnsResource(user, room.AdminPlayerId);
 

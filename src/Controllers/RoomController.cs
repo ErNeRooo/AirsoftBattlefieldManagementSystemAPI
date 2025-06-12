@@ -35,18 +35,18 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
             return Created($"/room/id/{resultRoom.RoomId}", resultRoom);
         }
 
-        [HttpPut("id/{id}")]
-        public ActionResult<RoomDto> Update(int id, [FromBody] PutRoomDto roomDto)
+        [HttpPut("")]
+        public ActionResult<RoomDto> Update([FromBody] PutRoomDto roomDto)
         {
-            RoomDto resultRoom = roomService.Update(id, roomDto, User);
+            RoomDto resultRoom = roomService.Update(roomDto, User);
 
             return Ok(resultRoom);
         }
 
-        [HttpDelete("id/{id}")]
-        public ActionResult Delete(int id)
+        [HttpDelete("")]
+        public ActionResult Delete()
         {
-            roomService.DeleteById(id, User);
+            roomService.Delete(User);
 
             return NoContent();
         }

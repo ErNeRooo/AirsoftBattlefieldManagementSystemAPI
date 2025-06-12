@@ -9,7 +9,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Controllers.AccountControl
 public class AccountControllerDeleteTests
 {
     private HttpClient _client;
-    private readonly string _endpoint = "/account/id/";
+    private readonly string _endpoint = "account";
 
     public AccountControllerDeleteTests()
     {
@@ -25,47 +25,24 @@ public class AccountControllerDeleteTests
         _client = factory.CreateClient();
         
         // act
-        var response = await _client.DeleteAsync($"{_endpoint}{2137}");
+        var response = await _client.DeleteAsync($"{_endpoint}");
         
         // assert
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
     } 
     
-    [Fact]
-    public async Task Delete_AccountDoesNotExist_ReturnsNotFound()
-    {
-        // act
-        var response = await _client.DeleteAsync($"{_endpoint}{12491938}");
-        
-        // assert
-        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
-    } 
-    
     [Theory]
-    [InlineData(1, 1)]
-    [InlineData(1, 2)]
-    [InlineData(2, 1)]
-    [InlineData(2, 2)]
-    public async Task Delete_AccountOfOtherPlayer_ReturnsForbidden(int accountId, int playerId)
+    [InlineData(5)]
+    public async Task Delete_PlayerWithoutAccount_ReturnsNotFound(int senderPlayerId)
     {
         // arrange
-        var factory = new CustomWebApplicationFactory<Program>(playerId);
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
         _client = factory.CreateClient();
         
         // act
-        var response = await _client.DeleteAsync($"{_endpoint}{accountId}");
+        var response = await _client.DeleteAsync($"{_endpoint}");
         
         // assert
-        response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
-    } 
-    
-    [Fact]
-    public async Task Delete_NotValidId_ReturnsBadRequest()
-    {
-        // act
-        var response = await _client.DeleteAsync($"{_endpoint}{"2 esdw"}");
-        
-        // assert
-        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     } 
 }

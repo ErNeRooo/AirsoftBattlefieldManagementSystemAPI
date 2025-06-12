@@ -1,19 +1,15 @@
 ﻿using System.Security.Claims;
-using AirsoftBattlefieldManagementSystemAPI.Authorization;
-using AirsoftBattlefieldManagementSystemAPI.Exceptions;
 using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Kill;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperService;
+using AirsoftBattlefieldManagementSystemAPI.Services.ClaimsHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.KillService
 {
-    public class KillService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IAuthorizationHelperService authorizationHelper, IDbContextHelperService dbHelper) : IKillService
+    public class KillService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IAuthorizationHelperService authorizationHelper, IDbContextHelperService dbHelper, IClaimsHelperService claimsHelper) : IKillService
     {
         public KillDto GetById(int id, ClaimsPrincipal user)
         {
@@ -45,8 +41,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.KillService
             return killDtos;
         }
 
-        public KillDto Create(int playerId, PostKillDto killDto, ClaimsPrincipal user)
+        public KillDto Create(PostKillDto killDto, ClaimsPrincipal user)
         {
+            int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
             Player player = dbHelper.FindPlayerById(playerId);
             
             authorizationHelper.CheckPlayerOwnsResource(user, playerId);

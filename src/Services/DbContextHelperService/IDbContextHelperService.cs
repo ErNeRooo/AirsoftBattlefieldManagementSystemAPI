@@ -8,6 +8,7 @@ public interface IDbContextHelperService
     public List<Location> FindAllLocationsOfPlayer(Player player);
     public PlayerLocation FindPlayerLocationById(int? id);
     public Player FindPlayerById(int? id);
+    public Player FindPlayerByIdIncludingAccount(int? id);
     public Team FindTeamById(int? id);
     public Kill FindKillById(int? id);
     public List<Kill> FindAllKillsOfPlayer(Player player);

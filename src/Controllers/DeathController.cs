@@ -30,10 +30,10 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpPost]
-        [Route("playerId/{playerId}")]
-        public ActionResult<DeathDto> Create(int playerId, [FromBody] PostDeathDto deathDto)
+        [Route("")]
+        public ActionResult<DeathDto> Create([FromBody] PostDeathDto deathDto)
         {
-            DeathDto resultDeath = deathService.Create(playerId, deathDto, User);
+            DeathDto resultDeath = deathService.Create(deathDto, User);
 
             return Created($"/Death/id/{resultDeath.DeathId}", resultDeath);
         }

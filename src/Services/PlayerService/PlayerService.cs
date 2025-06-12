@@ -43,9 +43,10 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
             return mapper.Map<PlayerDto>(player);
         }
 
-        public PlayerDto Update(int id, PutPlayerDto playerDto, ClaimsPrincipal user)
+        public PlayerDto Update(PutPlayerDto playerDto, ClaimsPrincipal user)
         {
-            authorizationHelper.CheckPlayerOwnsResource(user, id);
+            int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
+            authorizationHelper.CheckPlayerOwnsResource(user, playerId);
             
             if(playerDto.TeamId is not null)
             {
@@ -54,7 +55,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
                     $"Target team {team.TeamId} is not in the same room as player");
             }
             
-            Player previousPlayer = dbHelper.FindPlayerById(id);
+            Player previousPlayer = dbHelper.FindPlayerById(playerId);
 
             mapper.Map(playerDto, previousPlayer);
             dbContext.Player.Update(previousPlayer);
@@ -63,11 +64,12 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
             return mapper.Map<PlayerDto>(previousPlayer);
         }
 
-        public void DeleteById(int id, ClaimsPrincipal user)
+        public void Delete(ClaimsPrincipal user)
         {
-            Player player = dbHelper.FindPlayerById(id);
+            int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
+            Player player = dbHelper.FindPlayerById(playerId);
 
-            authorizationHelper.CheckPlayerOwnsResource(user, id);
+            authorizationHelper.CheckPlayerOwnsResource(user, playerId);
             
             dbContext.Player.Remove(player);
             dbContext.SaveChanges();

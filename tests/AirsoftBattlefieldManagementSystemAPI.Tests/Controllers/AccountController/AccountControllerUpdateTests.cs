@@ -8,7 +8,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Controllers.AccountControl
 public class AccountControllerUpdateTests
 {
     private HttpClient _client;
-    private readonly string _endpoint = "/account/id/";
+    private readonly string _endpoint = "account";
 
     public AccountControllerUpdateTests()
     {
@@ -31,7 +31,7 @@ public class AccountControllerUpdateTests
         };
 
         // act
-        var response = await _client.PutAsync($"{_endpoint}{2137}", model.ToJsonHttpContent());
+        var response = await _client.PutAsync($"{_endpoint}", model.ToJsonHttpContent());
         var result = await response.Content.DeserializeFromHttpContentAsync<AccountDto>();
         
         // assert
@@ -56,7 +56,7 @@ public class AccountControllerUpdateTests
         };
         
         // act
-        var response = await _client.PutAsync($"{_endpoint}{2137}", model.ToJsonHttpContent());
+        var response = await _client.PutAsync($"{_endpoint}", model.ToJsonHttpContent());
         var result = await response.Content.DeserializeFromHttpContentAsync<AccountDto>();
         
         // assert
@@ -80,7 +80,7 @@ public class AccountControllerUpdateTests
         };
         
         // act
-        var response = await _client.PutAsync($"{_endpoint}{2137}", model.ToJsonHttpContent());
+        var response = await _client.PutAsync($"{_endpoint}", model.ToJsonHttpContent());
         var result = await response.Content.DeserializeFromHttpContentAsync<AccountDto>();
         
         // assert
@@ -92,38 +92,19 @@ public class AccountControllerUpdateTests
     } 
     
     [Theory]
-    [InlineData(1, 1)]
-    [InlineData(1, 2)]
-    [InlineData(2, 1)]
-    [InlineData(2, 2)]
-    public async Task Update_AccountOfOtherPlayer_ReturnsForbidden(int accountId, int playerId)
+    [InlineData(5)]
+    public async Task Update_PlayerWithoutAccount_ReturnsNotFound(int senderPlayerId)
     {
         // arrange
-        var factory = new CustomWebApplicationFactory<Program>(playerId);
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
         _client = factory.CreateClient();
 
         var model = new PutAccountDto();
         
         // act
-        var response = await _client.PutAsync($"{_endpoint}{accountId}", model.ToJsonHttpContent());
-        
-        // assert
-        response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
-    } 
-
-    [Fact]
-    public async Task Update_AccountDoesNotExist_ReturnsNotFound()
-    {
-        // arrange
-        var model = new PutAccountDto()
-        {
-            Password = "$troNg-P4SSw0rd"
-        };
-        
-        // act
-        var response = await _client.PutAsync($"{_endpoint}{7472562}", model.ToJsonHttpContent());
+        var response = await _client.PutAsync($"{_endpoint}", model.ToJsonHttpContent());
         
         // assert
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
-    } 
+    }
 }

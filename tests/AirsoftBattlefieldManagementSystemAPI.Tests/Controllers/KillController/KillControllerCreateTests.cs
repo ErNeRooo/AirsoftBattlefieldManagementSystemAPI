@@ -8,7 +8,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Controllers.KillController
 public class KillControllerCreateTests
 {
     private HttpClient _client;
-    private string _endpoint = "kill/playerId/";
+    private string _endpoint = "kill";
 
     public KillControllerCreateTests()
     {
@@ -103,7 +103,7 @@ public class KillControllerCreateTests
             Time = testData.Time,
         };
         
-        var response = await _client.PostAsync($"{_endpoint}{testData.SenderPlayerId}", model.ToJsonHttpContent());
+        var response = await _client.PostAsync($"{_endpoint}", model.ToJsonHttpContent());
         var result = await response.Content.DeserializeFromHttpContentAsync<KillDto>();
         
         response.StatusCode.ShouldBe(HttpStatusCode.Created);

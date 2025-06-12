@@ -8,7 +8,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Controllers.DeathControlle
 public class DeathControllerCreateTests
 {
     private HttpClient _client;
-    private string _endpoint = "death/playerId/";
+    private string _endpoint = "death";
 
     public DeathControllerCreateTests()
     {
@@ -103,7 +103,7 @@ public class DeathControllerCreateTests
             Time = testData.Time,
         };
         
-        var response = await _client.PostAsync($"{_endpoint}{testData.SenderPlayerId}", model.ToJsonHttpContent());
+        var response = await _client.PostAsync($"{_endpoint}", model.ToJsonHttpContent());
         var result = await response.Content.DeserializeFromHttpContentAsync<DeathDto>();
         
         response.StatusCode.ShouldBe(HttpStatusCode.Created);

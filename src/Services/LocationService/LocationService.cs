@@ -70,10 +70,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
             return locationDtos;
         }
 
-        public LocationDto Create(int playerId, PostLocationDto locationDto, ClaimsPrincipal user)
+        public LocationDto Create(PostLocationDto locationDto, ClaimsPrincipal user)
         {
-            authorizationHelper.CheckPlayerOwnsResource(user, playerId);
-
+            int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
             Player player = dbHelper.FindPlayerById(playerId);
 
             Location location = mapper.Map<Location>(locationDto);

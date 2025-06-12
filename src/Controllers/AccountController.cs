@@ -38,20 +38,19 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpPut]
-        [Route("id/{id}")]
-        public ActionResult<AccountDto> Update(int id, [FromBody] PutAccountDto accountDto)
+        [Route("")]
+        public ActionResult<AccountDto> Update([FromBody] PutAccountDto accountDto)
         {
-            AccountDto resultAccount = accountService.Update(id, accountDto, User);
+            AccountDto resultAccount = accountService.Update(accountDto, User);
 
             return Ok(resultAccount);
-
         }
 
         [HttpDelete]
-        [Route("id/{id}")]
-        public ActionResult Delete(int id)
+        [Route("")]
+        public ActionResult Delete()
         {
-            accountService.DeleteById(id, User);
+            accountService.Delete(User);
 
             return NoContent();
         }

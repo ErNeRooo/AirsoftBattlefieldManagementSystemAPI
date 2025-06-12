@@ -5,6 +5,7 @@ using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbConte
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Death;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperService;
+using AirsoftBattlefieldManagementSystemAPI.Services.ClaimsHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.DeathService
 {
-    public class DeathService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IAuthorizationHelperService authorizationHelper, IDbContextHelperService dbHelper) : IDeathService
+    public class DeathService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IClaimsHelperService claimsHelper, IAuthorizationHelperService authorizationHelper, IDbContextHelperService dbHelper) : IDeathService
     {
         public DeathDto GetById(int id, ClaimsPrincipal user)
         {
@@ -45,8 +46,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.DeathService
             return deathDtos;
         }
 
-        public DeathDto Create(int playerId, PostDeathDto deathDto, ClaimsPrincipal user)
+        public DeathDto Create(PostDeathDto deathDto, ClaimsPrincipal user)
         {
+            int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
             Player player = dbHelper.FindPlayerById(playerId);
 
             Location location = mapper.Map<Location>(deathDto);

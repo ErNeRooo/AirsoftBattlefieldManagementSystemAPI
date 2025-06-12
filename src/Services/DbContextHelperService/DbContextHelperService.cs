@@ -47,6 +47,16 @@ public class DbContextHelperService(IBattleManagementSystemDbContext dbContext) 
         return player;
     }
     
+    public Player FindPlayerByIdIncludingAccount(int? id)
+    {
+        Player? player = dbContext.Player.Include(p => p.Account).FirstOrDefault(p => p.PlayerId == id);
+
+        if (player is null) throw new NotFoundException($"Player with id {id} not found");
+        if (player.Account is null) throw new NotFoundException($"Player with id {id} is not logged into account");
+        
+        return player;
+    }
+    
     public Team FindTeamById(int? id)
     {
         Team? team = dbContext.Team.FirstOrDefault(t => t.TeamId == id);

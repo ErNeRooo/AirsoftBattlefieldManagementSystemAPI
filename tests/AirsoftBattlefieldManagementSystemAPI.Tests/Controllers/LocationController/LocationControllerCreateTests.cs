@@ -9,7 +9,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Controllers.LocationContro
 public class LocationControllerCreateTests
 {
     private HttpClient _client;
-    private string _endpoint = "location/playerId/";
+    private string _endpoint = "location/";
 
     public LocationControllerCreateTests()
     {
@@ -104,7 +104,7 @@ public class LocationControllerCreateTests
             Time = testData.Time,
         };
         
-        var response = await _client.PostAsync($"{_endpoint}{testData.SenderPlayerId}", model.ToJsonHttpContent());
+        var response = await _client.PostAsync($"{_endpoint}", model.ToJsonHttpContent());
         var result = await response.Content.DeserializeFromHttpContentAsync<LocationDto>();
         
         response.StatusCode.ShouldBe(HttpStatusCode.Created);

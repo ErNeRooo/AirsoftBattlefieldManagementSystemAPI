@@ -28,18 +28,18 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
             return Created($"/player/id/{resultPlayer.PlayerId}", jwtToken);
         }
 
-        [HttpPut("id/{id}")]
-        public ActionResult<PlayerDto> Update(int id, [FromBody] PutPlayerDto playerDto)
+        [HttpPut("")]
+        public ActionResult<PlayerDto> Update([FromBody] PutPlayerDto playerDto)
         {
-            PlayerDto player = playerService.Update(id, playerDto, User);
+            PlayerDto player = playerService.Update(playerDto, User);
 
             return Ok(player);
         }
 
-        [HttpDelete("id/{id}")]
-        public ActionResult<string> Delete(int id)
+        [HttpDelete("")]
+        public ActionResult<string> Delete()
         {
-            playerService.DeleteById(id, User);
+            playerService.Delete(User);
 
             return NoContent();
         }

@@ -8,7 +8,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Controllers.RoomController
 public class RoomControllerUpdateTests
 {
     private HttpClient _client;
-    private string _endpoint = "room/id/";
+    private string _endpoint = "room";
 
     public RoomControllerUpdateTests()
     {
@@ -39,7 +39,7 @@ public class RoomControllerUpdateTests
         
         responseFromGet.StatusCode.ShouldBe(HttpStatusCode.OK);
         
-        var response = await _client.PutAsync($"{_endpoint}{1}", model.ToJsonHttpContent());
+        var response = await _client.PutAsync($"{_endpoint}", model.ToJsonHttpContent());
         var result = await response.Content.DeserializeFromHttpContentAsync<RoomDto>();
         
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -49,48 +49,34 @@ public class RoomControllerUpdateTests
         result.MaxPlayers.ShouldBe(maxPlayers ?? resultFromGet.MaxPlayers);
         result.AdminPlayerId.ShouldBe(adminPlayerId ?? resultFromGet.AdminPlayerId);
     }
-
-    [Theory]
-    [InlineData("2w")]
-    [InlineData("2.2")]
-    [InlineData("dd")]
-    public async void Update_InvalidId_ReturnsBadRequest(string roomId)
-    {
-        var model = new PutRoomDto();
-        
-        var response = await _client.PutAsync($"{_endpoint}{roomId}", model.ToJsonHttpContent());
-        
-        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-    }
     
     [Theory]
-    [InlineData(76734)]
-    [InlineData(0)]
-    [InlineData(-414)]
-    public async void Update_NotExistingRoom_ReturnsNotFound(int roomId)
-    {
-        var model = new PutRoomDto();
-        
-        var response = await _client.PutAsync($"{_endpoint}{roomId}", model.ToJsonHttpContent());
-        
-        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
-    }
-    
-    [Theory]
-    [InlineData(2, 1)]
-    [InlineData(4, 2)]
-    [InlineData(4, 1)]
-    [InlineData(3, 1)]
-    [InlineData(1, 2)]
-    public async void Update_ForNonAdminPlayer_ReturnsForbidden(int senderPlayerId, int roomId)
+    [InlineData(2)]
+    [InlineData(4)]
+    [InlineData(6)]
+    public async void Update_ForNonAdminPlayer_ReturnsForbidden(int senderPlayerId)
     {
         var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
         _client = factory.CreateClient();
         
         var model = new PutRoomDto();
         
-        var response = await _client.PutAsync($"{_endpoint}{roomId}", model.ToJsonHttpContent());
+        var response = await _client.PutAsync($"{_endpoint}", model.ToJsonHttpContent());
         
         response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+    }
+    
+    [Theory]
+    [InlineData(5)]
+    public async void Update_ForPlayerWithoutRoom_ReturnsNotFound(int senderPlayerId)
+    {
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
+        _client = factory.CreateClient();
+        
+        var model = new PutRoomDto();
+        
+        var response = await _client.PutAsync($"{_endpoint}", model.ToJsonHttpContent());
+        
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 }

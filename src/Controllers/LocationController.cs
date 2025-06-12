@@ -30,10 +30,10 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpPost]
-        [Route("playerId/{playerId}")]
-        public ActionResult Create(int playerId, [FromBody] PostLocationDto locationDto)
+        [Route("")]
+        public ActionResult Create([FromBody] PostLocationDto locationDto)
         {
-            LocationDto resultLocation = locationService.Create(playerId, locationDto, User);
+            LocationDto resultLocation = locationService.Create(locationDto, User);
 
             return Created($"/Location/id/{resultLocation.LocationId}", resultLocation);
         }
