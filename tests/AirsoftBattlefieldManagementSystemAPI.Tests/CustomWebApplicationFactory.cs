@@ -287,6 +287,95 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     Time = DateTime.Now.AddSeconds(4),
                 });
                 
+                context.Kill.Add(new Kill
+                {
+                    KillId = 1,
+                    LocationId = 1,
+                    PlayerId = 1,
+                    RoomId = 1
+                });
+                context.Kill.Add(new Kill
+                {
+                    KillId = 6,
+                    LocationId = 3,
+                    PlayerId = 1,
+                    RoomId = 1
+                });
+                context.Kill.Add(new Kill
+                {
+                    KillId = 2,
+                    LocationId = 8,
+                    PlayerId = 1,
+                    RoomId = 1
+                });
+                context.Location.Add(new Location
+                {
+                    LocationId = 8,
+                    Longitude = 22.862341m,
+                    Latitude = 44.4325m,
+                    Accuracy = 15,
+                    Bearing = 80,
+                    Time = DateTime.Now.AddSeconds(2.7),
+                });
+                
+                context.Kill.Add(new Kill
+                {
+                    KillId = 3,
+                    LocationId = 9,
+                    PlayerId = 2,
+                    RoomId = 1
+                });
+                context.Location.Add(new Location
+                {
+                    LocationId = 9,
+                    Longitude = 56.23455m,
+                    Latitude = -86.4325m,
+                    Accuracy = 1500,
+                    Bearing = 203,
+                    Time = DateTime.Now.AddSeconds(4.4),
+                });
+                
+                context.Kill.Add(new Kill
+                {
+                    KillId = 4,
+                    LocationId = 5,
+                    PlayerId = 3,
+                    RoomId = 2
+                });
+                context.Kill.Add(new Kill
+                {
+                    KillId = 5,
+                    LocationId = 10,
+                    PlayerId = 3,
+                    RoomId = 2
+                });
+                context.Location.Add(new Location
+                {
+                    LocationId = 10,
+                    Longitude = -2.2m,
+                    Latitude = -0.2137m,
+                    Accuracy = 1,
+                    Bearing = 180,
+                    Time = DateTime.Now.AddSeconds(4.4),
+                });
+                
+                context.Kill.Add(new Kill
+                {
+                    KillId = 7,
+                    LocationId = 11,
+                    PlayerId = 4,
+                    RoomId = 2
+                });
+                context.Location.Add(new Location
+                {
+                    LocationId = 11,
+                    Longitude = -124.2213m,
+                    Latitude = -34.2137m,
+                    Accuracy = 1,
+                    Bearing = 180,
+                    Time = DateTime.Now.AddSeconds(4.4),
+                });
+                
                 context.SaveChanges();
             }
         });
