@@ -376,6 +376,56 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     Time = DateTime.Now.AddSeconds(4.4),
                 });
                 
+                context.Death.Add(new Death
+                {
+                    DeathId = 1,
+                    LocationId = 1,
+                    PlayerId = 1,
+                    RoomId = 1
+                });
+                context.Death.Add(new Death
+                {
+                    DeathId = 6,
+                    LocationId = 3,
+                    PlayerId = 1,
+                    RoomId = 1
+                });
+                context.Death.Add(new Death
+                {
+                    DeathId = 2,
+                    LocationId = 8,
+                    PlayerId = 1,
+                    RoomId = 1
+                });
+                context.Death.Add(new Death
+                {
+                    DeathId = 3,
+                    LocationId = 9,
+                    PlayerId = 2,
+                    RoomId = 1
+                });
+                context.Death.Add(new Death
+                {
+                    DeathId = 4,
+                    LocationId = 5,
+                    PlayerId = 3,
+                    RoomId = 2
+                });
+                context.Death.Add(new Death
+                {
+                    DeathId = 5,
+                    LocationId = 10,
+                    PlayerId = 3,
+                    RoomId = 2
+                });
+                context.Death.Add(new Death
+                {
+                    DeathId = 7,
+                    LocationId = 11,
+                    PlayerId = 4,
+                    RoomId = 2
+                });
+                
                 context.SaveChanges();
             }
         });
