@@ -1,11 +1,13 @@
+using System.Security.Claims;
 using AirsoftBattlefieldManagementSystemAPI.Exceptions;
 using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
+using AirsoftBattlefieldManagementSystemAPI.Services.ClaimsHelperService;
 using Microsoft.EntityFrameworkCore;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService;
 
-public class DbContextHelperService(IBattleManagementSystemDbContext dbContext) : IDbContextHelperService
+public class DbContextHelperService(IBattleManagementSystemDbContext dbContext, IClaimsHelperService claimsHelper) : IDbContextHelperService
 {
     public Location FindLocationById(int? id)
     {
@@ -36,6 +38,16 @@ public class DbContextHelperService(IBattleManagementSystemDbContext dbContext) 
         if (playerLocation is null) throw new NotFoundException($"Location with id {id} not found");
 
         return playerLocation;
+    }
+    
+    public Player FindSelf(ClaimsPrincipal user)
+    {
+        int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
+        Player? player = dbContext.Player.FirstOrDefault(p => p.PlayerId == playerId);
+
+        if (player is null) throw new NotFoundException("You do not exist player");
+
+        return player;
     }
     
     public Player FindPlayerById(int? id)

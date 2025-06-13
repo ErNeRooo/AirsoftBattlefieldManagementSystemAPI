@@ -10,6 +10,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
     [Authorize]
     public class PlayerController(IPlayerService playerService) : ControllerBase
     {
+        [HttpGet("me")]
+        public ActionResult<PlayerDto> GetMe()
+        {
+            PlayerDto playerDto = playerService.GetMe(User);
+
+            return Ok(playerDto);
+        }
+        
         [HttpGet("id/{id}")]
         public ActionResult<PlayerDto> GetPlayerById(int id)
         {

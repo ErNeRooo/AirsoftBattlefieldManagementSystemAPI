@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService;
@@ -7,6 +8,7 @@ public interface IDbContextHelperService
     public Location FindLocationById(int? id);
     public List<Location> FindAllLocationsOfPlayer(Player player);
     public PlayerLocation FindPlayerLocationById(int? id);
+    public Player FindSelf(ClaimsPrincipal user);
     public Player FindPlayerById(int? id);
     public Player FindPlayerByIdIncludingAccount(int? id);
     public Team FindTeamById(int? id);

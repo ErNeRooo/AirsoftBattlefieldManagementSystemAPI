@@ -18,6 +18,15 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
 {
     public class PlayerService(IBattleManagementSystemDbContext dbContext, IMapper mapper, IAuthenticationSettings authenticationSettings, IAuthorizationHelperService authorizationHelper, IDbContextHelperService dbHelper, IClaimsHelperService claimsHelper) : IPlayerService
     {
+        public PlayerDto GetMe(ClaimsPrincipal user)
+        {
+            Player player = dbHelper.FindSelf(user);
+            
+            PlayerDto playerDto = mapper.Map<PlayerDto>(player);
+
+            return playerDto;
+        }
+        
         public PlayerDto GetById(int id, ClaimsPrincipal user)
         {
             Player player = dbHelper.FindPlayerById(id);
