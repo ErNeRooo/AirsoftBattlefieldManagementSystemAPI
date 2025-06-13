@@ -48,6 +48,35 @@ public class RoomControllerUpdateTests
     }
     
     [Theory]
+    [InlineData(7, 3)]
+    [InlineData(8, 3)]
+    public async void Update_ForNonAdminPlayerWhenThereIsNoRoomAdmin_ReturnsOkAndRoomDto(int senderPlayerId, int roomId)
+    {
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
+        _client = factory.CreateClient();
+        
+        var model = new PutRoomDto
+        {
+            AdminPlayerId = senderPlayerId
+        };
+        
+        var responseFromGet = await _client.GetAsync($"room/id/{roomId}");
+        var resultFromGet = await responseFromGet.Content.DeserializeFromHttpContentAsync<RoomDto>();
+        
+        responseFromGet.StatusCode.ShouldBe(HttpStatusCode.OK);
+        
+        var response = await _client.PutAsync($"{_endpoint}", model.ToJsonHttpContent());
+        var result = await response.Content.DeserializeFromHttpContentAsync<RoomDto>();
+        
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        result.ShouldNotBeNull();
+        result.RoomId.ShouldBe(roomId);
+        result.JoinCode.ShouldBe(resultFromGet.JoinCode);
+        result.MaxPlayers.ShouldBe(resultFromGet.MaxPlayers);
+        result.AdminPlayerId.ShouldBe(senderPlayerId);
+    }
+    
+    [Theory]
     [InlineData(2)]
     [InlineData(4)]
     [InlineData(6)]

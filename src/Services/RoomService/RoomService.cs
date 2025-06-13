@@ -65,7 +65,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
             Player player = dbHelper.Player.FindById(playerId);
             Room previousRoom = dbHelper.Room.FindById(player.RoomId);
 
-            authorizationHelperService.CheckPlayerOwnsResource(user, previousRoom.AdminPlayerId);
+            if(previousRoom.AdminPlayerId is not null) authorizationHelperService.CheckPlayerOwnsResource(user, previousRoom.AdminPlayerId);
             
             Room updatedRoom = mapper.Map(roomDto, previousRoom);
 
