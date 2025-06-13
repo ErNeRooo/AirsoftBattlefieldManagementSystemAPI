@@ -35,6 +35,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
 
             return Created($"/player/id/{resultPlayer.PlayerId}", jwtToken);
         }
+        
+        [HttpPost("kick/playerId/{playerId}")]
+        public ActionResult<PlayerDto> Kick(int playerId)
+        {
+            PlayerDto playerDto = playerService.Kick(playerId, User);
+
+            return Ok(playerDto);
+        }
 
         [HttpPut("")]
         public ActionResult<PlayerDto> Update([FromBody] PutPlayerDto playerDto)
