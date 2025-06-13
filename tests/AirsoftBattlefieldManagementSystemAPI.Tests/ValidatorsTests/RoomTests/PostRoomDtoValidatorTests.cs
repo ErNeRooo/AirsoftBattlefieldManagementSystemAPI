@@ -34,7 +34,7 @@ public class PostRoomDtoValidatorTests
     [InlineData("000000", 10)]
     [InlineData("777777", 2)]
     [InlineData("koodoo", 100000)]
-    [InlineData("P@nZ3r", 100)]
+    [InlineData("k00d00", 100000)]
     public void Validate_ForValidModel_ReturnsSuccess(string joinCode, int maxPlayers)
     {
         var validator = new PostRoomDtoValidator(_dbContext);
@@ -51,6 +51,22 @@ public class PostRoomDtoValidatorTests
     }
     
     [Theory]
+    [InlineData("00/000", 5)]
+    [InlineData("00+000", 5)]
+    [InlineData("00 000", 5)]
+    [InlineData("00:000", 5)]
+    [InlineData("00;000", 5)]
+    [InlineData("00'000", 5)]
+    [InlineData("00\"000", 5)]
+    [InlineData("00{000", 5)]
+    [InlineData("00@000", 5)]
+    [InlineData("00$000", 5)]
+    [InlineData("00[000", 5)]
+    [InlineData("00(000", 5)]
+    [InlineData("00\\000", 5)]
+    [InlineData("00,000", 5)]
+    [InlineData("00.000", 5)]
+    [InlineData("00=000", 5)]
     [InlineData("0cos00", -1)]
     [InlineData("213700", 5)]
     [InlineData("2137000", 15)]

@@ -1,4 +1,5 @@
-﻿using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
+﻿using System.Text.RegularExpressions;
+using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Room;
 using FluentValidation;
 
@@ -22,6 +23,17 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Validators.Room
                     if(string.IsNullOrEmpty(value)) return;
                     
                     if(value.Length != 6) context.AddFailure("Room join code must be exactly 6 characters long");
+                })
+                .Custom((value, context) =>
+                {
+                    if(string.IsNullOrEmpty(value)) return;
+                    
+                    bool containsNonAlphaNumeric = Regex.IsMatch(value, "[^0-9a-zA-Z]");
+
+                    if (containsNonAlphaNumeric)
+                    {
+                        context.AddFailure("JoinCode", "Join code must contain only letters and numbers.");
+                    }
                 })
                 .Custom((value, context) =>
                 {
