@@ -12,8 +12,8 @@ public class RoomControllerGetByIdTests
     
     [Theory]
     [InlineData(1, 1, "123456", 100, 1)]
-    [InlineData(1, 2, "213700", 2, 3)]
-    [InlineData(5, 2, "213700", 2, 3)]
+    [InlineData(1, 2, "213700", 3, 3)]
+    [InlineData(5, 2, "213700", 3, 3)]
     public async void GetById_ForValidModel_ReturnsOKAndRoomDto(int senderPlayerId, int roomId, string joinCode, int maxPlayers, int adminPlayerId)
     {
         var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
@@ -31,7 +31,7 @@ public class RoomControllerGetByIdTests
     }
     
     [Theory]
-    [InlineData("3")]
+    [InlineData("54533")]
     [InlineData("")]
     [InlineData("0")]
     public async void GetById_ForRoomThatDoesntExist_ReturnsNotFound(string roomId)

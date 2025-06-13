@@ -109,6 +109,22 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     RoomId = 2,
                     TeamId = 4
                 });
+                context.Player.Add(new Player
+                {
+                    PlayerId = 7,
+                    Name = "Priscilla",
+                    IsDead = false,
+                    RoomId = 3,
+                    TeamId = null
+                });
+                context.Player.Add(new Player
+                {
+                    PlayerId = 8,
+                    Name = "Yuigahama",
+                    IsDead = false,
+                    RoomId = 3,
+                    TeamId = 5
+                });
                 
                 context.Room.Add(new Room
                 {
@@ -122,9 +138,17 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                 {
                     RoomId = 2,
                     JoinCode = "213700",
-                    MaxPlayers = 2,
+                    MaxPlayers = 3,
                     AdminPlayerId = 3,
                     PasswordHash = "fafarafa"
+                });
+                context.Room.Add(new Room
+                {
+                    RoomId = 3,
+                    JoinCode = "207700",
+                    MaxPlayers = 2,
+                    AdminPlayerId = null,
+                    PasswordHash = ""
                 });
                 
                 context.Team.Add(new Team
@@ -154,6 +178,13 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     TeamId = 4,
                     RoomId = 2,
                     OfficerPlayerId = 6
+                });
+                context.Team.Add(new Team
+                {
+                    Name = "The Elite",
+                    TeamId = 5,
+                    RoomId = 3,
+                    OfficerPlayerId = null
                 });
                 
                 context.Battle.Add(new Battle

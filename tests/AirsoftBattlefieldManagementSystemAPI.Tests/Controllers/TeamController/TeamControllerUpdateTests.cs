@@ -68,6 +68,28 @@ public class TeamControllerUpdateTests
     }
     
     [Theory]
+    [InlineData(8, 5, "The Elite")]
+    public async void Update_NonOfficerOrAdminPlayerWhenThereIsNoOfficer_ReturnsOkAndTeamDto(int senderPlayerId, int teamId, string expectedTeamName)
+    {
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
+        _client = factory.CreateClient();
+        
+        var model = new PutTeamDto
+        {
+            OfficerPlayerId = senderPlayerId,
+        };
+        
+        var response = await _client.PutAsync($"{_endpoint}{teamId}", model.ToJsonHttpContent());
+        var result = await response.Content.DeserializeFromHttpContentAsync<TeamDto>();
+        
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        result.ShouldNotBeNull();
+        result.TeamId.ShouldBe(teamId);
+        result.Name.ShouldBe(expectedTeamName);
+        result.OfficerPlayerId.ShouldBe(senderPlayerId);
+    }
+    
+    [Theory]
     [InlineData(-2)]
     [InlineData(0)]
     [InlineData(24138)]

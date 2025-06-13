@@ -44,7 +44,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.TeamService
         {
             Team previousTeam = dbHelper.Team.FindById(id);
             
-            authorizationHelperService.CheckPlayerIsRoomAdminOrTargetTeamOfficer(user, id);
+            if(previousTeam.OfficerPlayerId is not null) authorizationHelperService.CheckPlayerIsRoomAdminOrTargetTeamOfficer(user, id);
             if(teamDto.OfficerPlayerId is not null) authorizationHelperService.CheckTargetPlayerIsInTheSameTeam(user, (int)teamDto.OfficerPlayerId, id);
             
             mapper.Map(teamDto, previousTeam);
