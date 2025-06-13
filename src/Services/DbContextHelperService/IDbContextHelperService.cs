@@ -1,24 +1,27 @@
 using System.Security.Claims;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.AccountHelper;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.BattleHelper;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.DeathHelper;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.KillHelper;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.LocationHelper;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.PlayerHelper;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.PlayerLocationHelper;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.RoomHelper;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.TeamHelper;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService;
 
 public interface IDbContextHelperService
 {
-    public Location FindLocationById(int? id);
-    public List<Location> FindAllLocationsOfPlayer(Player player);
-    public PlayerLocation FindPlayerLocationById(int? id);
-    public Player FindSelf(ClaimsPrincipal user);
-    public Player FindPlayerById(int? id);
-    public Player FindPlayerByIdIncludingAccount(int? id);
-    public Team FindTeamById(int? id);
-    public Kill FindKillById(int? id);
-    public List<Kill> FindAllKillsOfPlayer(Player player);
-    public Death FindDeathById(int? id);
-    public List<Death> FindAllDeathsOfPlayer(Player player);
-    public Account FindAccountById(int? id);
-    public Account FindAccountByEmail(string email);
-    public Battle FindBattleById(int? id);
-    public Room FindRoomById(int? id);
-    public Room FindRoomByIJoinCode(string joinCode);
+    public IAccountHelper Account { get; }
+    public IBattleHelper Battle { get; }
+    public IDeathHelper Death { get; }
+    public IKillHelper Kill { get; }
+    public ILocationHelper Location { get; }
+    public IPlayerHelper Player { get; }
+    public IPlayerLocationHelper PlayerLocation { get; }
+    public IRoomHelper Room { get; }
+    public ITeamHelper Team { get; }
 }

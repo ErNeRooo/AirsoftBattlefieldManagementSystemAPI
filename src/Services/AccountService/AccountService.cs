@@ -15,7 +15,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.AccountService
     {
         public AccountDto GetById(int id)
         {
-            Account account = dbHelper.FindAccountById(id);
+            Account account = dbHelper.Account.FindById(id);
 
             AccountDto accountDto = mapper.Map<AccountDto>(account);
 
@@ -46,7 +46,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.AccountService
         {
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
             
-            Account account = dbHelper.FindAccountByEmail(accountDto.Email);
+            Account account = dbHelper.Account.FindByEmail(accountDto.Email);
 
             var verificationResult = passwordHasher.VerifyHashedPassword(account, account.PasswordHash, accountDto.Password);
 
@@ -65,8 +65,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.AccountService
         public AccountDto Update(PutAccountDto accountDto, ClaimsPrincipal user)
         {
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
-            Player player = dbHelper.FindPlayerByIdIncludingAccount(playerId);
-            Account previousAccount = dbHelper.FindAccountById(player.Account.AccountId);
+            Player player = dbHelper.Player.FindByIdIncludingAccount(playerId);
+            Account previousAccount = dbHelper.Account.FindById(player.Account.AccountId);
             
             authorizationHelper.CheckPlayerOwnsResource(user, previousAccount.PlayerId);
 
@@ -84,8 +84,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.AccountService
         public void Delete(ClaimsPrincipal user)
         {
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
-            Player player = dbHelper.FindPlayerByIdIncludingAccount(playerId);
-            Account account = dbHelper.FindAccountById(player.Account.AccountId);
+            Player player = dbHelper.Player.FindByIdIncludingAccount(playerId);
+            Account account = dbHelper.Account.FindById(player.Account.AccountId);
 
             authorizationHelper.CheckPlayerOwnsResource(user, account.PlayerId);
             

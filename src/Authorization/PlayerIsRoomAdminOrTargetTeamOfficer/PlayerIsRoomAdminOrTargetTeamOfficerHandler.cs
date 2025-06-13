@@ -13,8 +13,8 @@ public class PlayerIsRoomAdminOrTargetTeamOfficerHandler(IClaimsHelperService cl
         int playerId = claimsHelper.GetIntegerClaimValue("playerId", context.User);
         int teamId = resourceRequirement.TeamId;
         
-        Team team = dbHelper.FindTeamById(teamId);
-        Room room = dbHelper.FindRoomById(team.RoomId);
+        Team team = dbHelper.Team.FindById(teamId);
+        Room room = dbHelper.Room.FindById(team.RoomId);
         
         if (playerId == team.OfficerPlayerId || playerId == room.AdminPlayerId) context.Succeed(resourceRequirement);
         else context.Fail();

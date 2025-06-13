@@ -13,7 +13,7 @@ public class TargetPlayerIsInTheSameTeamHandler(IDbContextHelperService dbHelper
         int playerId = resourceRequirement.PlayerId;
         int teamId = resourceRequirement.TeamId;
         
-        Player player = dbHelper.FindPlayerById(playerId);
+        Player player = dbHelper.Player.FindById(playerId);
 
         if (player.TeamId == teamId) context.Succeed(resourceRequirement);
         else context.Fail();

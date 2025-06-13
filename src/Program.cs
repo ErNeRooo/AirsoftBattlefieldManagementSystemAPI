@@ -13,6 +13,15 @@ using AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.BattleService;
 using AirsoftBattlefieldManagementSystemAPI.Services.ClaimsHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.AccountHelper;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.BattleHelper;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.DeathHelper;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.KillHelper;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.LocationHelper;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.PlayerHelper;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.PlayerLocationHelper;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.RoomHelper;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.TeamHelper;
 using AirsoftBattlefieldManagementSystemAPI.Services.DeathService;
 using AirsoftBattlefieldManagementSystemAPI.Services.JoinCodeService;
 using AirsoftBattlefieldManagementSystemAPI.Services.KillService;
@@ -110,8 +119,18 @@ namespace AirsoftBattlefieldManagementSystemAPI
             builder.Services.AddScoped<IDeathService, DeathService>();
             builder.Services.AddScoped<IJoinCodeService, JoinCodeService>();
             builder.Services.AddScoped<IAuthorizationHelperService, AuthorizationHelperService>();
-            builder.Services.AddScoped<IDbContextHelperService, DbContextHelperService>();
             builder.Services.AddScoped<IClaimsHelperService, ClaimsHelperService>();
+            builder.Services.AddScoped<IDbContextHelperService, DbContextHelperService>();
+            builder.Services.AddScoped<IAccountHelper, AccountHelper>();
+            builder.Services.AddScoped<IBattleHelper, BattleHelper>();
+            builder.Services.AddScoped<IDeathHelper, DeathHelper>();
+            builder.Services.AddScoped<IKillHelper, KillHelper>();
+            builder.Services.AddScoped<ILocationHelper, LocationHelper>();
+            builder.Services.AddScoped<IPlayerHelper, PlayerHelper>();
+            builder.Services.AddScoped<IPlayerLocationHelper, PlayerLocationHelper>();
+            builder.Services.AddScoped<IRoomHelper, RoomHelper>();
+            builder.Services.AddScoped<ITeamHelper, TeamHelper>();
+
 
             builder.Services.AddTransient<ErrorHandlingMiddleware>();
 

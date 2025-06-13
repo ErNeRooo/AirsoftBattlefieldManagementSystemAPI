@@ -13,7 +13,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.KillService
     {
         public KillDto GetById(int id, ClaimsPrincipal user)
         {
-            Kill kill = dbHelper.FindKillById(id);
+            Kill kill = dbHelper.Kill.FindById(id);
             
             authorizationHelper.CheckPlayerIsInTheSameRoomAsResource(user, kill.RoomId);
             
@@ -24,11 +24,11 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.KillService
 
         public List<KillDto> GetAllOfPlayerWithId(int playerId, ClaimsPrincipal user)
         {
-            Player player = dbHelper.FindPlayerById(playerId);
+            Player player = dbHelper.Player.FindById(playerId);
             
             authorizationHelper.CheckPlayerIsInTheSameRoomAsResource(user, player.RoomId);
             
-            var kills = dbHelper.FindAllKillsOfPlayer(player);
+            var kills = dbHelper.Kill.FindAllOfPlayer(player);
 
             List<KillDto> killDtos = kills.Select(kill =>
             {
@@ -44,7 +44,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.KillService
         public KillDto Create(PostKillDto killDto, ClaimsPrincipal user)
         {
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
-            Player player = dbHelper.FindPlayerById(playerId);
+            Player player = dbHelper.Player.FindById(playerId);
             
             authorizationHelper.CheckPlayerOwnsResource(user, playerId);
             
@@ -66,7 +66,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.KillService
 
         public KillDto Update(int id, PutKillDto killDto, ClaimsPrincipal user)
         {
-            Kill previousKill = dbHelper.FindKillById(id);
+            Kill previousKill = dbHelper.Kill.FindById(id);
 
             authorizationHelper.CheckPlayerOwnsResource(user, previousKill.PlayerId);
             
@@ -79,7 +79,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.KillService
 
         public void DeleteById(int id, ClaimsPrincipal user)
         {
-            Kill kill = dbHelper.FindKillById(id);
+            Kill kill = dbHelper.Kill.FindById(id);
 
             authorizationHelper.CheckPlayerOwnsResource(user, kill.PlayerId);
             

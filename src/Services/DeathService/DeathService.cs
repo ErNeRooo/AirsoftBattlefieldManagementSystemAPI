@@ -1,6 +1,4 @@
 ﻿using System.Security.Claims;
-using AirsoftBattlefieldManagementSystemAPI.Authorization;
-using AirsoftBattlefieldManagementSystemAPI.Exceptions;
 using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Death;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
@@ -8,9 +6,6 @@ using AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.ClaimsHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.DeathService
 {
@@ -18,7 +13,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.DeathService
     {
         public DeathDto GetById(int id, ClaimsPrincipal user)
         {
-            Death death = dbHelper.FindDeathById(id);
+            Death death = dbHelper.Death.FindById(id);
 
             authorizationHelper.CheckPlayerIsInTheSameRoomAsResource(user, death.RoomId);
             
@@ -29,11 +24,11 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.DeathService
 
         public List<DeathDto> GetAllOfPlayerWithId(int playerId, ClaimsPrincipal user)
         {
-            Player player = dbHelper.FindPlayerById(playerId);
+            Player player = dbHelper.Player.FindById(playerId);
             
             authorizationHelper.CheckPlayerIsInTheSameRoomAsResource(user, player.RoomId);
             
-            var deaths = dbHelper.FindAllDeathsOfPlayer(player);
+            var deaths = dbHelper.Death.FindAllOfPlayer(player);
 
             List<DeathDto> deathDtos = deaths.Select(location =>
             {
@@ -49,7 +44,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.DeathService
         public DeathDto Create(PostDeathDto deathDto, ClaimsPrincipal user)
         {
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
-            Player player = dbHelper.FindPlayerById(playerId);
+            Player player = dbHelper.Player.FindById(playerId);
 
             Location location = mapper.Map<Location>(deathDto);
             dbContext.Location.Add(location);
@@ -69,7 +64,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.DeathService
 
         public DeathDto Update(int id, PutDeathDto deathDto, ClaimsPrincipal user)
         {
-            Death previousDeath = dbHelper.FindDeathById(id);
+            Death previousDeath = dbHelper.Death.FindById(id);
             
             authorizationHelper.CheckPlayerOwnsResource(user, previousDeath.PlayerId);
             
@@ -82,7 +77,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.DeathService
 
         public void DeleteById(int id, ClaimsPrincipal user)
         {
-            Death death = dbHelper.FindDeathById(id);
+            Death death = dbHelper.Death.FindById(id);
             
             authorizationHelper.CheckPlayerOwnsResource(user, death.PlayerId);
 

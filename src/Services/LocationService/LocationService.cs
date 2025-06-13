@@ -1,10 +1,4 @@
-﻿using AirsoftBattlefieldManagementSystemAPI.Authorization;
-using AirsoftBattlefieldManagementSystemAPI.Enums;
-using AirsoftBattlefieldManagementSystemAPI.Exceptions;
-using AutoMapper;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
 using System.Security.Claims;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Location;
@@ -19,11 +13,11 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
     {
         public LocationDto GetById(int id, ClaimsPrincipal user)
         {
-            Location location = dbHelper.FindLocationById(id);
-            PlayerLocation playerLocation = dbHelper.FindPlayerLocationById(id);
+            Location location = dbHelper.Location.FindById(id);
+            PlayerLocation playerLocation = dbHelper.PlayerLocation.FindById(id);
             
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
-            Player player = dbHelper.FindPlayerById(playerId);
+            Player player = dbHelper.Player.FindById(playerId);
 
             authorizationHelper.CheckTargetPlayerIsInTheSameTeam(user, playerLocation.PlayerId ?? 0, player.TeamId ?? 0);
 
@@ -45,12 +39,12 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
         public List<LocationDto> GetAllLocationsOfPlayerWithId(int targetPlayerId, ClaimsPrincipal user)
         {
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
-            Player player = dbHelper.FindPlayerById(playerId);
-            Player targetPlayer = dbHelper.FindPlayerById(targetPlayerId);
+            Player player = dbHelper.Player.FindById(playerId);
+            Player targetPlayer = dbHelper.Player.FindById(targetPlayerId);
 
             authorizationHelper.CheckTargetPlayerIsInTheSameTeam(user, targetPlayerId, player.TeamId ?? 0);
             
-            List<Location> locations = dbHelper.FindAllLocationsOfPlayer(targetPlayer);
+            List<Location> locations = dbHelper.Location.FindAllOfPlayer(targetPlayer);
 
             List<LocationDto> locationDtos = locations.Select(l =>
             {
@@ -73,7 +67,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
         public LocationDto Create(PostLocationDto locationDto, ClaimsPrincipal user)
         {
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
-            Player player = dbHelper.FindPlayerById(playerId);
+            Player player = dbHelper.Player.FindById(playerId);
 
             Location location = mapper.Map<Location>(locationDto);
             dbContext.Location.Add(location);
@@ -105,8 +99,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
 
         public LocationDto Update(int id, PutLocationDto locationDto, ClaimsPrincipal user)
         {
-            Location oldLocation = dbHelper.FindLocationById(id);
-            PlayerLocation playerLocation = dbHelper.FindPlayerLocationById(id);
+            Location oldLocation = dbHelper.Location.FindById(id);
+            PlayerLocation playerLocation = dbHelper.PlayerLocation.FindById(id);
 
             authorizationHelper.CheckPlayerOwnsResource(user, playerLocation.PlayerId);
 
@@ -131,8 +125,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
 
         public void DeleteById(int id, ClaimsPrincipal user)
         {
-            Location location = dbHelper.FindLocationById(id);
-            PlayerLocation playerLocation = dbHelper.FindPlayerLocationById(id);
+            Location location = dbHelper.Location.FindById(id);
+            PlayerLocation playerLocation = dbHelper.PlayerLocation.FindById(id);
 
             authorizationHelper.CheckPlayerOwnsResource(user, playerLocation.PlayerId);
 

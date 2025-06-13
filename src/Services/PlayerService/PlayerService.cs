@@ -2,10 +2,6 @@
 using AutoMapper;
 using System.Security.Claims;
 using System.Text;
-using AirsoftBattlefieldManagementSystemAPI.Authorization;
-using AirsoftBattlefieldManagementSystemAPI.Exceptions;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Player;
@@ -20,7 +16,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
     {
         public PlayerDto GetMe(ClaimsPrincipal user)
         {
-            Player player = dbHelper.FindSelf(user);
+            Player player = dbHelper.Player.FindSelf(user);
             
             PlayerDto playerDto = mapper.Map<PlayerDto>(player);
 
@@ -29,7 +25,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
         
         public PlayerDto GetById(int id, ClaimsPrincipal user)
         {
-            Player player = dbHelper.FindPlayerById(id);
+            Player player = dbHelper.Player.FindById(id);
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
 
             if (playerId != id)
@@ -59,12 +55,12 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
             
             if(playerDto.TeamId is not null)
             {
-                Team team = dbHelper.FindTeamById(playerDto.TeamId);
+                Team team = dbHelper.Team.FindById(playerDto.TeamId);
                 authorizationHelper.CheckPlayerIsInTheSameRoomAsResource(user, team.RoomId,
                     $"Target team {team.TeamId} is not in the same room as player");
             }
             
-            Player previousPlayer = dbHelper.FindPlayerById(playerId);
+            Player previousPlayer = dbHelper.Player.FindById(playerId);
 
             mapper.Map(playerDto, previousPlayer);
             dbContext.Player.Update(previousPlayer);
@@ -76,7 +72,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
         public void Delete(ClaimsPrincipal user)
         {
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
-            Player player = dbHelper.FindPlayerById(playerId);
+            Player player = dbHelper.Player.FindById(playerId);
 
             authorizationHelper.CheckPlayerOwnsResource(user, playerId);
             

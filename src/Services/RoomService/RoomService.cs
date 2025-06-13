@@ -17,7 +17,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
     {
         public RoomDto GetById(int id)
         {
-            Room room = dbHelper.FindRoomById(id);
+            Room room = dbHelper.Room.FindById(id);
 
             RoomDto roomDto = mapper.Map<RoomDto>(room);
             return roomDto;
@@ -27,7 +27,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
         {
             if(joinCode.Length != 6) throw new InvalidJoinCodeFormatException("Invalid join code");
             
-            Room? room = dbHelper.FindRoomByIJoinCode(joinCode);
+            Room? room = dbHelper.Room.FindByJoinCode(joinCode);
 
             RoomDto roomDto = mapper.Map<RoomDto>(room);
             return roomDto;
@@ -37,7 +37,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
         {
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
             
-            Player player = dbHelper.FindPlayerById(playerId);
+            Player player = dbHelper.Player.FindById(playerId);
             
             if(player.RoomId is not null && player.RoomId != 0) throw new PlayerAlreadyInsideRoomException("You are already inside a room");
             
@@ -62,8 +62,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
         public RoomDto Update(PutRoomDto roomDto, ClaimsPrincipal user)
         {
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
-            Player player = dbHelper.FindPlayerById(playerId);
-            Room previousRoom = dbHelper.FindRoomById(player.RoomId);
+            Player player = dbHelper.Player.FindById(playerId);
+            Room previousRoom = dbHelper.Room.FindById(player.RoomId);
 
             authorizationHelperService.CheckPlayerOwnsResource(user, previousRoom.AdminPlayerId);
             
@@ -81,8 +81,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
         public void Delete(ClaimsPrincipal user)
         {
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
-            Player player = dbHelper.FindPlayerById(playerId);
-            Room room = dbHelper.FindRoomById(player.RoomId);
+            Player player = dbHelper.Player.FindById(playerId);
+            Room room = dbHelper.Room.FindById(player.RoomId);
 
             authorizationHelperService.CheckPlayerOwnsResource(user, room.AdminPlayerId);
 
@@ -97,8 +97,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
 
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
 
-            Room room = dbHelper.FindRoomByIJoinCode(joinCode);
-            Player player = dbHelper.FindPlayerById(playerId);
+            Room room = dbHelper.Room.FindByJoinCode(joinCode);
+            Player player = dbHelper.Player.FindById(playerId);
 
             var verificationResult = passwordHasher.VerifyHashedPassword(room, room.PasswordHash, password);
 
@@ -118,7 +118,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
         {
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
 
-            Player player = dbHelper.FindPlayerById(playerId);
+            Player player = dbHelper.Player.FindById(playerId);
 
             player.RoomId = null;
 

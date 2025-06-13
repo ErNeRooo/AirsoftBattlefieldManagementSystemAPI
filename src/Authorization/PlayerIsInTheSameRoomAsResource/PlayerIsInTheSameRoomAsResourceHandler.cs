@@ -13,7 +13,7 @@ public class PlayerIsInTheSameRoomAsResourceHandler(IClaimsHelperService claimsH
     {
         int playerId = claimsHelper.GetIntegerClaimValue("playerId", context.User);
         
-        Player player = dbHelper.FindPlayerById(playerId);
+        Player player = dbHelper.Player.FindById(playerId);
 
         if (player.RoomId == roomId) context.Succeed(resourceRequirement);
         else context.Fail();
