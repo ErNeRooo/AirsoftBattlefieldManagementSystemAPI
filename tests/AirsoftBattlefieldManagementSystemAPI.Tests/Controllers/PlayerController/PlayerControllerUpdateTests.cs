@@ -1,4 +1,5 @@
 using System.Net;
+using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
 using AirsoftBattlefieldManagementSystemAPI.Tests.Helpers;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Player;
 using Shouldly;
@@ -10,17 +11,14 @@ public class PlayerControllerUpdateTests
     private HttpClient _client;
     private readonly string _endpoint = "player";
 
-    public PlayerControllerUpdateTests()
-    {
-        CustomWebApplicationFactory<Program> factory = new CustomWebApplicationFactory<Program>();
-        _client = factory.CreateClient();
-    }
-
     [Theory]
-    [InlineData("Chisato", true, 1)]
-    [InlineData("Takina", false, 2)]
-    public async Task Update_ValidModel_ReturnsOk(string name, bool isDead, int teamId)
+    [InlineData(4, "Chisato", true, 3)]
+    [InlineData(4, "Takina", false, 4)]
+    public async Task Update_ValidModel_ReturnsOk(int senderPlayerId, string name, bool isDead, int teamId)
     {
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
+        _client = factory.CreateClient();
+        
         var model = new PutPlayerDto
         {
             Name = name,
@@ -38,9 +36,39 @@ public class PlayerControllerUpdateTests
     }
     
     [Theory]
+    [InlineData(2,1)]
+    [InlineData(1,2)]
+    [InlineData(3,4)]
+    [InlineData(6,3)]
+    public async Task Update_WhenPlayerIsTeamOfficerAndSwitchesTeam_ReturnsOkAndUpdatesTeam(int senderPlayerId, int teamId)
+    {
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
+        _client = factory.CreateClient();
+        
+        var model = new PutPlayerDto
+        {
+            TeamId = teamId,
+        };
+        
+        using var scope = factory.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<BattleManagementSystemDbContext>();
+        
+        var player = context.Player.FirstOrDefault(p => p.PlayerId == senderPlayerId);
+        
+        var response = await _client.PutAsync($"{_endpoint}", model.ToJsonHttpContent());
+        var team = context.Team.FirstOrDefault(t => t.TeamId == player.TeamId);
+        
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        team.OfficerPlayerId.ShouldBeNull();
+    }
+    
+    [Theory]
     [InlineData(3)]
     public async Task Update_GivenTeamIdOfForeignRoom_ReturnsForbidden(int teamId)
     {
+        var factory = new CustomWebApplicationFactory<Program>();
+        _client = factory.CreateClient();
+        
         var model = new PutPlayerDto
         {
             TeamId = teamId,
@@ -58,6 +86,9 @@ public class PlayerControllerUpdateTests
     [InlineData(null, true, null)]
     public async Task Update_GivenOnlySpecificField_ReturnsOk(string? name, bool? isDead, int? teamId)
     {
+        var factory = new CustomWebApplicationFactory<Program>();
+        _client = factory.CreateClient();
+        
         var model = new PutPlayerDto
         {
             Name = name,
@@ -79,6 +110,9 @@ public class PlayerControllerUpdateTests
     [Fact]
     public async Task Update_IsDeadFieldIsNotValid_ReturnsBadRequest()
     {
+        var factory = new CustomWebApplicationFactory<Program>();
+        _client = factory.CreateClient();
+
         var model = new 
         {
             Name = "Namae",
@@ -94,6 +128,9 @@ public class PlayerControllerUpdateTests
     [Fact]
     public async Task Update_TeamIdFieldIsNotValid_ReturnsBadRequest()
     {
+        var factory = new CustomWebApplicationFactory<Program>();
+        _client = factory.CreateClient();
+        
         var model = new 
         {
             Name = "Namae",

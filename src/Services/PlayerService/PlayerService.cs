@@ -67,14 +67,23 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
             authorizationHelper.CheckPlayerOwnsResource(user, playerId);
             
+            Player previousPlayer = dbHelper.Player.FindById(playerId);
+            
             if(playerDto.TeamId is not null)
             {
-                Team team = dbHelper.Team.FindById(playerDto.TeamId);
-                authorizationHelper.CheckPlayerIsInTheSameRoomAsResource(user, team.RoomId,
-                    $"Target team {team.TeamId} is not in the same room as player");
+                Team targetTeam = dbHelper.Team.FindById(playerDto.TeamId);
+                
+                authorizationHelper.CheckPlayerIsInTheSameRoomAsResource(user, targetTeam.RoomId,
+                    $"Target team {targetTeam.TeamId} is not in the same room as player");
+                
+                Team oldTeam = dbHelper.Team.FindById(previousPlayer.TeamId);
+
+                if (oldTeam.OfficerPlayerId == playerId)
+                {
+                    oldTeam.OfficerPlayerId = null;
+                    dbContext.Team.Update(oldTeam);
+                }
             }
-            
-            Player previousPlayer = dbHelper.Player.FindById(playerId);
 
             mapper.Map(playerDto, previousPlayer);
             dbContext.Player.Update(previousPlayer);

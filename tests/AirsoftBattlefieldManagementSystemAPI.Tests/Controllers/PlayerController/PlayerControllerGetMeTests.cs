@@ -11,8 +11,8 @@ public class PlayerControllerGetMeTests
     [InlineData(1, "Chisato", false, 1, 1)]
     [InlineData(2, "Takina", false, 2, 1)]
     [InlineData(4, "Aqua", true, 3, 2)]
-    [InlineData(5, "Nobody", true, 0, 0)]
-    public async Task GetMe_ReturnsOkAndPlayerDto(int senderPlayerId, string name, bool isDead, int teamId, int roomId)
+    [InlineData(5, "Nobody", true, null, null)]
+    public async Task GetMe_ReturnsOkAndPlayerDto(int senderPlayerId, string name, bool isDead, int? teamId, int? roomId)
     {
         var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
         var client = factory.CreateClient();

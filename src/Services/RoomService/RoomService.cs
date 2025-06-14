@@ -123,11 +123,17 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
             if(player.RoomId is not null || player.RoomId == 0)
             {
                 Room room = dbHelper.Room.FindById(player.RoomId);
-                room.AdminPlayerId = null;
+                Team team = dbHelper.Team.FindById(player.TeamId);
+                
+                if(team.OfficerPlayerId == playerId) team.OfficerPlayerId = null;
+                if(room.AdminPlayerId == playerId) room.AdminPlayerId = null;
+                
+                dbContext.Team.Update(team);
                 dbContext.Room.Update(room);
             }
 
             player.RoomId = null;
+            player.TeamId = null;
             dbContext.Player.Update(player);
             
             dbContext.SaveChanges();
