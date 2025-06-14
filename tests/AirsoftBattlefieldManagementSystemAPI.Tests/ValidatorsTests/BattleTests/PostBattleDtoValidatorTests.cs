@@ -40,8 +40,7 @@ public class PostBattleDtoValidatorTests
         var model = new PostBattleDto
         {
             Name = name,
-            RoomId = roomId,
-            IsActive = false
+            RoomId = roomId
         };
         
         var result = validator.TestValidate(model);
@@ -59,8 +58,7 @@ public class PostBattleDtoValidatorTests
         var model = new PostBattleDto
         {
             Name = name,
-            RoomId = roomId,
-            IsActive = false
+            RoomId = roomId
         };
         
         var result = validator.TestValidate(model);
