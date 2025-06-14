@@ -98,8 +98,8 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     PlayerId = 5,
                     Name = "Nobody",
                     IsDead = true,
-                    RoomId = 0,
-                    TeamId = 0
+                    RoomId = null,
+                    TeamId = null
                 });
                 context.Player.Add(new Player
                 {

@@ -120,9 +120,16 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
 
             Player player = dbHelper.Player.FindById(playerId);
 
-            player.RoomId = null;
+            if(player.RoomId is not null || player.RoomId == 0)
+            {
+                Room room = dbHelper.Room.FindById(player.RoomId);
+                room.AdminPlayerId = null;
+                dbContext.Room.Update(room);
+            }
 
+            player.RoomId = null;
             dbContext.Player.Update(player);
+            
             dbContext.SaveChanges();
         }
     }
