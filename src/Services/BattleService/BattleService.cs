@@ -12,9 +12,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.BattleService
     {
         public BattleDto GetById(int id, ClaimsPrincipal user)
         {
-            Battle battle = dbHelper.Battle.FindById(id);
+            Battle battle = dbHelper.Battle.FindByIdIncludingRoom(id);
 
-            authorizationHelper.CheckPlayerIsInTheSameRoomAsResource(user, battle.RoomId);
+            authorizationHelper.CheckPlayerIsInTheSameRoomAsResource(user, battle.Room.RoomId);
             
             BattleDto battleDto = mapper.Map<BattleDto>(battle);
 
@@ -36,11 +36,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.BattleService
 
         public BattleDto Update(int id, PutBattleDto battleDto, ClaimsPrincipal user)
         {
-            Battle previousBattle = dbHelper.Battle.FindById(id);
+            Battle previousBattle = dbHelper.Battle.FindByIdIncludingRoom(id);
             
-            Room room = dbHelper.Room.FindById(previousBattle.RoomId);
-            
-            authorizationHelper.CheckPlayerOwnsResource(user, room.AdminPlayerId);
+            authorizationHelper.CheckPlayerOwnsResource(user, previousBattle.Room.AdminPlayerId);
             
             mapper.Map(battleDto, previousBattle);
             dbContext.Battle.Update(previousBattle);
@@ -51,11 +49,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.BattleService
 
         public void Delete(int id, ClaimsPrincipal user)
         {
-            Battle battle = dbHelper.Battle.FindById(id);
-
-            Room room = dbHelper.Room.FindById(battle.RoomId);
+            Battle battle = dbHelper.Battle.FindByIdIncludingRoom(id);
             
-            authorizationHelper.CheckPlayerOwnsResource(user, room.AdminPlayerId);
+            authorizationHelper.CheckPlayerOwnsResource(user, battle.Room.AdminPlayerId);
             
             dbContext.Battle.Remove(battle);
             dbContext.SaveChanges();

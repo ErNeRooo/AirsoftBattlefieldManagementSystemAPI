@@ -9,7 +9,19 @@ public class DeathHelper(IBattleManagementSystemDbContext dbContext) : IDeathHel
 {
     public Death FindById(int? id)
     {
-        Death? death = dbContext.Death.Include(k => k.Location).FirstOrDefault(t => t.DeathId == id);
+        Death? death = dbContext.Death.Include(death => death.Location).FirstOrDefault(death => death.DeathId == id);
+
+        if(death is null) throw new NotFoundException($"Death with id {id} not found");
+            
+        return death;
+    }
+    
+    public Death FindByIdIncludingBattle(int? id)
+    {
+        Death? death = dbContext.Death
+            .Include(death => death.Location)
+            .Include(death => death.Battle)
+            .FirstOrDefault(death => death.DeathId == id);
 
         if(death is null) throw new NotFoundException($"Death with id {id} not found");
             
@@ -19,8 +31,8 @@ public class DeathHelper(IBattleManagementSystemDbContext dbContext) : IDeathHel
     public List<Death> FindAllOfPlayer(Player player)
     {
         var deaths = dbContext.Death
-            .Include(k => k.Location)
-            .Where(death => death.PlayerId == player.PlayerId && death.RoomId == player.RoomId).ToList();
+            .Include(death => death.Location)
+            .Where(death => death.PlayerId == player.PlayerId).ToList();
 
         return deaths;
     }

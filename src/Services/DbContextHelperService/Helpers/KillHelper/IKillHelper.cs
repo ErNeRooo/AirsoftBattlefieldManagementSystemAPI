@@ -5,5 +5,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.
 public interface IKillHelper
 {
     public Kill FindById(int? id);
+    public Kill FindByIdIncludingBattle(int? id);
     public List<Kill> FindAllOfPlayer(Player player);
 }

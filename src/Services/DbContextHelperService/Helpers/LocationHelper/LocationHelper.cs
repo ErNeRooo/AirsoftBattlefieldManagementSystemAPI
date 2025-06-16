@@ -19,7 +19,7 @@ public class LocationHelper(IBattleManagementSystemDbContext dbContext) : ILocat
     {
         var locationIDs = 
             dbContext.PlayerLocation
-                .Where(playerLocation => playerLocation.PlayerId == player.PlayerId && playerLocation.RoomId == player.RoomId)
+                .Where(playerLocation => playerLocation.PlayerId == player.PlayerId)
                 .Select(playerLocation => playerLocation.LocationId);
 
         var locations = dbContext.Location

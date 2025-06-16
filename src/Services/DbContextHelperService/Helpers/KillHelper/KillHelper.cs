@@ -16,11 +16,23 @@ public class KillHelper(IBattleManagementSystemDbContext dbContext) : IKillHelpe
         return kill;
     }
     
+    public Kill FindByIdIncludingBattle(int? id)
+    {
+        Kill? kill = dbContext.Kill
+            .Include(k => k.Location)
+            .Include(k => k.Battle)
+            .FirstOrDefault(t => t.KillId == id);
+
+        if(kill is null) throw new NotFoundException($"Kill with id {id} not found");
+            
+        return kill;
+    }
+    
     public List<Kill> FindAllOfPlayer(Player player)
     {
         var kills = dbContext.Kill
             .Include(k => k.Location)
-            .Where(kill => kill.PlayerId == player.PlayerId && kill.RoomId == player.RoomId).ToList();
+            .Where(kill => kill.PlayerId == player.PlayerId).ToList();
 
         return kills;
     }

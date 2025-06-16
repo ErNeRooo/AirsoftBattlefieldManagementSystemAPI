@@ -9,6 +9,7 @@ public class PostPlayerDtoValidatorTests
     [Theory]
     [InlineData("a")]
     [InlineData("aA!@#$%^&*()_+-={}[]")]
+    [InlineData("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")]
     public void Validate_ForValidModel_ReturnsSuccess(string name)
     {
         var validator = new PostPlayerDtoValidator();
@@ -24,7 +25,7 @@ public class PostPlayerDtoValidatorTests
     
     [Theory]
     [InlineData("")]
-    [InlineData("aaaaaaaaaaaaaaaaaaaaa")]
+    [InlineData("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")]
     public void Validate_ForInvalidModel_ReturnsFailure(string name)
     {
         var validator = new PostPlayerDtoValidator();

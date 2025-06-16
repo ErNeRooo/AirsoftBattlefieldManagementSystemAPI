@@ -15,7 +15,7 @@ public class DeathControllerGetByIdTests
         public int SenderPlayerId { get; set; }
         public int DeathId { get; set; }
         public int PlayerId { get; set; }
-        public int RoomId { get; set; }
+        public int BattleId { get; set; }
         public decimal Longitude { get; set; }
         public decimal Latitude { get; set; }
         public short Accuracy { get; set; }
@@ -33,7 +33,7 @@ public class DeathControllerGetByIdTests
                 SenderPlayerId = 1,
                 DeathId = 1,
                 PlayerId = 1,
-                RoomId = 1,
+                BattleId = 1,
                 Longitude = 21,
                 Latitude = 45,
                 Accuracy = 10,
@@ -45,7 +45,7 @@ public class DeathControllerGetByIdTests
                 SenderPlayerId = 1,
                 DeathId = 2,
                 PlayerId = 1,
-                RoomId = 1,
+                BattleId = 1,
                 Longitude = 22.862341m,
                 Latitude = 44.4325m,
                 Accuracy = 15,
@@ -57,7 +57,7 @@ public class DeathControllerGetByIdTests
                 SenderPlayerId = 1,
                 DeathId = 3,
                 PlayerId = 2,
-                RoomId = 1,
+                BattleId = 1,
                 Longitude = 56.23455m,
                 Latitude = -86.4325m,
                 Accuracy = 1500,
@@ -69,7 +69,7 @@ public class DeathControllerGetByIdTests
                 SenderPlayerId = 1,
                 DeathId = 6,
                 PlayerId = 1,
-                RoomId = 1,
+                BattleId = 1,
                 Longitude = 18.22m,
                 Latitude = 46.4m,
                 Accuracy = 15,
@@ -81,7 +81,7 @@ public class DeathControllerGetByIdTests
                 SenderPlayerId = 2,
                 DeathId = 3,
                 PlayerId = 2,
-                RoomId = 1,
+                BattleId = 1,
                 Longitude = 56.23455m,
                 Latitude = -86.4325m,
                 Accuracy = 1500,
@@ -93,7 +93,7 @@ public class DeathControllerGetByIdTests
                 SenderPlayerId = 2,
                 DeathId = 2,
                 PlayerId = 1,
-                RoomId = 1,
+                BattleId = 1,
                 Longitude = 22.862341m,
                 Latitude = 44.4325m,
                 Accuracy = 15,
@@ -105,7 +105,7 @@ public class DeathControllerGetByIdTests
                 SenderPlayerId = 3,
                 DeathId = 4,
                 PlayerId = 3,
-                RoomId = 2,
+                BattleId = 2,
                 Longitude = -32.02m,
                 Latitude = -40.4m,
                 Accuracy = 7,
@@ -117,7 +117,7 @@ public class DeathControllerGetByIdTests
                 SenderPlayerId = 6,
                 DeathId = 4,
                 PlayerId = 3,
-                RoomId = 2,
+                BattleId = 2,
                 Longitude = -32.02m,
                 Latitude = -40.4m,
                 Accuracy = 7,
@@ -129,7 +129,7 @@ public class DeathControllerGetByIdTests
                 SenderPlayerId = 3,
                 DeathId = 7,
                 PlayerId = 4,
-                RoomId = 2,
+                BattleId = 2,
                 Longitude = -124.2213m,
                 Latitude = -34.2137m,
                 Accuracy = 1,
@@ -141,7 +141,7 @@ public class DeathControllerGetByIdTests
                 SenderPlayerId = 4,
                 DeathId = 4,
                 PlayerId = 3,
-                RoomId = 2,
+                BattleId = 2,
                 Longitude = -32.02m,
                 Latitude = -40.4m,
                 Accuracy = 7,
@@ -153,7 +153,7 @@ public class DeathControllerGetByIdTests
                 SenderPlayerId = 6,
                 DeathId = 7,
                 PlayerId = 4,
-                RoomId = 2,
+                BattleId = 2,
                 Longitude = -124.2213m,
                 Latitude = -34.2137m,
                 Accuracy = 1,
@@ -180,7 +180,7 @@ public class DeathControllerGetByIdTests
         result.ShouldNotBeNull();
         result.DeathId.ShouldBe(testData.DeathId);
         result.PlayerId.ShouldBe(testData.PlayerId);
-        result.RoomId.ShouldBe(testData.RoomId);
+        result.BattleId.ShouldBe(testData.BattleId);
         result.Longitude.ShouldBe(testData.Longitude);
         result.Latitude.ShouldBe(testData.Latitude);
         result.Accuracy.ShouldBe(testData.Accuracy);

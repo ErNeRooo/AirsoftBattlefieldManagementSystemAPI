@@ -18,7 +18,7 @@ public class KillControllerCreateTests
             new()
             {
                 SenderPlayerId = 1,
-                RoomId = 1,
+                BattleId = 1,
                 Longitude = 21,
                 Latitude = 45,
                 Accuracy = 10,
@@ -28,7 +28,7 @@ public class KillControllerCreateTests
             new()
             {
                 SenderPlayerId = 2,
-                RoomId = 1,
+                BattleId = 1,
                 Longitude = 53,
                 Latitude = 34,
                 Accuracy = 12,
@@ -38,7 +38,7 @@ public class KillControllerCreateTests
             new()
             {
                 SenderPlayerId = 3,
-                RoomId = 2,
+                BattleId = 2,
                 Longitude = 53,
                 Latitude = 34,
                 Accuracy = 12,
@@ -48,7 +48,7 @@ public class KillControllerCreateTests
             new()
             {
                 SenderPlayerId = 4,
-                RoomId = 2,
+                BattleId = 2,
                 Longitude = 53,
                 Latitude = 34,
                 Accuracy = 12,
@@ -58,7 +58,7 @@ public class KillControllerCreateTests
             new()
             {
                 SenderPlayerId = 6,
-                RoomId = 2,
+                BattleId = 2,
                 Longitude = 53,
                 Latitude = 34,
                 Accuracy = 12,
@@ -73,7 +73,7 @@ public class KillControllerCreateTests
     public class PlayerKillTestData
     {
         public int SenderPlayerId { get; set; }
-        public int RoomId { get; set; }
+        public int BattleId { get; set; }
         public decimal Longitude { get; set; }
         public decimal Latitude { get; set; }
         public short Accuracy { get; set; }
@@ -102,7 +102,7 @@ public class KillControllerCreateTests
         
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
         result.KillId.ShouldNotBe(0);
-        result.RoomId.ShouldBe(testData.RoomId);
+        result.BattleId.ShouldBe(testData.BattleId);
         result.PlayerId.ShouldBe(testData.SenderPlayerId);
         result.Longitude.ShouldBe(testData.Longitude);
         result.Latitude.ShouldBe(testData.Latitude);

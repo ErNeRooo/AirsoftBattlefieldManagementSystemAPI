@@ -5,4 +5,5 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.
 public interface IBattleHelper
 {
     public Battle FindById(int? id);
+    public Battle FindByIdIncludingRoom(int? id);
 }

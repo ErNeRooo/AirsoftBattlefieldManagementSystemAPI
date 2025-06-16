@@ -19,13 +19,13 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
             Player player = dbHelper.Player.FindById(playerId);
 
-            authorizationHelper.CheckTargetPlayerIsInTheSameTeam(user, playerLocation.PlayerId ?? 0, player.TeamId ?? 0);
+            authorizationHelper.CheckTargetPlayerIsInTheSameTeam(user, playerLocation.PlayerId, player.TeamId ?? 0);
 
             LocationDto locationDto = new LocationDto
             {
                 PlayerId = playerLocation.PlayerId,
                 LocationId = location.LocationId,
-                RoomId = playerLocation.RoomId,
+                BattleId = playerLocation.BattleId,
                 Longitude = location.Longitude,
                 Latitude = location.Latitude,
                 Accuracy = location.Accuracy,
@@ -44,6 +44,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
 
             authorizationHelper.CheckTargetPlayerIsInTheSameTeam(user, targetPlayerId, player.TeamId ?? 0);
             
+            Room room = dbHelper.Room.FindByIdIncludingBattle(targetPlayer.RoomId);
+            
             List<Location> locations = dbHelper.Location.FindAllOfPlayer(targetPlayer);
 
             List<LocationDto> locationDtos = locations.Select(l =>
@@ -52,7 +54,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
                 {
                     PlayerId = targetPlayerId,
                     LocationId = l.LocationId,
-                    RoomId = targetPlayer.RoomId,
+                    BattleId = room.Battle.BattleId,
                     Longitude = l.Longitude,
                     Latitude = l.Latitude,
                     Accuracy = l.Accuracy,
@@ -68,6 +70,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
         {
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
             Player player = dbHelper.Player.FindById(playerId);
+            Room room = dbHelper.Room.FindByIdIncludingBattle(player.RoomId);
 
             Location location = mapper.Map<Location>(locationDto);
             dbContext.Location.Add(location);
@@ -77,7 +80,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
             PlayerLocation playerLocation = new PlayerLocation();
             playerLocation.LocationId = location.LocationId;
             playerLocation.PlayerId = playerId;
-            playerLocation.RoomId = player.RoomId;
+            playerLocation.BattleId = room.Battle.BattleId;
             dbContext.PlayerLocation.Add(playerLocation);
 
             dbContext.SaveChanges();
@@ -86,7 +89,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
             {
                 LocationId = location.LocationId,
                 PlayerId = playerId,
-                RoomId = player.RoomId,
+                BattleId = room.Battle.BattleId,
                 Longitude = location.Longitude,
                 Latitude = location.Latitude,
                 Accuracy = location.Accuracy,
@@ -112,7 +115,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
             {
                 LocationId = oldLocation.LocationId,
                 PlayerId = playerLocation.PlayerId,
-                RoomId = playerLocation.RoomId,
+                BattleId = playerLocation.BattleId,
                 Longitude = oldLocation.Longitude,
                 Latitude = oldLocation.Latitude,
                 Accuracy = oldLocation.Accuracy,

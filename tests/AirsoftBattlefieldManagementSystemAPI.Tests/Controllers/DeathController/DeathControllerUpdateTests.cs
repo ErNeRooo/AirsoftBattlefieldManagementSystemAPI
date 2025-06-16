@@ -14,7 +14,7 @@ public class DeathControllerUpdateTests
     {
         public int SenderPlayerId { get; set; }
         public int DeathId { get; set; }
-        public int RoomId { get; set; }
+        public int BattleId { get; set; }
         public decimal? Longitude { get; set; }
         public decimal? Latitude { get; set; }
         public short? Accuracy { get; set; }
@@ -31,7 +31,7 @@ public class DeathControllerUpdateTests
             {
                 SenderPlayerId = 1,
                 DeathId = 1,
-                RoomId = 1,
+                BattleId = 1,
                 Longitude = 86,
                 Latitude = 43,
                 Accuracy = 2,
@@ -42,7 +42,7 @@ public class DeathControllerUpdateTests
             {
                 SenderPlayerId = 1,
                 DeathId = 2,
-                RoomId = 1,
+                BattleId = 1,
                 Longitude = 75,
                 Latitude = 46,
                 Accuracy = 123,
@@ -53,7 +53,7 @@ public class DeathControllerUpdateTests
             {
                 SenderPlayerId = 2,
                 DeathId = 3,
-                RoomId = 1,
+                BattleId = 1,
                 Longitude = 86,
                 Latitude = 87,
                 Accuracy = 88,
@@ -64,7 +64,7 @@ public class DeathControllerUpdateTests
             {
                 SenderPlayerId = 3,
                 DeathId = 5,
-                RoomId = 2,
+                BattleId = 2,
                 Longitude = 1,
                 Latitude = 1,
                 Accuracy = 1,
@@ -75,7 +75,7 @@ public class DeathControllerUpdateTests
             {
                 SenderPlayerId = 4,
                 DeathId = 7,
-                RoomId = 2,
+                BattleId = 2,
                 Longitude = 6,
                 Latitude = 6,
                 Accuracy = 6,
@@ -96,7 +96,7 @@ public class DeathControllerUpdateTests
             {
                 SenderPlayerId = 1,
                 DeathId = 1,
-                RoomId = 1,
+                BattleId = 1,
                 Longitude = null,
                 Latitude = null,
                 Accuracy = null,
@@ -107,7 +107,7 @@ public class DeathControllerUpdateTests
             {
                 SenderPlayerId = 3,
                 DeathId = 5,
-                RoomId = 2,
+                BattleId = 2,
                 Longitude = null,
                 Latitude = null,
                 Accuracy = null,
@@ -118,7 +118,7 @@ public class DeathControllerUpdateTests
             {
                 SenderPlayerId = 1,
                 DeathId = 2,
-                RoomId = 1,
+                BattleId = 1,
                 Longitude = null,
                 Latitude = 24,
                 Accuracy = null,
@@ -129,7 +129,7 @@ public class DeathControllerUpdateTests
             {
                 SenderPlayerId = 4,
                 DeathId = 7,
-                RoomId = 2,
+                BattleId = 2,
                 Longitude = null,
                 Latitude = null,
                 Accuracy = null,
@@ -140,7 +140,7 @@ public class DeathControllerUpdateTests
             {
                 SenderPlayerId = 1,
                 DeathId = 1,
-                RoomId = 1,
+                BattleId = 1,
                 Longitude = 155,
                 Latitude = null,
                 Accuracy = null,
@@ -151,7 +151,7 @@ public class DeathControllerUpdateTests
             {
                 SenderPlayerId = 1,
                 DeathId = 1,
-                RoomId = 1,
+                BattleId = 1,
                 Longitude = null,
                 Latitude = null,
                 Accuracy = 6546,
@@ -162,7 +162,7 @@ public class DeathControllerUpdateTests
             {
                 SenderPlayerId = 1,
                 DeathId = 1,
-                RoomId = 1,
+                BattleId = 1,
                 Longitude = null,
                 Latitude = null,
                 Accuracy = 6546,
@@ -173,7 +173,7 @@ public class DeathControllerUpdateTests
             {
                 SenderPlayerId = 1,
                 DeathId = 1,
-                RoomId = 1,
+                BattleId = 1,
                 Longitude = null,
                 Latitude = null,
                 Accuracy = 6546,
@@ -206,7 +206,7 @@ public class DeathControllerUpdateTests
         
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         result.DeathId.ShouldNotBe(0);
-        result.RoomId.ShouldBe(testData.RoomId);
+        result.BattleId.ShouldBe(testData.BattleId);
         result.PlayerId.ShouldBe(testData.SenderPlayerId);
         result.Longitude.ShouldBe((int)testData.Longitude);
         result.Latitude.ShouldBe((int)testData.Latitude);
@@ -241,7 +241,7 @@ public class DeathControllerUpdateTests
         
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         result.DeathId.ShouldNotBe(0);
-        result.RoomId.ShouldBe(testData.RoomId);
+        result.BattleId.ShouldBe(testData.BattleId);
         result.PlayerId.ShouldBe(testData.SenderPlayerId);
         result.Longitude.ShouldBe(testData.Longitude ?? resultFromGet.Longitude);
         result.Latitude.ShouldBe(testData.Latitude ?? resultFromGet.Latitude);

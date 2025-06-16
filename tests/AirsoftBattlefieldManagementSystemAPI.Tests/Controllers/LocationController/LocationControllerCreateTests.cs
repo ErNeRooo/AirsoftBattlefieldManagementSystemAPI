@@ -19,7 +19,7 @@ public class LocationControllerCreateTests
             new()
             {
                 SenderPlayerId = 1,
-                RoomId = 1,
+                BattleId = 1,
                 Longitude = 21,
                 Latitude = 45,
                 Accuracy = 10,
@@ -29,7 +29,7 @@ public class LocationControllerCreateTests
             new()
             {
                 SenderPlayerId = 2,
-                RoomId = 1,
+                BattleId = 1,
                 Longitude = 53,
                 Latitude = 34,
                 Accuracy = 12,
@@ -39,7 +39,7 @@ public class LocationControllerCreateTests
             new()
             {
                 SenderPlayerId = 3,
-                RoomId = 2,
+                BattleId = 2,
                 Longitude = 53,
                 Latitude = 34,
                 Accuracy = 12,
@@ -49,7 +49,7 @@ public class LocationControllerCreateTests
             new()
             {
                 SenderPlayerId = 4,
-                RoomId = 2,
+                BattleId = 2,
                 Longitude = 53,
                 Latitude = 34,
                 Accuracy = 12,
@@ -59,7 +59,7 @@ public class LocationControllerCreateTests
             new()
             {
                 SenderPlayerId = 6,
-                RoomId = 2,
+                BattleId = 2,
                 Longitude = 53,
                 Latitude = 34,
                 Accuracy = 12,
@@ -74,7 +74,7 @@ public class LocationControllerCreateTests
     public class PlayerLocationTestData
     {
         public int SenderPlayerId { get; set; }
-        public int? RoomId { get; set; }
+        public int? BattleId { get; set; }
         public decimal Longitude { get; set; }
         public decimal Latitude { get; set; }
         public short Accuracy { get; set; }
@@ -103,7 +103,7 @@ public class LocationControllerCreateTests
         
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
         result.LocationId.ShouldNotBe(0);
-        result.RoomId.ShouldBe(testData.RoomId);
+        result.BattleId.ShouldBe(testData.BattleId);
         result.PlayerId.ShouldBe(testData.SenderPlayerId);
         result.Longitude.ShouldBe(testData.Longitude);
         result.Latitude.ShouldBe(testData.Latitude);

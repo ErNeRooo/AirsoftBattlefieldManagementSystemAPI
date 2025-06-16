@@ -37,4 +37,16 @@ public class PlayerHelper(IBattleManagementSystemDbContext dbContext, IClaimsHel
         
         return player;
     }
+
+    public Player FindByIdIncludingRoom(int? id)
+    {
+        Player? player = dbContext.Player
+            .Include(p => p.Room)
+            .FirstOrDefault(p => p.PlayerId == id);
+
+        if (player is null) throw new NotFoundException($"Player with id {id} not found");
+        if (player.Account is null) throw new NotFoundException($"Player with id {id} is not logged into account");
+        
+        return player;
+    }
 }

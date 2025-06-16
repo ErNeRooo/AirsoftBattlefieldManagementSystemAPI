@@ -19,9 +19,9 @@ public class LocationControllerGetLocationsOfPlayerWithIdTests
                 QueriedPlayerId = 1,
                 ExpectedLocations = new List<LocationDto>
                 {
-                    new() { LocationId = 1, PlayerId = 1, Longitude = 21, Latitude = 45, Accuracy = 10, Bearing = 45, RoomId = 1 },
-                    new() { LocationId = 2, PlayerId = 1, Longitude = 22.67m, Latitude = 46, Accuracy = 5, Bearing = 58, RoomId = 1 },
-                    new() { LocationId = 3, PlayerId = 1, Longitude = 18.22m, Latitude = 46.4m, Accuracy = 15, Bearing = 58, RoomId = 1 }
+                    new() { LocationId = 1, PlayerId = 1, Longitude = 21, Latitude = 45, Accuracy = 10, Bearing = 45, BattleId = 1 },
+                    new() { LocationId = 2, PlayerId = 1, Longitude = 22.67m, Latitude = 46, Accuracy = 5, Bearing = 58, BattleId = 1 },
+                    new() { LocationId = 3, PlayerId = 1, Longitude = 18.22m, Latitude = 46.4m, Accuracy = 15, Bearing = 58, BattleId = 1 }
                 }
             },
             new()
@@ -30,7 +30,7 @@ public class LocationControllerGetLocationsOfPlayerWithIdTests
                 QueriedPlayerId = 2,
                 ExpectedLocations = new List<LocationDto>
                 {
-                    new() { LocationId = 4, PlayerId = 2, Longitude = 32.02m, Latitude = 40.4m, Accuracy = 7, Bearing = 268, RoomId = 1 }
+                    new() { LocationId = 4, PlayerId = 2, Longitude = 32.02m, Latitude = 40.4m, Accuracy = 7, Bearing = 268, BattleId = 1 }
                 }
             },
             new()
@@ -39,8 +39,8 @@ public class LocationControllerGetLocationsOfPlayerWithIdTests
                 QueriedPlayerId = 3,
                 ExpectedLocations = new List<LocationDto>
                 {
-                    new() { LocationId = 5, PlayerId = 3, Longitude = -32.02m, Latitude = -40.4m, Accuracy = 7, Bearing = 268, RoomId = 2 },
-                    new() { LocationId = 6, PlayerId = 3, Longitude = -35.02m, Latitude = -39.42m, Accuracy = 1, Bearing = 230, RoomId = 2 }
+                    new() { LocationId = 5, PlayerId = 3, Longitude = -32.02m, Latitude = -40.4m, Accuracy = 7, Bearing = 268, BattleId = 2 },
+                    new() { LocationId = 6, PlayerId = 3, Longitude = -35.02m, Latitude = -39.42m, Accuracy = 1, Bearing = 230, BattleId = 2 }
                 }
             },
             new()
@@ -49,8 +49,8 @@ public class LocationControllerGetLocationsOfPlayerWithIdTests
                 QueriedPlayerId = 3,
                 ExpectedLocations = new List<LocationDto>
                 {
-                    new() { LocationId = 5, PlayerId = 3, Longitude = -32.02m, Latitude = -40.4m, Accuracy = 7, Bearing = 268, RoomId = 2 },
-                    new() { LocationId = 6, PlayerId = 3, Longitude = -35.02m, Latitude = -39.42m, Accuracy = 1, Bearing = 230, RoomId = 2 }
+                    new() { LocationId = 5, PlayerId = 3, Longitude = -32.02m, Latitude = -40.4m, Accuracy = 7, Bearing = 268, BattleId = 2 },
+                    new() { LocationId = 6, PlayerId = 3, Longitude = -35.02m, Latitude = -39.42m, Accuracy = 1, Bearing = 230, BattleId = 2 }
                 }
             }
         };
@@ -88,7 +88,7 @@ public class LocationControllerGetLocationsOfPlayerWithIdTests
             actual.Latitude.ShouldBe(expected.Latitude);
             actual.Accuracy.ShouldBe(expected.Accuracy);
             actual.Bearing.ShouldBe(expected.Bearing);
-            actual.RoomId.ShouldBe(expected.RoomId);
+            actual.BattleId.ShouldBe(expected.BattleId);
         }
     }
 

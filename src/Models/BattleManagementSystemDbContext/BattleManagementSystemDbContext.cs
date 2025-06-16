@@ -22,130 +22,167 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbC
         public ChangeTracker ChangeTracker => base.ChangeTracker;
         public DbContextId ContextId => base.ContextId;
         public IModel Model => base.Model;
+        
+        private ModelBuilder _modelBuilder;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
+        { 
+            _modelBuilder = modelBuilder;
+            
+            BuildPlayerLocation();
+            BuildKill();
+            BuildDeath();
+            BuildAccount();
+            BuildPlayer();
+            BuildBattle();
+            BuildTeam();
+            BuildRoom();
+        }
+        
+        private void BuildPlayerLocation()
         {
-            modelBuilder
+            _modelBuilder.Entity<PlayerLocation>()
+                .HasOne(playerLocation => playerLocation.Battle)
+                .WithMany()
+                .HasForeignKey(playerLocation => playerLocation.BattleId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            _modelBuilder.Entity<PlayerLocation>()
+                .HasOne(playerLocation => playerLocation.Location)
+                .WithMany()
+                .HasForeignKey(playerLocation => playerLocation.LocationId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            _modelBuilder.Entity<PlayerLocation>()
+                .HasOne(playerLocation => playerLocation.Player)
+                .WithMany()
+                .HasForeignKey(playerLocation => playerLocation.PlayerId)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
+
+        private void BuildKill()
+        {
+            _modelBuilder.Entity<Kill>()
+                .HasOne(kill => kill.Battle)
+                .WithMany()
+                .HasForeignKey(kill => kill.BattleId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            _modelBuilder.Entity<Kill>()
+                .HasOne(kill => kill.Location)
+                .WithMany()
+                .HasForeignKey(kill => kill.LocationId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            _modelBuilder.Entity<Kill>()
+                .HasOne(kill => kill.Player)
+                .WithMany()
+                .HasForeignKey(kill => kill.PlayerId)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
+        
+        private void BuildDeath()
+        {
+            _modelBuilder.Entity<Death>()
+                .HasOne(death => death.Battle)
+                .WithMany()
+                .HasForeignKey(death => death.BattleId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            _modelBuilder.Entity<Death>()
+                .HasOne(death => death.Location)
+                .WithMany()
+                .HasForeignKey(death => death.LocationId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            _modelBuilder.Entity<Death>()
+                .HasOne(death => death.Player)
+                .WithMany()
+                .HasForeignKey(death => death.PlayerId)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
+
+        private void BuildAccount()
+        {
+            _modelBuilder
                 .Entity<Account>()
                 .Property(a => a.Email)
                 .HasMaxLength(320);
 
-            modelBuilder
+            _modelBuilder
                 .Entity<Account>()
                 .HasOne(account => account.Player)
                 .WithOne(player => player.Account)
                 .HasForeignKey<Account>(a => a.PlayerId)
                 .OnDelete(DeleteBehavior.SetNull);
+        }
 
-            modelBuilder
-                .Entity<Team>()
-                .Property(team => team.Name)
-                .HasMaxLength(60);
-
-            modelBuilder
-                .Entity<Team>()
-                .HasOne(team => team.OfficerPlayer)
-                .WithMany()
-                .HasForeignKey(team => team.OfficerPlayerId)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            modelBuilder
-                .Entity<Team>()
-                .HasOne(team => team.Room)
-                .WithMany()
-                .HasForeignKey(t => t.RoomId)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            modelBuilder
+        private void BuildPlayer()
+        {
+            _modelBuilder
                 .Entity<Player>()
                 .Property(player => player.Name)
                 .HasMaxLength(40);
             
-            modelBuilder
+            _modelBuilder
                 .Entity<Player>()
                 .HasOne(player => player.Room)
                 .WithMany()
                 .HasForeignKey(p => p.RoomId)
                 .OnDelete(DeleteBehavior.SetNull);
             
-            modelBuilder
+            _modelBuilder
                 .Entity<Player>()
                 .HasOne(player => player.Team)
                 .WithMany(team => team.Players)
                 .HasForeignKey(player => player.TeamId)
                 .OnDelete(DeleteBehavior.SetNull);
-
-            modelBuilder
+        }
+        
+        private void BuildBattle()
+        {
+            _modelBuilder
                 .Entity<Battle>()
                 .Property(battle => battle.Name)
                 .HasMaxLength(60);
-
-            modelBuilder
+            
+            _modelBuilder
                 .Entity<Battle>()
                 .HasOne(battle => battle.Room)
-                .WithMany()
-                .HasForeignKey(b => b.RoomId)
+                .WithOne(room => room.Battle)
+                .HasForeignKey<Battle>(battle => battle.RoomId)
                 .OnDelete(DeleteBehavior.SetNull);
-            
-            modelBuilder
+        }
+        
+        private void BuildTeam()
+        {
+            _modelBuilder
+                .Entity<Team>()
+                .Property(team => team.Name)
+                .HasMaxLength(60);
+
+            _modelBuilder
+                .Entity<Team>()
+                .HasOne(team => team.OfficerPlayer)
+                .WithMany()
+                .HasForeignKey(team => team.OfficerPlayerId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            _modelBuilder
+                .Entity<Team>()
+                .HasOne(team => team.Room)
+                .WithMany()
+                .HasForeignKey(team => team.RoomId)
+                .OnDelete(DeleteBehavior.SetNull);
+        }
+        
+        private void BuildRoom()
+        {
+            _modelBuilder
                 .Entity<Room>()
                 .HasOne(room => room.AdminPlayer)
                 .WithMany()
-                .HasForeignKey(r => r.AdminPlayerId)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            modelBuilder.Entity<Kill>()
-                .HasOne(kill => kill.Room)
-                .WithMany()
-                .HasForeignKey(kill => kill.RoomId)
-                .OnDelete(DeleteBehavior.SetNull);
-            
-            modelBuilder.Entity<Kill>()
-                .HasOne(kill => kill.Location)
-                .WithMany()
-                .HasForeignKey(kill => kill.LocationId)
-                .OnDelete(DeleteBehavior.SetNull);
-            
-            modelBuilder.Entity<Kill>()
-                .HasOne(kill => kill.Player)
-                .WithMany()
-                .HasForeignKey(kill => kill.PlayerId)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            modelBuilder.Entity<Death>()
-                .HasOne(death => death.Room)
-                .WithMany()
-                .HasForeignKey(death => death.RoomId)
-                .OnDelete(DeleteBehavior.SetNull);
-            
-            modelBuilder.Entity<Death>()
-                .HasOne(death => death.Location)
-                .WithMany()
-                .HasForeignKey(death => death.LocationId)
-                .OnDelete(DeleteBehavior.SetNull);
-            
-            modelBuilder.Entity<Death>()
-                .HasOne(death => death.Player)
-                .WithMany()
-                .HasForeignKey(death => death.PlayerId)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            modelBuilder.Entity<PlayerLocation>()
-                .HasOne(playerLocation => playerLocation.Room)
-                .WithMany()
-                .HasForeignKey(playerLocation => playerLocation.RoomId)
-                .OnDelete(DeleteBehavior.SetNull);
-            
-            modelBuilder.Entity<PlayerLocation>()
-                .HasOne(playerLocation => playerLocation.Location)
-                .WithMany()
-                .HasForeignKey(playerLocation => playerLocation.LocationId)
-                .OnDelete(DeleteBehavior.SetNull);
-            
-            modelBuilder.Entity<PlayerLocation>()
-                .HasOne(playerLocation => playerLocation.Player)
-                .WithMany()
-                .HasForeignKey(playerLocation => playerLocation.PlayerId)
+                .HasForeignKey(room => room.AdminPlayerId)
                 .OnDelete(DeleteBehavior.SetNull);
         }
     }

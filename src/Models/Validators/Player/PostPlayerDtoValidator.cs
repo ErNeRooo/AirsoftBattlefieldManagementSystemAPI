@@ -7,7 +7,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Validators.Player
     {
         public PostPlayerDtoValidator()
         {
-            RuleFor(p => p.Name).NotEmpty().MaximumLength(20);
+            RuleFor(p => p.Name).NotEmpty().MaximumLength(40);
         }
     }
 }

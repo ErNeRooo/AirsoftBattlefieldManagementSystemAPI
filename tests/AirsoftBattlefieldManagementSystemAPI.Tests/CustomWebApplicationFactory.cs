@@ -207,7 +207,7 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     PlayerLocationId = 1,
                     LocationId = 1,
                     PlayerId = 1,
-                    RoomId = 1
+                    BattleId = 1
                 });
                 context.Location.Add(new Location
                 {
@@ -223,7 +223,7 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     PlayerLocationId = 2,
                     LocationId = 2,
                     PlayerId = 1,
-                    RoomId = 1
+                    BattleId = 1
                 });
                 context.Location.Add(new Location
                 {
@@ -239,7 +239,7 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     PlayerLocationId = 3,
                     LocationId = 3,
                     PlayerId = 1,
-                    RoomId = 1
+                    BattleId = 1
                 });
                 context.Location.Add(new Location
                 {
@@ -256,7 +256,7 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     PlayerLocationId = 4,
                     LocationId = 4,
                     PlayerId = 2,
-                    RoomId = 1
+                    BattleId = 1
                 });
                 context.Location.Add(new Location
                 {
@@ -273,7 +273,7 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     PlayerLocationId = 5,
                     LocationId = 5,
                     PlayerId = 3,
-                    RoomId = 2
+                    BattleId = 2
                 });
                 context.Location.Add(new Location
                 {
@@ -289,7 +289,7 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     PlayerLocationId = 6,
                     LocationId = 6,
                     PlayerId = 3,
-                    RoomId = 2
+                    BattleId = 2
                 });
                 context.Location.Add(new Location
                 {
@@ -306,7 +306,7 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     PlayerLocationId = 7,
                     LocationId = 7,
                     PlayerId = 6,
-                    RoomId = 2
+                    BattleId = 2
                 });
                 context.Location.Add(new Location
                 {
@@ -323,21 +323,21 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     KillId = 1,
                     LocationId = 1,
                     PlayerId = 1,
-                    RoomId = 1
+                    BattleId = 1
                 });
                 context.Kill.Add(new Kill
                 {
                     KillId = 6,
                     LocationId = 3,
                     PlayerId = 1,
-                    RoomId = 1
+                    BattleId = 1
                 });
                 context.Kill.Add(new Kill
                 {
                     KillId = 2,
                     LocationId = 8,
                     PlayerId = 1,
-                    RoomId = 1
+                    BattleId = 1
                 });
                 context.Location.Add(new Location
                 {
@@ -354,7 +354,7 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     KillId = 3,
                     LocationId = 9,
                     PlayerId = 2,
-                    RoomId = 1
+                    BattleId = 1
                 });
                 context.Location.Add(new Location
                 {
@@ -371,14 +371,14 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     KillId = 4,
                     LocationId = 5,
                     PlayerId = 3,
-                    RoomId = 2
+                    BattleId = 2
                 });
                 context.Kill.Add(new Kill
                 {
                     KillId = 5,
                     LocationId = 10,
                     PlayerId = 3,
-                    RoomId = 2
+                    BattleId = 2
                 });
                 context.Location.Add(new Location
                 {
@@ -395,7 +395,7 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     KillId = 7,
                     LocationId = 11,
                     PlayerId = 4,
-                    RoomId = 2
+                    BattleId = 2
                 });
                 context.Location.Add(new Location
                 {
@@ -412,49 +412,49 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     DeathId = 1,
                     LocationId = 1,
                     PlayerId = 1,
-                    RoomId = 1
+                    BattleId = 1
                 });
                 context.Death.Add(new Death
                 {
                     DeathId = 6,
                     LocationId = 3,
                     PlayerId = 1,
-                    RoomId = 1
+                    BattleId = 1
                 });
                 context.Death.Add(new Death
                 {
                     DeathId = 2,
                     LocationId = 8,
                     PlayerId = 1,
-                    RoomId = 1
+                    BattleId = 1
                 });
                 context.Death.Add(new Death
                 {
                     DeathId = 3,
                     LocationId = 9,
                     PlayerId = 2,
-                    RoomId = 1
+                    BattleId = 1
                 });
                 context.Death.Add(new Death
                 {
                     DeathId = 4,
                     LocationId = 5,
                     PlayerId = 3,
-                    RoomId = 2
+                    BattleId = 2
                 });
                 context.Death.Add(new Death
                 {
                     DeathId = 5,
                     LocationId = 10,
                     PlayerId = 3,
-                    RoomId = 2
+                    BattleId = 2
                 });
                 context.Death.Add(new Death
                 {
                     DeathId = 7,
                     LocationId = 11,
                     PlayerId = 4,
-                    RoomId = 2
+                    BattleId = 2
                 });
                 
                 context.SaveChanges();

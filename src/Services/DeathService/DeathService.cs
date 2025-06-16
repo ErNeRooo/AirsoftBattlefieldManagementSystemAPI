@@ -13,9 +13,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.DeathService
     {
         public DeathDto GetById(int id, ClaimsPrincipal user)
         {
-            Death death = dbHelper.Death.FindById(id);
+            Death death = dbHelper.Death.FindByIdIncludingBattle(id);
 
-            authorizationHelper.CheckPlayerIsInTheSameRoomAsResource(user, death.RoomId);
+            authorizationHelper.CheckPlayerIsInTheSameRoomAsResource(user, death.Battle.RoomId);
             
             DeathDto deathDto = mapper.Map<DeathDto>(death);
 
@@ -45,6 +45,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.DeathService
         {
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
             Player player = dbHelper.Player.FindById(playerId);
+            Room room = dbHelper.Room.FindByIdIncludingBattle(player.RoomId);
 
             Location location = mapper.Map<Location>(deathDto);
             dbContext.Location.Add(location);
@@ -54,7 +55,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.DeathService
             Death death = new Death();
             death.LocationId = location.LocationId;
             death.PlayerId = playerId;
-            death.RoomId = (int)player.RoomId;
+            death.BattleId = room.Battle.BattleId;
             dbContext.Death.Add(death);
 
             dbContext.SaveChanges();

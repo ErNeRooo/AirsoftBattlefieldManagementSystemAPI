@@ -13,9 +13,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.KillService
     {
         public KillDto GetById(int id, ClaimsPrincipal user)
         {
-            Kill kill = dbHelper.Kill.FindById(id);
+            Kill kill = dbHelper.Kill.FindByIdIncludingBattle(id);
             
-            authorizationHelper.CheckPlayerIsInTheSameRoomAsResource(user, kill.RoomId);
+            authorizationHelper.CheckPlayerIsInTheSameRoomAsResource(user, kill.Battle.RoomId);
             
             KillDto killDto = mapper.Map<KillDto>(kill);
 
@@ -45,6 +45,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.KillService
         {
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
             Player player = dbHelper.Player.FindById(playerId);
+            Room room = dbHelper.Room.FindByIdIncludingBattle(player.RoomId);
             
             authorizationHelper.CheckPlayerOwnsResource(user, playerId);
             
@@ -56,7 +57,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.KillService
             Kill kill = new Kill();
             kill.LocationId = location.LocationId;
             kill.PlayerId = playerId;
-            kill.RoomId = (int)player.RoomId;
+            kill.BattleId = room.Battle.BattleId;
             dbContext.Kill.Add(kill);
 
             dbContext.SaveChanges();

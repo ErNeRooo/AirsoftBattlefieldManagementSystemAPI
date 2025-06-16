@@ -19,9 +19,9 @@ public class DeathControllerGetDeathsOfPlayerWithIdTests
                 QueriedPlayerId = 1,
                 ExpectedDeaths = new List<DeathDto>
                 {
-                    new() { DeathId = 1, PlayerId = 1, Longitude = 21, Latitude = 45, Accuracy = 10, Bearing = 45, RoomId = 1 },
-                    new() { DeathId = 2, PlayerId = 1, Longitude = 22.862341m, Latitude = 44.4325m, Accuracy = 15, Bearing = 80, RoomId = 1 },
-                    new() { DeathId = 6, PlayerId = 1, Longitude = 18.22m, Latitude = 46.4m, Accuracy = 15, Bearing = 58, RoomId = 1 }
+                    new() { DeathId = 1, PlayerId = 1, Longitude = 21, Latitude = 45, Accuracy = 10, Bearing = 45, BattleId = 1 },
+                    new() { DeathId = 2, PlayerId = 1, Longitude = 22.862341m, Latitude = 44.4325m, Accuracy = 15, Bearing = 80, BattleId = 1 },
+                    new() { DeathId = 6, PlayerId = 1, Longitude = 18.22m, Latitude = 46.4m, Accuracy = 15, Bearing = 58, BattleId = 1 }
                 }
             },
             new()
@@ -30,7 +30,7 @@ public class DeathControllerGetDeathsOfPlayerWithIdTests
                 QueriedPlayerId = 2,
                 ExpectedDeaths = new List<DeathDto>
                 {
-                    new() { DeathId = 3, PlayerId = 2, Longitude = 56.23455m, Latitude = -86.4325m, Accuracy = 1500, Bearing = 203, RoomId = 1 },
+                    new() { DeathId = 3, PlayerId = 2, Longitude = 56.23455m, Latitude = -86.4325m, Accuracy = 1500, Bearing = 203, BattleId = 1 },
                 }
             },
             new()
@@ -39,9 +39,9 @@ public class DeathControllerGetDeathsOfPlayerWithIdTests
                 QueriedPlayerId = 1,
                 ExpectedDeaths = new List<DeathDto>
                 {
-                    new() { DeathId = 1, PlayerId = 1, Longitude = 21, Latitude = 45, Accuracy = 10, Bearing = 45, RoomId = 1 },
-                    new() { DeathId = 2, PlayerId = 1, Longitude = 22.862341m, Latitude = 44.4325m, Accuracy = 15, Bearing = 80, RoomId = 1 },
-                    new() { DeathId = 6, PlayerId = 1, Longitude = 18.22m, Latitude = 46.4m, Accuracy = 15, Bearing = 58, RoomId = 1 }
+                    new() { DeathId = 1, PlayerId = 1, Longitude = 21, Latitude = 45, Accuracy = 10, Bearing = 45, BattleId = 1 },
+                    new() { DeathId = 2, PlayerId = 1, Longitude = 22.862341m, Latitude = 44.4325m, Accuracy = 15, Bearing = 80, BattleId = 1 },
+                    new() { DeathId = 6, PlayerId = 1, Longitude = 18.22m, Latitude = 46.4m, Accuracy = 15, Bearing = 58, BattleId = 1 }
                 }
             },
             new()
@@ -62,7 +62,7 @@ public class DeathControllerGetDeathsOfPlayerWithIdTests
                 QueriedPlayerId = 4,
                 ExpectedDeaths = new List<DeathDto>
                 {
-                    new() { DeathId = 7, PlayerId = 4, Longitude = -124.2213m, Latitude = -34.2137m, Accuracy = 1, Bearing = 180, RoomId = 2 }
+                    new() { DeathId = 7, PlayerId = 4, Longitude = -124.2213m, Latitude = -34.2137m, Accuracy = 1, Bearing = 180, BattleId = 2 }
                 }
             },
             new()
@@ -71,8 +71,8 @@ public class DeathControllerGetDeathsOfPlayerWithIdTests
                 QueriedPlayerId = 3,
                 ExpectedDeaths = new List<DeathDto>
                 {
-                    new() { DeathId = 4, PlayerId = 3, Longitude = -32.02m, Latitude = -40.4m, Accuracy = 7, Bearing = 268, RoomId = 2 },
-                    new() { DeathId = 5, PlayerId = 3, Longitude = -2.2m, Latitude = -0.2137m, Accuracy = 1, Bearing = 180, RoomId = 2 }
+                    new() { DeathId = 4, PlayerId = 3, Longitude = -32.02m, Latitude = -40.4m, Accuracy = 7, Bearing = 268, BattleId = 2 },
+                    new() { DeathId = 5, PlayerId = 3, Longitude = -2.2m, Latitude = -0.2137m, Accuracy = 1, Bearing = 180, BattleId = 2 }
                 }
             },
         };
@@ -110,7 +110,7 @@ public class DeathControllerGetDeathsOfPlayerWithIdTests
             actual.Latitude.ShouldBe(expected.Latitude);
             actual.Accuracy.ShouldBe(expected.Accuracy);
             actual.Bearing.ShouldBe(expected.Bearing);
-            actual.RoomId.ShouldBe(expected.RoomId);
+            actual.BattleId.ShouldBe(expected.BattleId);
         }
     }
 

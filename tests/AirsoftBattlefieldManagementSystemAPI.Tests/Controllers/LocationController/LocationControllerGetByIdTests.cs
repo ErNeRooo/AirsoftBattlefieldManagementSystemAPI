@@ -21,7 +21,7 @@ public class LocationControllerGetByIdTests
                 PlayerLocationId = 1,
                 LocationId = 1,
                 PlayerId = 1,
-                RoomId = 1,
+                BattleId = 1,
                 Longitude = 21,
                 Latitude = 45,
                 Accuracy = 10,
@@ -34,7 +34,7 @@ public class LocationControllerGetByIdTests
                 PlayerLocationId = 2,
                 LocationId = 2,
                 PlayerId = 1,
-                RoomId = 1,
+                BattleId = 1,
                 Longitude = 22.67m,
                 Latitude = 46,
                 Accuracy = 5,
@@ -47,7 +47,7 @@ public class LocationControllerGetByIdTests
                 PlayerLocationId = 4,
                 LocationId = 4,
                 PlayerId = 2,
-                RoomId = 1,
+                BattleId = 1,
                 Longitude = 32.02m,
                 Latitude = 40.4m,
                 Accuracy = 7,
@@ -60,7 +60,7 @@ public class LocationControllerGetByIdTests
                 PlayerLocationId = 5,
                 LocationId = 5,
                 PlayerId = 3,
-                RoomId = 2,
+                BattleId = 2,
                 Longitude = -32.02m,
                 Latitude = -40.4m,
                 Accuracy = 7,
@@ -73,7 +73,7 @@ public class LocationControllerGetByIdTests
                 PlayerLocationId = 5,
                 LocationId = 5,
                 PlayerId = 3,
-                RoomId = 2,
+                BattleId = 2,
                 Longitude = -32.02m,
                 Latitude = -40.4m,
                 Accuracy = 7,
@@ -86,7 +86,7 @@ public class LocationControllerGetByIdTests
                 PlayerLocationId = 7,
                 LocationId = 7,
                 PlayerId = 6,
-                RoomId = 2,
+                BattleId = 2,
                 Longitude = -2.02m,
                 Latitude = -4.42m,
                 Accuracy = 1000,
@@ -104,7 +104,7 @@ public class LocationControllerGetByIdTests
         public int PlayerLocationId { get; set; }
         public int LocationId { get; set; }
         public int PlayerId { get; set; }
-        public int? RoomId { get; set; }
+        public int? BattleId { get; set; }
         public decimal Longitude { get; set; }
         public decimal Latitude { get; set; }
         public short Accuracy { get; set; }
@@ -126,7 +126,7 @@ public class LocationControllerGetByIdTests
         result.ShouldNotBeNull();
         result.LocationId.ShouldBe(testData.LocationId);
         result.PlayerId.ShouldBe(testData.PlayerId);
-        result.RoomId.ShouldBe(testData.RoomId);
+        result.BattleId.ShouldBe(testData.BattleId);
         result.Longitude.ShouldBe(testData.Longitude);
         result.Latitude.ShouldBe(testData.Latitude);
         result.Accuracy.ShouldBe(testData.Accuracy);

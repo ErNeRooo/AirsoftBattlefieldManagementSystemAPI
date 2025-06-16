@@ -5,5 +5,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.
 public interface IDeathHelper
 {
     public Death FindById(int? id);
+    public Death FindByIdIncludingBattle(int? id);
     public List<Death> FindAllOfPlayer(Player player);
 }

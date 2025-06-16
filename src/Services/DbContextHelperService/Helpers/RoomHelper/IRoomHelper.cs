@@ -5,5 +5,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.
 public interface IRoomHelper
 {
     public Room FindById(int? id);
+    public Room FindByIdIncludingBattle(int? id);
     public Room FindByJoinCode(string joinCode);
 }

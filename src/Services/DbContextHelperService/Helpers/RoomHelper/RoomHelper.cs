@@ -1,6 +1,7 @@
 using AirsoftBattlefieldManagementSystemAPI.Exceptions;
 using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.RoomHelper;
 
@@ -9,6 +10,17 @@ public class RoomHelper(IBattleManagementSystemDbContext dbContext) : IRoomHelpe
     public Room FindById(int? id)
     {
         Room? room = dbContext.Room.FirstOrDefault(r => r.RoomId == id);
+
+        if(room is null) throw new NotFoundException($"Room with id {id} not found");
+            
+        return room;
+    }
+    
+    public Room FindByIdIncludingBattle(int? id)
+    {
+        Room? room = dbContext.Room
+            .Include(room => room.Battle)
+            .FirstOrDefault(r => r.RoomId == id);
 
         if(room is null) throw new NotFoundException($"Room with id {id} not found");
             
