@@ -47,13 +47,17 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
             }
 
             Room room = mapper.Map<Room>(roomDto);
-            
-            room.AdminPlayerId = claimsHelper.GetIntegerClaimValue("playerId", user);
+
+            room.AdminPlayerId = playerId;
 
             var hash = passwordHasher.HashPassword(room, room.PasswordHash);
             room.PasswordHash = hash;
 
             dbContext.Room.Add(room);
+            dbContext.SaveChanges();
+
+            player.RoomId = room.RoomId;
+            dbContext.Player.Update(player);
             dbContext.SaveChanges();
 
             return mapper.Map<RoomDto>(room);

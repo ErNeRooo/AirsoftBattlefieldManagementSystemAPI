@@ -1,4 +1,5 @@
 using System.Net;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Player;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Room;
 using AirsoftBattlefieldManagementSystemAPI.Tests.Helpers;
 using Shouldly;
@@ -33,6 +34,33 @@ public class RoomControllerCreateTests
         result.JoinCode.ShouldBe(joinCode);
         result.MaxPlayers.ShouldBe(maxPlayers);
         result.AdminPlayerId.ShouldBe(senderPlayerId);
+    }
+    
+    [Theory]
+    [InlineData(5, "325543", 2, "")]
+    public async void Create_ForValidModel_ChangesPlayerRoomId(int senderPlayerId, string joinCode, int maxPlayers, string password)
+    {
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
+        _client = factory.CreateClient();
+
+        var model = new PostRoomDto
+        {
+            JoinCode = joinCode,
+            MaxPlayers = maxPlayers,
+            Password = password
+        };
+        
+        var response = await _client.PostAsync($"{_endpoint}", model.ToJsonHttpContent());
+        var result = await response.Content.DeserializeFromHttpContentAsync<RoomDto>();
+        
+        response.StatusCode.ShouldBe(HttpStatusCode.Created);
+        result.RoomId.ShouldNotBe(0);
+
+        var responseFromGet = await _client.GetAsync($"player/me");
+        var resultFromGet = await responseFromGet.Content.DeserializeFromHttpContentAsync<PlayerDto>();
+        
+        responseFromGet.StatusCode.ShouldBe(HttpStatusCode.OK);
+        resultFromGet.RoomId.ShouldBe(result.RoomId);
     }
     
     [Theory]
@@ -77,6 +105,4 @@ public class RoomControllerCreateTests
         
         response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
     }
-    
-
 }
