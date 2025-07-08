@@ -14,8 +14,15 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Validators.Room
                 .GreaterThan(1)
                 .LessThanOrEqualTo(100000);
 
+            RuleFor(r => r.Password);
+
             RuleFor(r => r.JoinCode)
-                .Length(6)
+                .Custom((value, context) =>
+                {
+                    if(string.IsNullOrEmpty(value)) return;
+                    
+                    if(value.Length != 6) context.AddFailure("JoinCode", "If specified, the join code must be 6 characters long.");
+                })
                 .Custom((value, context) =>
                 {
                     if(string.IsNullOrEmpty(value)) return;
@@ -29,6 +36,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Validators.Room
                 })
                 .Custom((value, context) =>
                 {
+                    if(string.IsNullOrEmpty(value)) return;
+                    
                     bool isJoinCodeOccupied = dbContext.Room.Any(r => r.JoinCode == value);
 
                     if (isJoinCodeOccupied)

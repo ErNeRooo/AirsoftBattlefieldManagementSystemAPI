@@ -31,6 +31,7 @@ public class PostRoomDtoValidatorTests
     }
     
     [Theory]
+    [InlineData("", 10)]
     [InlineData("000000", 10)]
     [InlineData("777777", 2)]
     [InlineData("koodoo", 100000)]

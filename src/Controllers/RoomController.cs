@@ -28,9 +28,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpPost("")]
-        public ActionResult<RoomDto> Create([FromBody] PostRoomDto roomDto)
+        public ActionResult<RoomDto> Create([FromBody] PostRoomDto postRoomDto)
         {
-            RoomDto resultRoom = roomService.Create(roomDto, User);
+            RoomDto resultRoom = roomService.Create(postRoomDto, User);
 
             return Created($"/room/id/{resultRoom.RoomId}", resultRoom);
         }

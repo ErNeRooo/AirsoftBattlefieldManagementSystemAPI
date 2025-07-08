@@ -41,12 +41,13 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
             
             if(player.RoomId is not null && player.RoomId != 0) throw new PlayerAlreadyInsideRoomException("You are already inside a room");
             
-            if (roomDto.JoinCode is null)
+            if (String.IsNullOrEmpty(roomDto.JoinCode))
             {
                 roomDto.JoinCode = joinCodeService.Generate(JoinCodeFormat.From0to9, 6);
             }
 
             Room room = mapper.Map<Room>(roomDto);
+            if (room.PasswordHash is null) room.PasswordHash = "";
 
             room.AdminPlayerId = playerId;
 
@@ -97,7 +98,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
         public RoomDto Join(LoginRoomDto roomDto, ClaimsPrincipal user)
         {
             string joinCode = roomDto.JoinCode;
-            string password = roomDto.Password;
+            string password = roomDto.Password is null ? "" : roomDto.Password;
 
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
 
@@ -124,16 +125,22 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
 
             Player player = dbHelper.Player.FindById(playerId);
 
-            if(player.RoomId is not null || player.RoomId == 0)
+            if(player.RoomId is not null && player.RoomId != 0)
             {
                 Room room = dbHelper.Room.FindById(player.RoomId);
+                
+                if(room.AdminPlayerId == playerId) room.AdminPlayerId = null;
+                
+                dbContext.Room.Update(room);
+            }
+            
+            if(player.TeamId is not null && player.TeamId != 0)
+            {
                 Team team = dbHelper.Team.FindById(player.TeamId);
                 
                 if(team.OfficerPlayerId == playerId) team.OfficerPlayerId = null;
-                if(room.AdminPlayerId == playerId) room.AdminPlayerId = null;
-                
+             
                 dbContext.Team.Update(team);
-                dbContext.Room.Update(room);
             }
 
             player.RoomId = null;
