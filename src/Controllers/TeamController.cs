@@ -21,6 +21,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpPost]
+        [Route("create")]
         public ActionResult<TeamDto> Create([FromBody] PostTeamDto teamDto)
         {
             TeamDto resultTeam = teamService.Create(teamDto, User);
@@ -44,6 +45,15 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
             teamService.Delete(id, User);
 
             return NoContent();
+        }
+        
+        [HttpPost]
+        [Route("leave")]
+        public ActionResult Delete()
+        {
+            teamService.Leave(User);
+
+            return Ok();
         }
     }
 }

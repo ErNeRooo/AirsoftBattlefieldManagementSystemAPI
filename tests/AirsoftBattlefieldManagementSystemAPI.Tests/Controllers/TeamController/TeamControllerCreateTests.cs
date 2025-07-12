@@ -8,7 +8,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Controllers.TeamController
 public class TeamControllerCreateTests
 {
     private HttpClient _client;
-    private string _endpoint = "team/";
+    private string _endpoint = "team/create";
     
     [Theory]
     [InlineData(1, 1, "Green")]

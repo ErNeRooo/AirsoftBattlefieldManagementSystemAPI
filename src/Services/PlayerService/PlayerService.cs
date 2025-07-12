@@ -76,9 +76,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
                 authorizationHelper.CheckPlayerIsInTheSameRoomAsResource(user, targetTeam.RoomId,
                     $"Target team {targetTeam.TeamId} is not in the same room as player");
                 
-                Team oldTeam = dbHelper.Team.FindById(previousPlayer.TeamId);
+                Team? oldTeam = previousPlayer.TeamId is not null ? dbHelper.Team.FindById(previousPlayer.TeamId) : null;
 
-                if (oldTeam.OfficerPlayerId == playerId)
+                if (oldTeam?.OfficerPlayerId == playerId)
                 {
                     oldTeam.OfficerPlayerId = null;
                     dbContext.Team.Update(oldTeam);

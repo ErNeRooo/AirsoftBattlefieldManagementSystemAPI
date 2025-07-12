@@ -64,5 +64,15 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.TeamService
             dbContext.Team.Remove(team);
             dbContext.SaveChanges();
         }
+        
+        public void Leave(ClaimsPrincipal user)
+        {
+            Player player = dbHelper.Player.FindSelf(user);
+
+            player.Team = null;
+            
+            dbContext.Player.Update(player);
+            dbContext.SaveChanges();
+        }
     }
 }
