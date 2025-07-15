@@ -43,7 +43,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbC
         {
             _modelBuilder.Entity<PlayerLocation>()
                 .HasOne(playerLocation => playerLocation.Battle)
-                .WithMany()
+                .WithMany(battle => battle.PlayerLocations)
                 .HasForeignKey(playerLocation => playerLocation.BattleId)
                 .OnDelete(DeleteBehavior.Cascade);
             
@@ -55,7 +55,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbC
             
             _modelBuilder.Entity<PlayerLocation>()
                 .HasOne(playerLocation => playerLocation.Player)
-                .WithMany()
+                .WithMany(player => player.PlayerLocations)
                 .HasForeignKey(playerLocation => playerLocation.PlayerId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
@@ -64,7 +64,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbC
         {
             _modelBuilder.Entity<Kill>()
                 .HasOne(kill => kill.Battle)
-                .WithMany()
+                .WithMany(battle => battle.Kills)
                 .HasForeignKey(kill => kill.BattleId)
                 .OnDelete(DeleteBehavior.Cascade);
             
@@ -76,7 +76,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbC
             
             _modelBuilder.Entity<Kill>()
                 .HasOne(kill => kill.Player)
-                .WithMany()
+                .WithMany(player => player.Kills)
                 .HasForeignKey(kill => kill.PlayerId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
@@ -85,7 +85,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbC
         {
             _modelBuilder.Entity<Death>()
                 .HasOne(death => death.Battle)
-                .WithMany()
+                .WithMany(battle => battle.Deaths)
                 .HasForeignKey(death => death.BattleId)
                 .OnDelete(DeleteBehavior.Cascade);
             
@@ -97,7 +97,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbC
             
             _modelBuilder.Entity<Death>()
                 .HasOne(death => death.Player)
-                .WithMany()
+                .WithMany(player => player.Deaths)
                 .HasForeignKey(death => death.PlayerId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
@@ -127,7 +127,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbC
             _modelBuilder
                 .Entity<Player>()
                 .HasOne(player => player.Room)
-                .WithMany()
+                .WithMany(room => room.Players)
                 .HasForeignKey(p => p.RoomId)
                 .OnDelete(DeleteBehavior.SetNull);
             
@@ -171,7 +171,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbC
             _modelBuilder
                 .Entity<Team>()
                 .HasOne(team => team.Room)
-                .WithMany()
+                .WithMany(room => room.Teams)
                 .HasForeignKey(team => team.RoomId)
                 .OnDelete(DeleteBehavior.SetNull);
         }
@@ -181,8 +181,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbC
             _modelBuilder
                 .Entity<Room>()
                 .HasOne(room => room.AdminPlayer)
-                .WithMany()
-                .HasForeignKey(room => room.AdminPlayerId)
+                .WithOne()
+                .HasForeignKey<Room>(room => room.AdminPlayerId)
                 .OnDelete(DeleteBehavior.SetNull);
         }
     }

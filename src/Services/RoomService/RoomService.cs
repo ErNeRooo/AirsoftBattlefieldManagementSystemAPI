@@ -15,21 +15,21 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
 {
     public class RoomService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IDbContextHelperService dbHelper, IPasswordHasher<Room> passwordHasher, IJoinCodeService joinCodeService, IAuthorizationHelperService authorizationHelperService, IClaimsHelperService claimsHelper) : IRoomService
     {
-        public RoomDto GetById(int id)
+        public RoomWithRelatedEntitiesDto GetById(int id)
         {
-            Room room = dbHelper.Room.FindById(id);
+            Room room = dbHelper.Room.FindByIdIncludingRelated(id);
 
-            RoomDto roomDto = mapper.Map<RoomDto>(room);
+            RoomWithRelatedEntitiesDto roomDto = mapper.Map<RoomWithRelatedEntitiesDto>(room);
             return roomDto;
         }
 
-        public RoomDto GetByJoinCode(string joinCode)
+        public RoomWithRelatedEntitiesDto GetByJoinCode(string joinCode)
         {
             if(joinCode.Length != 6) throw new InvalidJoinCodeFormatException("Invalid join code");
             
-            Room? room = dbHelper.Room.FindByJoinCode(joinCode);
+            Room? room = dbHelper.Room.FindByJoinCodeIncludingRelated(joinCode);
 
-            RoomDto roomDto = mapper.Map<RoomDto>(room);
+            RoomWithRelatedEntitiesDto roomDto = mapper.Map<RoomWithRelatedEntitiesDto>(room);
             return roomDto;
         }
 
@@ -95,14 +95,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
             dbContext.SaveChanges();
         }
 
-        public RoomDto Join(LoginRoomDto roomDto, ClaimsPrincipal user)
+        public RoomWithRelatedEntitiesDto Join(LoginRoomDto roomDto, ClaimsPrincipal user)
         {
             string joinCode = roomDto.JoinCode;
             string password = roomDto.Password is null ? "" : roomDto.Password;
 
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
 
-            Room room = dbHelper.Room.FindByJoinCode(joinCode);
+            Room room = dbHelper.Room.FindByJoinCodeIncludingRelated(joinCode);
             Player player = dbHelper.Player.FindById(playerId);
 
             var verificationResult = passwordHasher.VerifyHashedPassword(room, room.PasswordHash, password);
@@ -113,7 +113,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
                 dbContext.Player.Update(player);
                 dbContext.SaveChanges();
 
-                return mapper.Map<RoomDto>(room);
+                return mapper.Map<RoomWithRelatedEntitiesDto>(room);
             }
             
             throw new WrongPasswordException("Wrong room password");

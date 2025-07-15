@@ -9,6 +9,12 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles
         public RoomMappingProfile()
         {
             CreateMap<Room, RoomDto>();
+            
+            CreateMap<Room, RoomWithRelatedEntitiesDto>()
+                .ForMember(destinationMember: dest => dest.Players, 
+                    source => source.MapFrom(src => src.Players))
+                .ForMember(destinationMember: dest => dest.Teams, 
+                    source => source.MapFrom(src => src.Teams));
 
             CreateMap<PostRoomDto, Room>()
                 .ForMember(

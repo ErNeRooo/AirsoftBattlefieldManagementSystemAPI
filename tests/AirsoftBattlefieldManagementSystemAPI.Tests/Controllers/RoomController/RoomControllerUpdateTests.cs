@@ -32,7 +32,7 @@ public class RoomControllerUpdateTests
         };
         
         var responseFromGet = await _client.GetAsync($"room/id/{1}");
-        var resultFromGet = await responseFromGet.Content.DeserializeFromHttpContentAsync<RoomDto>();
+        var resultFromGet = await responseFromGet.Content.DeserializeFromHttpContentAsync<RoomWithRelatedEntitiesDto>();
         
         responseFromGet.StatusCode.ShouldBe(HttpStatusCode.OK);
         
@@ -44,7 +44,7 @@ public class RoomControllerUpdateTests
         result.RoomId.ShouldBe(1);
         result.JoinCode.ShouldBe(joinCode ?? resultFromGet.JoinCode);
         result.MaxPlayers.ShouldBe(maxPlayers ?? resultFromGet.MaxPlayers);
-        result.AdminPlayerId.ShouldBe(adminPlayerId ?? resultFromGet.AdminPlayerId);
+        result.AdminPlayerId.ShouldBe(adminPlayerId ?? resultFromGet.AdminPlayer.PlayerId);
     }
     
     [Theory]

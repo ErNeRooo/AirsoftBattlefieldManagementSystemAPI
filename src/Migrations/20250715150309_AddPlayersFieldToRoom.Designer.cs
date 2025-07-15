@@ -4,6 +4,7 @@ using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbConte
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AirsoftBattlefieldManagementSystemAPI.Migrations
 {
     [DbContext(typeof(BattleManagementSystemDbContext))]
-    partial class BmsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250715150309_AddPlayersFieldToRoom")]
+    partial class AddPlayersFieldToRoom
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -90,19 +93,29 @@ namespace AirsoftBattlefieldManagementSystemAPI.Migrations
                     b.Property<int>("BattleId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("BattleId1")
+                        .HasColumnType("int");
+
                     b.Property<int>("LocationId")
                         .HasColumnType("int");
 
                     b.Property<int>("PlayerId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("PlayerId1")
+                        .HasColumnType("int");
+
                     b.HasKey("DeathId");
 
                     b.HasIndex("BattleId");
 
+                    b.HasIndex("BattleId1");
+
                     b.HasIndex("LocationId");
 
                     b.HasIndex("PlayerId");
+
+                    b.HasIndex("PlayerId1");
 
                     b.ToTable("Death");
                 });
@@ -118,19 +131,29 @@ namespace AirsoftBattlefieldManagementSystemAPI.Migrations
                     b.Property<int>("BattleId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("BattleId1")
+                        .HasColumnType("int");
+
                     b.Property<int>("LocationId")
                         .HasColumnType("int");
 
                     b.Property<int>("PlayerId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("PlayerId1")
+                        .HasColumnType("int");
+
                     b.HasKey("KillId");
 
                     b.HasIndex("BattleId");
 
+                    b.HasIndex("BattleId1");
+
                     b.HasIndex("LocationId");
 
                     b.HasIndex("PlayerId");
+
+                    b.HasIndex("PlayerId1");
 
                     b.ToTable("Kill");
                 });
@@ -182,12 +205,17 @@ namespace AirsoftBattlefieldManagementSystemAPI.Migrations
                     b.Property<int?>("RoomId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("RoomId1")
+                        .HasColumnType("int");
+
                     b.Property<int?>("TeamId")
                         .HasColumnType("int");
 
                     b.HasKey("PlayerId");
 
                     b.HasIndex("RoomId");
+
+                    b.HasIndex("RoomId1");
 
                     b.HasIndex("TeamId");
 
@@ -205,19 +233,29 @@ namespace AirsoftBattlefieldManagementSystemAPI.Migrations
                     b.Property<int>("BattleId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("BattleId1")
+                        .HasColumnType("int");
+
                     b.Property<int>("LocationId")
                         .HasColumnType("int");
 
                     b.Property<int>("PlayerId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("PlayerId1")
+                        .HasColumnType("int");
+
                     b.HasKey("PlayerLocationId");
 
                     b.HasIndex("BattleId");
 
+                    b.HasIndex("BattleId1");
+
                     b.HasIndex("LocationId");
 
                     b.HasIndex("PlayerId");
+
+                    b.HasIndex("PlayerId1");
 
                     b.ToTable("PlayerLocation");
                 });
@@ -246,9 +284,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Migrations
 
                     b.HasKey("RoomId");
 
-                    b.HasIndex("AdminPlayerId")
-                        .IsUnique()
-                        .HasFilter("[AdminPlayerId] IS NOT NULL");
+                    b.HasIndex("AdminPlayerId");
 
                     b.ToTable("Room");
                 });
@@ -272,11 +308,16 @@ namespace AirsoftBattlefieldManagementSystemAPI.Migrations
                     b.Property<int?>("RoomId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("RoomId1")
+                        .HasColumnType("int");
+
                     b.HasKey("TeamId");
 
                     b.HasIndex("OfficerPlayerId");
 
                     b.HasIndex("RoomId");
+
+                    b.HasIndex("RoomId1");
 
                     b.ToTable("Team");
                 });
@@ -304,10 +345,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Migrations
             modelBuilder.Entity("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Death", b =>
                 {
                     b.HasOne("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Battle", "Battle")
-                        .WithMany("Deaths")
+                        .WithMany()
                         .HasForeignKey("BattleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Battle", null)
+                        .WithMany("Deaths")
+                        .HasForeignKey("BattleId1");
 
                     b.HasOne("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Location", "Location")
                         .WithMany()
@@ -316,10 +361,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Migrations
                         .IsRequired();
 
                     b.HasOne("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Player", "Player")
-                        .WithMany("Deaths")
+                        .WithMany()
                         .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Player", null)
+                        .WithMany("Deaths")
+                        .HasForeignKey("PlayerId1");
 
                     b.Navigation("Battle");
 
@@ -331,10 +380,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Migrations
             modelBuilder.Entity("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Kill", b =>
                 {
                     b.HasOne("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Battle", "Battle")
-                        .WithMany("Kills")
+                        .WithMany()
                         .HasForeignKey("BattleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Battle", null)
+                        .WithMany("Kills")
+                        .HasForeignKey("BattleId1");
 
                     b.HasOne("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Location", "Location")
                         .WithMany()
@@ -343,10 +396,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Migrations
                         .IsRequired();
 
                     b.HasOne("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Player", "Player")
-                        .WithMany("Kills")
+                        .WithMany()
                         .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Player", null)
+                        .WithMany("Kills")
+                        .HasForeignKey("PlayerId1");
 
                     b.Navigation("Battle");
 
@@ -358,9 +415,13 @@ namespace AirsoftBattlefieldManagementSystemAPI.Migrations
             modelBuilder.Entity("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Player", b =>
                 {
                     b.HasOne("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Room", "Room")
-                        .WithMany("Players")
+                        .WithMany()
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Room", null)
+                        .WithMany("Players")
+                        .HasForeignKey("RoomId1");
 
                     b.HasOne("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Team", "Team")
                         .WithMany("Players")
@@ -375,10 +436,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Migrations
             modelBuilder.Entity("AirsoftBattlefieldManagementSystemAPI.Models.Entities.PlayerLocation", b =>
                 {
                     b.HasOne("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Battle", "Battle")
-                        .WithMany("PlayerLocations")
+                        .WithMany()
                         .HasForeignKey("BattleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Battle", null)
+                        .WithMany("PlayerLocations")
+                        .HasForeignKey("BattleId1");
 
                     b.HasOne("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Location", "Location")
                         .WithMany()
@@ -387,10 +452,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Migrations
                         .IsRequired();
 
                     b.HasOne("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Player", "Player")
-                        .WithMany("PlayerLocations")
+                        .WithMany()
                         .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Player", null)
+                        .WithMany("PlayerLocations")
+                        .HasForeignKey("PlayerId1");
 
                     b.Navigation("Battle");
 
@@ -402,8 +471,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Migrations
             modelBuilder.Entity("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Room", b =>
                 {
                     b.HasOne("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Player", "AdminPlayer")
-                        .WithOne()
-                        .HasForeignKey("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Room", "AdminPlayerId")
+                        .WithMany()
+                        .HasForeignKey("AdminPlayerId")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("AdminPlayer");
@@ -417,9 +486,13 @@ namespace AirsoftBattlefieldManagementSystemAPI.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Room", "Room")
-                        .WithMany("Teams")
+                        .WithMany()
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Room", null)
+                        .WithMany("Teams")
+                        .HasForeignKey("RoomId1");
 
                     b.Navigation("OfficerPlayer");
 

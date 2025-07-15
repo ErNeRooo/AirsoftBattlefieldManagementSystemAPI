@@ -12,17 +12,17 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
     public class RoomController(IRoomService roomService) : ControllerBase
     {
         [HttpGet("id/{id}")]
-        public ActionResult<RoomDto> GetById(int id)
+        public ActionResult<RoomWithRelatedEntitiesDto> GetById(int id)
         {
-            RoomDto roomDto = roomService.GetById(id);
+            RoomWithRelatedEntitiesDto roomDto = roomService.GetById(id);
 
             return Ok(roomDto);
         }
 
         [HttpGet("join-code/{joinCode}")]
-        public ActionResult<RoomDto> GetByJoinCode(string joinCode)
+        public ActionResult<RoomWithRelatedEntitiesDto> GetByJoinCode(string joinCode)
         {
-            RoomDto roomDto = roomService.GetByJoinCode(joinCode);
+            RoomWithRelatedEntitiesDto roomDto = roomService.GetByJoinCode(joinCode);
 
             return Ok(roomDto);
         }
@@ -52,9 +52,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
 
         [HttpPost("join")]
-        public ActionResult<RoomDto> Join([FromBody] LoginRoomDto roomDto)
+        public ActionResult<RoomWithRelatedEntitiesDto> Join([FromBody] LoginRoomDto roomDto)
         {
-            RoomDto resultRoom = roomService.Join(roomDto, User);
+            RoomWithRelatedEntitiesDto resultRoom = roomService.Join(roomDto, User);
             return Ok(resultRoom);
         }
 
