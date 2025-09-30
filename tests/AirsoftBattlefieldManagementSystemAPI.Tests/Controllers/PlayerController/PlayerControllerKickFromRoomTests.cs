@@ -5,10 +5,10 @@ using Shouldly;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Tests.Controllers.PlayerController;
 
-public class PlayerControllerKickTests
+public class PlayerControllerKickFromRoomTests
 {
     private HttpClient _client;
-    private string _endpoint = "player/kick/playerId/";
+    private string _endpoint = "player/kick-from-room/playerId/";
     
     [Theory]
     [InlineData(1, 1)]

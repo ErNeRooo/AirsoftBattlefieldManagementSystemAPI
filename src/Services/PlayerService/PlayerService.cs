@@ -48,7 +48,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
             return mapper.Map<PlayerDto>(player);
         }
         
-        public PlayerDto Kick(int id, ClaimsPrincipal user)
+        public PlayerDto KickFromRoom(int id, ClaimsPrincipal user)
         {
             Player player = dbHelper.Player.FindById(id);
             Room room = dbHelper.Room.FindById(player.RoomId);

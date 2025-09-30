@@ -36,10 +36,10 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
             return Created($"/player/id/{resultPlayer.PlayerId}", jwtToken);
         }
         
-        [HttpPost("kick/playerId/{playerId}")]
+        [HttpPost("kick-from-room/playerId/{playerId}")]
         public ActionResult<PlayerDto> Kick(int playerId)
         {
-            PlayerDto playerDto = playerService.Kick(playerId, User);
+            PlayerDto playerDto = playerService.KickFromRoom(playerId, User);
 
             return Ok(playerDto);
         }
