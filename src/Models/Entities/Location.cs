@@ -7,6 +7,6 @@
         public decimal Latitude { get; set; }
         public short Accuracy { get; set; }
         public short Bearing { get; set; }
-        public DateTime Time { get; set; }
+        public DateTimeOffset Time { get; set; }
     }
 }

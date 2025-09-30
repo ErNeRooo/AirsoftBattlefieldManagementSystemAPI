@@ -56,6 +56,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
             authorizationHelper.CheckPlayerOwnsResource(user, room.AdminPlayerId);
 
             player.RoomId = 0;
+            player.TeamId = 0;
             dbContext.Player.Update(player);
             dbContext.SaveChanges();
             

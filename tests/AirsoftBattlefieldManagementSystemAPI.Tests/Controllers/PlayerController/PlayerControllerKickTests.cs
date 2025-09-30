@@ -29,7 +29,7 @@ public class PlayerControllerKickTests
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         result.ShouldNotBeNull();
         result.PlayerId.ShouldBe(resultFromGet.PlayerId);
-        result.TeamId.ShouldBe(resultFromGet.TeamId);
+        result.TeamId.ShouldBe(0);
         result.RoomId.ShouldBe(0);
         result.IsDead.ShouldBe(resultFromGet.IsDead);
         result.Name.ShouldBe(resultFromGet.Name);

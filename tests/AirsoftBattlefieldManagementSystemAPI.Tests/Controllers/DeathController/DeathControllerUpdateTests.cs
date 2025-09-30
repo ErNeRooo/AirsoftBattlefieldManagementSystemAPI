@@ -19,12 +19,12 @@ public class DeathControllerUpdateTests
         public decimal? Latitude { get; set; }
         public short? Accuracy { get; set; }
         public short? Bearing { get; set; }
-        public DateTime? Time { get; set; }
+        public DateTimeOffset? Time { get; set; }
     }
     
     public static IEnumerable<object[]> GetDataFor_ValidModel()
     {
-        var datetime = DateTime.Now;
+        var datetime = DateTimeOffset.Now;
         var tests = new List<PlayerDeathTestData>
         {
             new()
@@ -89,7 +89,7 @@ public class DeathControllerUpdateTests
     
     public static IEnumerable<object[]> GetDataFor_NotAllFieldsSpecified()
     {
-        var datetime = DateTime.Now;
+        var datetime = DateTimeOffset.Now;
         var tests = new List<PlayerDeathTestData>
         {
             new()
@@ -212,7 +212,7 @@ public class DeathControllerUpdateTests
         result.Latitude.ShouldBe((int)testData.Latitude);
         result.Accuracy.ShouldBe((short)testData.Accuracy);
         result.Bearing.ShouldBe((short)testData.Bearing);
-        result.Time.ShouldBe((DateTime)testData.Time);
+        result.Time.ShouldBe((DateTimeOffset)testData.Time);
     }
     
     [Theory]
