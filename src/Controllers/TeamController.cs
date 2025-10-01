@@ -1,5 +1,4 @@
 ﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Team;
-using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Services.TeamService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

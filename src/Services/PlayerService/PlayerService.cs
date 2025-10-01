@@ -62,6 +62,28 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
             
             return mapper.Map<PlayerDto>(player);
         }
+        
+        public PlayerDto KickFromTeam(int id, ClaimsPrincipal user)
+        {
+            Player player = dbHelper.Player.FindById(id);
+            Room room = dbHelper.Room.FindById(player.RoomId);
+            Team team = dbHelper.Team.FindById(player.TeamId);
+            
+            authorizationHelper.CheckPlayerOwnsResource(user, room.AdminPlayerId);
+            
+            if(player.PlayerId == team.OfficerPlayerId)
+            {
+                team.OfficerPlayerId = 0;
+                dbContext.Team.Update(team);
+            }
+            
+            player.TeamId = 0;
+            dbContext.Player.Update(player);
+            
+            dbContext.SaveChanges();
+            
+            return mapper.Map<PlayerDto>(player);
+        }
 
         public PlayerDto Update(PutPlayerDto playerDto, ClaimsPrincipal user)
         {

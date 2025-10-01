@@ -37,9 +37,17 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         }
         
         [HttpPost("kick-from-room/playerId/{playerId}")]
-        public ActionResult<PlayerDto> Kick(int playerId)
+        public ActionResult<PlayerDto> KickFromRoom(int playerId)
         {
             PlayerDto playerDto = playerService.KickFromRoom(playerId, User);
+
+            return Ok(playerDto);
+        }
+        
+        [HttpPost("kick-from-team/playerId/{playerId}")]
+        public ActionResult<PlayerDto> KickFromTeam(int playerId)
+        {
+            PlayerDto playerDto = playerService.KickFromTeam(playerId, User);
 
             return Ok(playerDto);
         }

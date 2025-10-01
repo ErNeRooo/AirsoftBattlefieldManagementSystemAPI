@@ -10,6 +10,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
         public PlayerDto Create(PostPlayerDto playerDto);
         public PlayerDto Update(PutPlayerDto playerDto, ClaimsPrincipal user);
         public PlayerDto KickFromRoom(int id, ClaimsPrincipal user);
+        public PlayerDto KickFromTeam(int id, ClaimsPrincipal user);
         public void Delete(ClaimsPrincipal user);
         public string GenerateJwt(int playerId);
     }
