@@ -6,6 +6,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperServ
     {
         public void CheckPlayerIsInTheSameRoomAsResource(ClaimsPrincipal user, int? roomId, string? message = null);
 
+        public void CheckPlayerIsInTheSameTeamAsResource(ClaimsPrincipal user, int? teamId, string? message = null);
+        
         public void CheckTargetPlayerIsInTheSameTeam(ClaimsPrincipal user, int playerId, int teamId,
             string? message = null);
         

@@ -11,6 +11,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbC
         public DbSet<Account> Account { get; set; }
         public DbSet<Battle> Battle { get; set; }
         public DbSet<Kill> Kill { get; set; }
+        public DbSet<Order> Order { get; set; }
         public DbSet<Death> Death { get; set; }
         public DbSet<Location> Location { get; set; }
         public DbSet<Player> Player { get; set; }
@@ -31,6 +32,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbC
             
             BuildPlayerLocation();
             BuildKill();
+            BuildOrder();
             BuildDeath();
             BuildAccount();
             BuildPlayer();
@@ -78,6 +80,27 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbC
                 .HasOne(kill => kill.Player)
                 .WithMany(player => player.Kills)
                 .HasForeignKey(kill => kill.PlayerId)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
+        
+        private void BuildOrder()
+        {
+            _modelBuilder.Entity<Order>()
+                .HasOne(order => order.Battle)
+                .WithMany(battle => battle.Orders)
+                .HasForeignKey(order => order.BattleId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            _modelBuilder.Entity<Order>()
+                .HasOne(order => order.Location)
+                .WithMany()
+                .HasForeignKey(order => order.LocationId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            _modelBuilder.Entity<Order>()
+                .HasOne(order => order.Player)
+                .WithMany(player => player.Orders)
+                .HasForeignKey(order => order.PlayerId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
         

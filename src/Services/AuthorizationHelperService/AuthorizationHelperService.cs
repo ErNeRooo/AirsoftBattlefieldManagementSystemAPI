@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using AirsoftBattlefieldManagementSystemAPI.Authorization.JwtPlayerIdHasExistingPlayerEntity;
 using AirsoftBattlefieldManagementSystemAPI.Authorization.PlayerIsInTheSameRoomAsResource;
+using AirsoftBattlefieldManagementSystemAPI.Authorization.PlayerIsInTheSameTeamAsResource;
 using AirsoftBattlefieldManagementSystemAPI.Authorization.PlayerIsRoomAdminOrTargetTeamOfficer;
 using AirsoftBattlefieldManagementSystemAPI.Authorization.PlayerOwnsResource;
 using AirsoftBattlefieldManagementSystemAPI.Authorization.TargetPlayerIsInTheSameTeam;
@@ -20,6 +21,15 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperServ
                 new PlayerIsInTheSameRoomAsResourceRequirement()).Result;
 
             if (!playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException(message ?? "You're must be in the same room as target resource");
+        }
+        
+        public void CheckPlayerIsInTheSameTeamAsResource(ClaimsPrincipal user, int? teamId, string? message = null)
+        {
+            var playerIsInTheSameRoomAsResourceResult =
+                authorizationService.AuthorizeAsync(user, teamId ?? 0,
+                    new PlayerIsInTheSameTeamAsResourceRequirement()).Result;
+
+            if (!playerIsInTheSameRoomAsResourceResult.Succeeded) throw new ForbidException(message ?? "You're must be in the same team as target resource");
         }
         
         public void CheckTargetPlayerIsInTheSameTeam(ClaimsPrincipal user, int playerId, int teamId, string? message = null)

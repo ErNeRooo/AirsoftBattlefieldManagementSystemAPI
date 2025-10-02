@@ -1,6 +1,7 @@
 using System.Text;
 using AirsoftBattlefieldManagementSystemAPI.Authorization.JwtPlayerIdHasExistingPlayerEntity;
 using AirsoftBattlefieldManagementSystemAPI.Authorization.PlayerIsInTheSameRoomAsResource;
+using AirsoftBattlefieldManagementSystemAPI.Authorization.PlayerIsInTheSameTeamAsResource;
 using AirsoftBattlefieldManagementSystemAPI.Authorization.PlayerIsRoomAdminOrTargetTeamOfficer;
 using AirsoftBattlefieldManagementSystemAPI.Authorization.PlayerOwnsResource;
 using AirsoftBattlefieldManagementSystemAPI.Authorization.TargetPlayerIsInTheSameTeam;
@@ -18,6 +19,7 @@ using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Help
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.DeathHelper;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.KillHelper;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.LocationHelper;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.OrderHelper;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.PlayerHelper;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.PlayerLocationHelper;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.RoomHelper;
@@ -26,6 +28,7 @@ using AirsoftBattlefieldManagementSystemAPI.Services.DeathService;
 using AirsoftBattlefieldManagementSystemAPI.Services.JoinCodeService;
 using AirsoftBattlefieldManagementSystemAPI.Services.KillService;
 using AirsoftBattlefieldManagementSystemAPI.Services.LocationService;
+using AirsoftBattlefieldManagementSystemAPI.Services.OrderService;
 using AirsoftBattlefieldManagementSystemAPI.Services.PlayerService;
 using AirsoftBattlefieldManagementSystemAPI.Services.RoomService;
 using AirsoftBattlefieldManagementSystemAPI.Services.TeamService;
@@ -81,6 +84,7 @@ namespace AirsoftBattlefieldManagementSystemAPI
 
             builder.Services.AddScoped<IAuthorizationHandler, PlayerOwnsResourceHandler>();
             builder.Services.AddScoped<IAuthorizationHandler, PlayerIsInTheSameRoomAsResourceHandler>();
+            builder.Services.AddScoped<IAuthorizationHandler, PlayerIsInTheSameTeamAsResourceHandler>();
             builder.Services.AddScoped<IAuthorizationHandler, JwtPlayerIdHasExistingPlayerEntityHandler>();
             builder.Services.AddScoped<IAuthorizationHandler, PlayerIsRoomAdminOrTargetTeamOfficerHandler>();
             builder.Services.AddScoped<IAuthorizationHandler, TargetPlayerIsInTheSameTeamHandler>();
@@ -105,6 +109,7 @@ namespace AirsoftBattlefieldManagementSystemAPI
                     cfg.AddProfile<AccountMappingProfile>();
                     cfg.AddProfile<LocationMappingProfile>();
                     cfg.AddProfile<KillMappingProfile>();
+                    cfg.AddProfile<OrderMappingProfile>();
                     cfg.AddProfile<DeathMappingProfile>();
                 });
                 return config.CreateMapper();
@@ -116,15 +121,19 @@ namespace AirsoftBattlefieldManagementSystemAPI
             builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<ILocationService, LocationService>();
             builder.Services.AddScoped<IKillService, KillService>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddScoped<IDeathService, DeathService>();
+            
             builder.Services.AddScoped<IJoinCodeService, JoinCodeService>();
             builder.Services.AddScoped<IAuthorizationHelperService, AuthorizationHelperService>();
             builder.Services.AddScoped<IClaimsHelperService, ClaimsHelperService>();
+            
             builder.Services.AddScoped<IDbContextHelperService, DbContextHelperService>();
             builder.Services.AddScoped<IAccountHelper, AccountHelper>();
             builder.Services.AddScoped<IBattleHelper, BattleHelper>();
             builder.Services.AddScoped<IDeathHelper, DeathHelper>();
             builder.Services.AddScoped<IKillHelper, KillHelper>();
+            builder.Services.AddScoped<IOrderHelper, OrderHelper>();
             builder.Services.AddScoped<ILocationHelper, LocationHelper>();
             builder.Services.AddScoped<IPlayerHelper, PlayerHelper>();
             builder.Services.AddScoped<IPlayerLocationHelper, PlayerLocationHelper>();

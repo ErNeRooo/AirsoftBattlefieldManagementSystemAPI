@@ -47,8 +47,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.KillService
             Player player = dbHelper.Player.FindById(playerId);
             Room room = dbHelper.Room.FindByIdIncludingBattle(player.RoomId);
             
-            authorizationHelper.CheckPlayerOwnsResource(user, playerId);
-            
             Location location = mapper.Map<Location>(killDto);
             dbContext.Location.Add(location);
 

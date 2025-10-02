@@ -11,6 +11,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbC
         DbSet<Account> Account { get; set; }
         DbSet<Battle> Battle { get; set; }
         DbSet<Kill> Kill { get; set; }
+        DbSet<Order> Order { get; set; }
         DbSet<Death> Death { get; set; }
         DbSet<Location> Location { get; set; }
         DbSet<Player> Player { get; set; }

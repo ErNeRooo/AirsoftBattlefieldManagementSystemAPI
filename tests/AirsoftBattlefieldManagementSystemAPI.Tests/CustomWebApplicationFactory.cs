@@ -95,19 +95,51 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                 });
                 context.Player.Add(new Player
                 {
-                    PlayerId = 5,
-                    Name = "Nobody",
-                    IsDead = true,
-                    RoomId = null,
-                    TeamId = null
-                });
-                context.Player.Add(new Player
-                {
                     PlayerId = 6,
                     Name = "Akane",
                     IsDead = false,
                     RoomId = 2,
                     TeamId = 4
+                });
+                context.Player.Add(new Player
+                {
+                    PlayerId = 9,
+                    Name = "Arima",
+                    IsDead = false,
+                    RoomId = 2,
+                    TeamId = 6
+                });
+                context.Player.Add(new Player
+                {
+                    PlayerId = 10,
+                    Name = "Mem-cho",
+                    IsDead = false,
+                    RoomId = 2,
+                    TeamId = 6
+                });
+                context.Player.Add(new Player
+                {
+                    PlayerId = 11,
+                    Name = "Ai",
+                    IsDead = false,
+                    RoomId = 2,
+                    TeamId = 6
+                });
+                context.Player.Add(new Player
+                {
+                    PlayerId = 12,
+                    Name = "Miyako",
+                    IsDead = false,
+                    RoomId = 2,
+                    TeamId = null
+                });
+                context.Player.Add(new Player
+                {
+                    PlayerId = 5,
+                    Name = "Nobody",
+                    IsDead = true,
+                    RoomId = null,
+                    TeamId = null
                 });
                 context.Player.Add(new Player
                 {
@@ -124,6 +156,14 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     IsDead = false,
                     RoomId = 3,
                     TeamId = 5
+                });
+                context.Player.Add(new Player
+                {
+                    PlayerId = 13,
+                    Name = "s0m3body",
+                    IsDead = false,
+                    RoomId = 4,
+                    TeamId = 7
                 });
                 
                 context.Room.Add(new Room
@@ -150,7 +190,15 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     AdminPlayerId = null,
                     PasswordHash = ""
                 });
-                
+                context.Room.Add(new Room
+                {
+                    RoomId = 4,
+                    JoinCode = "yuiyui",
+                    MaxPlayers = 22,
+                    AdminPlayerId = null,
+                    PasswordHash = ""
+                });
+
                 context.Team.Add(new Team
                 {
                     Name = "Red",
@@ -174,6 +222,13 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                 });
                 context.Team.Add(new Team
                 {
+                    Name = "The Revolt",
+                    TeamId = 6,
+                    RoomId = 2,
+                    OfficerPlayerId = 9
+                });
+                context.Team.Add(new Team
+                {
                     Name = "Navy",
                     TeamId = 4,
                     RoomId = 2,
@@ -185,6 +240,13 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     TeamId = 5,
                     RoomId = 3,
                     OfficerPlayerId = null
+                });
+                context.Team.Add(new Team
+                {
+                    Name = "aaaa",
+                    TeamId = 7,
+                    RoomId = 4,
+                    OfficerPlayerId = 13
                 });
                 
                 context.Battle.Add(new Battle
@@ -455,6 +517,56 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     LocationId = 11,
                     PlayerId = 4,
                     BattleId = 2
+                });
+                
+                context.Order.Add(new Order
+                {
+                    OrderId = 1,
+                    PlayerId = 4,
+                    LocationId = 10,
+                    BattleId = 2,
+                    OrderType = OrderTypes.DEFEND
+                });
+                context.Order.Add(new Order
+                {
+                    OrderId = 2,
+                    PlayerId = 10,
+                    LocationId = 11,
+                    BattleId = 2,
+                    OrderType = OrderTypes.MOVE
+                });
+                context.Order.Add(new Order
+                {
+                    OrderId = 3,
+                    PlayerId = 2,
+                    LocationId = 3,
+                    BattleId = 1,
+                    OrderType = OrderTypes.DEFEND
+                });
+                context.Location.Add(new Location
+                {
+                    LocationId = 12,
+                    Longitude = 1,
+                    Latitude = 2,
+                    Accuracy = 3,
+                    Bearing = 4,
+                    Time = DateTimeOffset.Now,
+                });
+                context.Order.Add(new Order
+                {
+                    OrderId = 4,
+                    PlayerId = 6,
+                    LocationId = 12,
+                    BattleId = 2,
+                    OrderType = OrderTypes.DEFEND
+                });
+                context.Order.Add(new Order
+                {
+                    OrderId = 5,
+                    PlayerId = 6,
+                    LocationId = 12,
+                    BattleId = 2,
+                    OrderType = OrderTypes.MOVE
                 });
                 
                 context.SaveChanges();

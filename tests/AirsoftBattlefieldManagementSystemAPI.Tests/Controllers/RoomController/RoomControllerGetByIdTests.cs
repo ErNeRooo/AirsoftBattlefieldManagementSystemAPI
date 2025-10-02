@@ -52,8 +52,8 @@ public class RoomControllerGetByIdTests
                     RoomId = 2,
                     TeamId = 3
                 },
-                TeamsCount: 2,
-                PlayersCount: 3,
+                TeamsCount: 3,
+                PlayersCount: 7,
                 Battle: new BattleDto
                 {
                     BattleId = 2,
