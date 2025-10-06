@@ -11,9 +11,7 @@ public class PlayerIsInTheSameTeamAsResourceHandler(IClaimsHelperService claimsH
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, PlayerIsInTheSameTeamAsResourceRequirement resourceRequirement,
         int teamId)
     {
-        int playerId = claimsHelper.GetIntegerClaimValue("playerId", context.User);
-        
-        Player player = dbHelper.Player.FindById(playerId);
+        Player player = dbHelper.Player.FindSelf(context.User);
 
         if (player.TeamId == teamId) context.Succeed(resourceRequirement);
         else context.Fail();

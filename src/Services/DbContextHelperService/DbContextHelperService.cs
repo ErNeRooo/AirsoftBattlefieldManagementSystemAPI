@@ -9,6 +9,7 @@ using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Help
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.DeathHelper;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.KillHelper;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.LocationHelper;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.MapPingHelper;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.OrderHelper;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.PlayerHelper;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.PlayerLocationHelper;
@@ -24,6 +25,7 @@ public class DbContextHelperService(
     IDeathHelper deathHelper,
     IKillHelper killHelper,
     IOrderHelper orderHelper,
+    IMapPingHelper mapPingHelper,
     ILocationHelper locationHelper,
     IPlayerHelper playerHelper,
     IPlayerLocationHelper playerLocationHelper,
@@ -36,6 +38,7 @@ public class DbContextHelperService(
     public IDeathHelper Death { get; } = deathHelper;
     public IKillHelper Kill { get; } = killHelper;
     public IOrderHelper Order { get; } = orderHelper;
+    public IMapPingHelper MapPing { get; } = mapPingHelper;
     public ILocationHelper Location { get; } = locationHelper;
     public IPlayerHelper Player { get; } = playerHelper;
     public IPlayerLocationHelper PlayerLocation { get; } = playerLocationHelper;

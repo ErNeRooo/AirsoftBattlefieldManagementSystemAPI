@@ -9,6 +9,7 @@ public class Battle
     public virtual Room Room { get; set; }
     public virtual List<PlayerLocation> PlayerLocations { get; set; }
     public virtual List<Kill> Kills { get; set; }
-    public virtual List<Order> Orders { get; set; }
     public virtual List<Death> Deaths { get; set; }
+    public virtual List<Order> Orders { get; set; }
+    public virtual List<MapPing> MapPings { get; set; }
 }

@@ -1,13 +1,14 @@
 ﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Kill;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.MapPing;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Order;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using FluentValidation;
 
-namespace AirsoftBattlefieldManagementSystemAPI.Models.Validators.Order;
+namespace AirsoftBattlefieldManagementSystemAPI.Models.Validators.MapPing;
 
-public class PostOrderDtoValidator : AbstractValidator<PostOrderDto>
+public class PostMapPingDtoValidator : AbstractValidator<PostMapPingDto>
 {
-    public PostOrderDtoValidator()
+    public PostMapPingDtoValidator()
     {
         RuleFor(k => k.Latitude)
             .InclusiveBetween(-90, 90);
@@ -28,13 +29,13 @@ public class PostOrderDtoValidator : AbstractValidator<PostOrderDto>
             .NotEmpty()
             .Custom((value, context) =>
             {
-                List<string> types = typeof(OrderTypes)
+                List<string> types = typeof(MapPingTypes)
                     .GetFields()
                     .Where(f => f.FieldType == typeof(string))
                     .Select(f => (string)f.GetRawConstantValue()!)
                     .ToList();
 
-                if(!types.Contains(value)) context.AddFailure("Invalid type of order");
+                if(!types.Contains(value)) context.AddFailure("Invalid type of map ping");
             });
     }
 }

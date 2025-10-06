@@ -568,6 +568,71 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     BattleId = 2,
                     OrderType = OrderTypes.MOVE
                 });
+
+                context.MapPing.Add(new MapPing
+                {
+                    MapPingId = 1,
+                    PlayerId = 1,
+                    LocationId = 1,
+                    BattleId = 1,
+                    Type = MapPingTypes.ENEMY
+                });
+                context.MapPing.Add(new MapPing
+                {
+                    MapPingId = 2,
+                    PlayerId = 2,
+                    LocationId = 2,
+                    BattleId = 1,
+                    Type = MapPingTypes.ENEMY
+                });
+                context.MapPing.Add(new MapPing
+                {
+                    MapPingId = 3,
+                    PlayerId = 3,
+                    LocationId = 3,
+                    BattleId = 2,
+                    Type = MapPingTypes.ENEMY
+                });
+                context.MapPing.Add(new MapPing
+                {
+                    MapPingId = 4,
+                    PlayerId = 4,
+                    LocationId = 4,
+                    BattleId = 2,
+                    Type = MapPingTypes.ENEMY
+                });
+                context.MapPing.Add(new MapPing
+                {
+                    MapPingId = 9,
+                    PlayerId = 9,
+                    LocationId = 9,
+                    BattleId = 2,
+                    Type = MapPingTypes.ENEMY
+                });
+                context.MapPing.Add(new MapPing
+                {
+                    MapPingId = 10,
+                    PlayerId = 10,
+                    LocationId = 10,
+                    BattleId = 2,
+                    Type = MapPingTypes.ENEMY
+                });
+                context.MapPing.Add(new MapPing
+                {
+                    MapPingId = 11,
+                    PlayerId = 11,
+                    LocationId = 11,
+                    BattleId = 2,
+                    Type = MapPingTypes.ENEMY
+                });
+                context.MapPing.Add(new MapPing
+                {
+                    MapPingId = 12,
+                    PlayerId = 12,
+                    LocationId = 12,
+                    BattleId = 2,
+                    Type = MapPingTypes.ENEMY
+                });
                 
                 context.SaveChanges();
             }

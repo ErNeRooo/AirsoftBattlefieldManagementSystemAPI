@@ -29,7 +29,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.OrderService
         {
             Player targetPlayer = dbHelper.Player.FindById(orderDto.PlayerId);
             
-            if (targetPlayer.TeamId is null) throw new ForbidException("Can't kick player from team that is not in a team.");
+            if (targetPlayer.TeamId is null) throw new ForbidException("Can't order a player that is not in a team.");
             
             Team team = dbHelper.Team.FindById(targetPlayer.TeamId);
             

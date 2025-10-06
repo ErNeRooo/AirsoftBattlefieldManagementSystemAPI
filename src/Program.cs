@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Text;
 using AirsoftBattlefieldManagementSystemAPI.Authorization.JwtPlayerIdHasExistingPlayerEntity;
 using AirsoftBattlefieldManagementSystemAPI.Authorization.PlayerIsInTheSameRoomAsResource;
@@ -19,6 +20,7 @@ using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Help
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.DeathHelper;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.KillHelper;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.LocationHelper;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.MapPingHelper;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.OrderHelper;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.PlayerHelper;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.PlayerLocationHelper;
@@ -28,6 +30,7 @@ using AirsoftBattlefieldManagementSystemAPI.Services.DeathService;
 using AirsoftBattlefieldManagementSystemAPI.Services.JoinCodeService;
 using AirsoftBattlefieldManagementSystemAPI.Services.KillService;
 using AirsoftBattlefieldManagementSystemAPI.Services.LocationService;
+using AirsoftBattlefieldManagementSystemAPI.Services.MapPingService;
 using AirsoftBattlefieldManagementSystemAPI.Services.OrderService;
 using AirsoftBattlefieldManagementSystemAPI.Services.PlayerService;
 using AirsoftBattlefieldManagementSystemAPI.Services.RoomService;
@@ -48,7 +51,7 @@ namespace AirsoftBattlefieldManagementSystemAPI
     public class Program
     {
         public static void Main(string[] args)
-        {
+        {   
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Logging.ClearProviders();
@@ -109,8 +112,9 @@ namespace AirsoftBattlefieldManagementSystemAPI
                     cfg.AddProfile<AccountMappingProfile>();
                     cfg.AddProfile<LocationMappingProfile>();
                     cfg.AddProfile<KillMappingProfile>();
-                    cfg.AddProfile<OrderMappingProfile>();
                     cfg.AddProfile<DeathMappingProfile>();
+                    cfg.AddProfile<OrderMappingProfile>();
+                    cfg.AddProfile<MapPingMappingProfile>();
                 });
                 return config.CreateMapper();
             });
@@ -121,8 +125,9 @@ namespace AirsoftBattlefieldManagementSystemAPI
             builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<ILocationService, LocationService>();
             builder.Services.AddScoped<IKillService, KillService>();
-            builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddScoped<IDeathService, DeathService>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
+            builder.Services.AddScoped<IMapPingService, MapPingService>();
             
             builder.Services.AddScoped<IJoinCodeService, JoinCodeService>();
             builder.Services.AddScoped<IAuthorizationHelperService, AuthorizationHelperService>();
@@ -134,6 +139,7 @@ namespace AirsoftBattlefieldManagementSystemAPI
             builder.Services.AddScoped<IDeathHelper, DeathHelper>();
             builder.Services.AddScoped<IKillHelper, KillHelper>();
             builder.Services.AddScoped<IOrderHelper, OrderHelper>();
+            builder.Services.AddScoped<IMapPingHelper, MapPingHelper>();
             builder.Services.AddScoped<ILocationHelper, LocationHelper>();
             builder.Services.AddScoped<IPlayerHelper, PlayerHelper>();
             builder.Services.AddScoped<IPlayerLocationHelper, PlayerLocationHelper>();
