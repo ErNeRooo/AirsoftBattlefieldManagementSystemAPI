@@ -7,6 +7,7 @@ public interface IPlayerHelper
 {
     public Player FindSelf(ClaimsPrincipal user);
     public Player FindById(int? id);
+    public Player FindByIdIncludingAllRelatedEntities(int? id);
     public Player FindByIdIncludingAccount(int? id);
     public Player FindByIdIncludingRoom(int? id);
 }

@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Text;
+using AirsoftBattlefieldManagementSystemAPI.Authorization.IsAdminOrOfficerOfTargetPlayer;
+using AirsoftBattlefieldManagementSystemAPI.Authorization.IsNotSelf;
 using AirsoftBattlefieldManagementSystemAPI.Authorization.JwtPlayerIdHasExistingPlayerEntity;
 using AirsoftBattlefieldManagementSystemAPI.Authorization.PlayerIsInTheSameRoomAsResource;
 using AirsoftBattlefieldManagementSystemAPI.Authorization.PlayerIsInTheSameTeamAsResource;
@@ -91,6 +93,8 @@ namespace AirsoftBattlefieldManagementSystemAPI
             builder.Services.AddScoped<IAuthorizationHandler, JwtPlayerIdHasExistingPlayerEntityHandler>();
             builder.Services.AddScoped<IAuthorizationHandler, PlayerIsRoomAdminOrTargetTeamOfficerHandler>();
             builder.Services.AddScoped<IAuthorizationHandler, TargetPlayerIsInTheSameTeamHandler>();
+            builder.Services.AddScoped<IAuthorizationHandler, IsAdminOrOfficerOfTargetPlayerHandler>();
+            builder.Services.AddScoped<IAuthorizationHandler, IsNotSelfHandler>();
             builder.Services.AddControllers(options =>
             {
                 var policy = new AuthorizationPolicyBuilder()

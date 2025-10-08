@@ -23,12 +23,12 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
             return playerDto;
         }
         
-        public PlayerDto GetById(int id, ClaimsPrincipal user)
+        public PlayerDto GetById(int playerId, ClaimsPrincipal user)
         {
-            Player player = dbHelper.Player.FindById(id);
-            int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
+            Player player = dbHelper.Player.FindById(playerId);
+            int claimPlayerId = claimsHelper.GetIntegerClaimValue("playerId", user);
 
-            if (playerId != id)
+            if (claimPlayerId != playerId)
             {
                 authorizationHelper.CheckPlayerIsInTheSameRoomAsResource(user, player.RoomId);
             }
@@ -48,41 +48,80 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
             return mapper.Map<PlayerDto>(player);
         }
         
-        public PlayerDto KickFromRoom(int id, ClaimsPrincipal user)
+        public PlayerDto KickFromRoom(int playerId, ClaimsPrincipal user)
         {
-            Player player = dbHelper.Player.FindById(id);
-            Room room = dbHelper.Room.FindById(player.RoomId);
+            Player targetPlayer = dbHelper.Player.FindByIdIncludingAllRelatedEntities(playerId);
             
-            authorizationHelper.CheckPlayerOwnsResource(user, room.AdminPlayerId);
+            authorizationHelper.CheckIfPlayerIsNotSelf(user, targetPlayer.PlayerId);
+            authorizationHelper.CheckPlayerOwnsResource(user, targetPlayer.Room.AdminPlayerId);
 
-            player.RoomId = 0;
-            player.TeamId = 0;
-            dbContext.Player.Update(player);
-            dbContext.SaveChanges();
-            
-            return mapper.Map<PlayerDto>(player);
-        }
-        
-        public PlayerDto KickFromTeam(int id, ClaimsPrincipal user)
-        {
-            Player player = dbHelper.Player.FindById(id);
-            Room room = dbHelper.Room.FindById(player.RoomId);
-            Team team = dbHelper.Team.FindById(player.TeamId);
-            
-            authorizationHelper.CheckPlayerOwnsResource(user, room.AdminPlayerId);
-            
-            if(player.PlayerId == team.OfficerPlayerId)
+            if(targetPlayer.PlayerId == targetPlayer.Team.OfficerPlayerId)
             {
-                team.OfficerPlayerId = 0;
-                dbContext.Team.Update(team);
+                UnassignTeamOfficer(targetPlayer.Team);
             }
             
-            player.TeamId = 0;
-            dbContext.Player.Update(player);
+            UnassignPlayerTeam(targetPlayer);
+            UnassignPlayerRoom(targetPlayer);
+            
+            ClearPlayerMapPings(playerId);
+            ClearPlayerOrders(playerId);
+            
+            dbContext.Player.Update(targetPlayer);
+            dbContext.SaveChanges();
+            
+            return mapper.Map<PlayerDto>(targetPlayer);
+        }
+        
+        public PlayerDto KickFromTeam(int playerId, ClaimsPrincipal user)
+        {
+            Player targetPlayer = dbHelper.Player.FindByIdIncludingAllRelatedEntities(playerId);
+            
+            authorizationHelper.CheckIfPlayerIsNotSelf(user, targetPlayer.PlayerId);
+            authorizationHelper.CheckPlayerIsInTheSameRoomAsResource(user, targetPlayer.RoomId); 
+            authorizationHelper.CheckIfPlayerIsAdminOrOfficerOfTargetPlayer(user, targetPlayer.Team.OfficerPlayerId ?? 0, targetPlayer.Room.AdminPlayerId ?? 0);
+            
+            if(targetPlayer.PlayerId == targetPlayer.Team.OfficerPlayerId)
+            {
+                UnassignTeamOfficer(targetPlayer.Team);
+            }
+            
+            UnassignPlayerTeam(targetPlayer);
+            ClearPlayerMapPings(playerId);
+            ClearPlayerOrders(playerId);
             
             dbContext.SaveChanges();
             
-            return mapper.Map<PlayerDto>(player);
+            return mapper.Map<PlayerDto>(targetPlayer);
+        }
+
+        private void ClearPlayerMapPings(int playerId)
+        {
+            IQueryable<MapPing> mapPingsToRemove = dbContext.MapPing.Where(ping => ping.PlayerId == playerId);
+            dbContext.MapPing.RemoveRange(mapPingsToRemove);
+        }
+        
+        private void ClearPlayerOrders(int playerId)
+        {
+            IQueryable<Order> ordersToRemove = dbContext.Order.Where(order => order.PlayerId == playerId);
+            dbContext.Order.RemoveRange(ordersToRemove);
+        }
+        
+        private void UnassignPlayerTeam(Player player)
+        {
+            player.TeamId = null;
+            dbContext.Player.Update(player);
+        }
+        
+        private void UnassignPlayerRoom(Player player)
+        {
+            player.RoomId = null;
+            dbContext.Player.Update(player);
+        }
+        
+        private void UnassignTeamOfficer(Team team)
+        {
+            team.OfficerPlayerId = null;
+            dbContext.Team.Update(team);
         }
 
         public PlayerDto Update(PutPlayerDto playerDto, ClaimsPrincipal user)
@@ -90,7 +129,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
             authorizationHelper.CheckPlayerOwnsResource(user, playerId);
             
-            Player previousPlayer = dbHelper.Player.FindById(playerId);
+            Player playerToUpdate = dbHelper.Player.FindById(playerId);
             
             if(playerDto.TeamId is not null)
             {
@@ -98,22 +137,27 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
                 
                 authorizationHelper.CheckPlayerIsInTheSameRoomAsResource(user, targetTeam.RoomId,
                     $"Target team {targetTeam.TeamId} is not in the same room as player");
-                
-                Team? oldTeam = previousPlayer.TeamId is not null ? dbHelper.Team.FindById(previousPlayer.TeamId) : null;
 
-                if (oldTeam?.OfficerPlayerId == playerId)
+                Team? previousTeam = GetPreviousTeam(playerToUpdate);
+
+                if (previousTeam?.OfficerPlayerId == playerId)
                 {
-                    oldTeam.OfficerPlayerId = null;
-                    dbContext.Team.Update(oldTeam);
+                    UnassignTeamOfficer(previousTeam);
+                    dbContext.SaveChanges();
                 }
+                
+                ClearPlayerOrders(playerToUpdate.PlayerId);
+                ClearPlayerMapPings(playerToUpdate.PlayerId);
             }
 
-            mapper.Map(playerDto, previousPlayer);
-            dbContext.Player.Update(previousPlayer);
+            mapper.Map(playerDto, playerToUpdate);
+            dbContext.Player.Update(playerToUpdate);
             dbContext.SaveChanges();
             
-            return mapper.Map<PlayerDto>(previousPlayer);
+            return mapper.Map<PlayerDto>(playerToUpdate);
         }
+
+        private Team? GetPreviousTeam(Player player) => dbContext.Team.FirstOrDefault(team => team.TeamId == player.TeamId);
 
         public void Delete(ClaimsPrincipal user)
         {

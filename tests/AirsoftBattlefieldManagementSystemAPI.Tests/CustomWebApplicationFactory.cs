@@ -18,6 +18,7 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
     {
         PlayerId = playerId;
     }
+    
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureTestServices(services =>
@@ -36,7 +37,7 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
             
             context.Database.EnsureCreated();
 
-            bool isDbEmpty = context.Account.Count() == 0;
+            bool isDbEmpty = !context.Account.Any();
             
             if (isDbEmpty)
             {

@@ -143,11 +143,26 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
                 dbContext.Team.Update(team);
             }
 
+            ClearPlayerMapPings(playerId);
+            ClearPlayerOrders(playerId);
+            
             player.RoomId = null;
             player.TeamId = null;
             dbContext.Player.Update(player);
             
             dbContext.SaveChanges();
+        }
+        
+        private void ClearPlayerMapPings(int playerId)
+        {
+            IQueryable<MapPing> mapPingsToRemove = dbContext.MapPing.Where(ping => ping.PlayerId == playerId);
+            dbContext.MapPing.RemoveRange(mapPingsToRemove);
+        }
+        
+        private void ClearPlayerOrders(int playerId)
+        {
+            IQueryable<Order> ordersToRemove = dbContext.Order.Where(order => order.PlayerId == playerId);
+            dbContext.Order.RemoveRange(ordersToRemove);
         }
     }
 }

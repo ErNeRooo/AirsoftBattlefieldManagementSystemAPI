@@ -28,6 +28,25 @@ public class PlayerHelper(IBattleManagementSystemDbContext dbContext, IClaimsHel
         return player;
     }
     
+    public Player FindByIdIncludingAllRelatedEntities(int? id)
+    {
+        Player? player = dbContext
+            .Player
+            .Include(p => p.Account)
+            .Include(p => p.Room)
+            .Include(p => p.Team)
+            .Include(p => p.Kills)
+            .Include(p => p.Deaths)
+            .Include(p => p.PlayerLocations)
+            .Include(p => p.Orders)
+            .Include(p => p.MapPings)
+            .FirstOrDefault(p => p.PlayerId == id);
+
+        if (player is null) throw new NotFoundException($"Player with id {id} not found");
+
+        return player;
+    }
+    
     public Player FindByIdIncludingAccount(int? id)
     {
         Player? player = dbContext.Player.Include(p => p.Account).FirstOrDefault(p => p.PlayerId == id);

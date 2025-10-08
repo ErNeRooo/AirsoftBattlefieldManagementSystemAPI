@@ -4,17 +4,21 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperServ
 {
     public interface IAuthorizationHelperService
     {
-        public void CheckPlayerIsInTheSameRoomAsResource(ClaimsPrincipal user, int? roomId, string? message = null);
+        public bool CheckPlayerIsInTheSameRoomAsResource(ClaimsPrincipal user, int? roomId, string? message = null);
 
-        public void CheckPlayerIsInTheSameTeamAsResource(ClaimsPrincipal user, int? teamId, string? message = null);
+        public bool CheckPlayerIsInTheSameTeamAsResource(ClaimsPrincipal user, int? teamId, string? message = null);
         
-        public void CheckTargetPlayerIsInTheSameTeam(ClaimsPrincipal user, int playerId, int teamId,
+        public bool CheckIfPlayerIsAdminOrOfficerOfTargetPlayer(ClaimsPrincipal user, int officerPlayerId, int adminPlayerId, string? message = null);
+        
+        public bool CheckTargetPlayerIsInTheSameTeam(ClaimsPrincipal user, int playerId, int teamId,
             string? message = null);
         
-        public void CheckPlayerOwnsResource(ClaimsPrincipal user, int? playerId, string? message = null);
+        public bool CheckPlayerOwnsResource(ClaimsPrincipal user, int? playerId, string? message = null);
 
-        public void CheckPlayerIsRoomAdminOrTargetTeamOfficer(ClaimsPrincipal user, int teamId, string? message = null);
+        public bool CheckPlayerIsRoomAdminOrTargetTeamOfficer(ClaimsPrincipal user, int teamId, string? message = null);
 
-        public void CheckPlayerIdHasExistingEntity(ClaimsPrincipal user, string? message = null);
+        public bool CheckPlayerIdHasExistingEntity(ClaimsPrincipal user, string? message = null);
+        
+        public bool CheckIfPlayerIsNotSelf(ClaimsPrincipal user, int targetPlayerId, string? message = null);
     }
 }
