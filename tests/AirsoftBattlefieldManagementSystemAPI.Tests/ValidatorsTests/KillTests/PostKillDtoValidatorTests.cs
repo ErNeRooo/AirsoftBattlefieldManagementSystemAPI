@@ -13,6 +13,14 @@ public class PostKillDtoValidatorTests
         {
             new()
             {
+                Latitude = 0,
+                Longitude = 0,
+                Accuracy = 0,
+                Bearing = 0,
+                Time = datetime
+            },
+            new()
+            {
                 Latitude = 1,
                 Longitude = 1,
                 Accuracy = 1,
