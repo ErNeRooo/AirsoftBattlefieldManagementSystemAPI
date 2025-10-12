@@ -634,6 +634,110 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     BattleId = 2,
                     Type = MapPingTypes.ENEMY
                 });
+
+                context.ZoneVertex.Add(new ZoneVertex
+                {
+                    ZoneVertexId = 1,
+                    Longitude = 10,
+                    Latitude = 10,
+                    ZoneId = 1
+                });
+                context.ZoneVertex.Add(new ZoneVertex
+                {
+                    ZoneVertexId = 2,
+                    Longitude = 12,
+                    Latitude = 10,
+                    ZoneId = 1
+                });
+                context.ZoneVertex.Add(new ZoneVertex
+                {
+                    ZoneVertexId = 3,
+                    Longitude = 12,
+                    Latitude = 11,
+                    ZoneId = 1
+                });
+                context.ZoneVertex.Add(new ZoneVertex
+                {
+                    ZoneVertexId = 4,
+                    Longitude = 10,
+                    Latitude = 11,
+                    ZoneId = 1
+                });
+                
+                context.Zone.Add(new Zone
+                {
+                    ZoneId = 1,
+                    BattleId = 1,
+                    Name = "Test Zone",
+                    Type = ZoneTypes.NO_FIRE_ZONE
+                });
+                
+                context.ZoneVertex.Add(new ZoneVertex
+                {
+                    ZoneVertexId = 5,
+                    Longitude = 20.0m,
+                    Latitude = 20.0m,
+                    ZoneId = 2
+                });
+                context.ZoneVertex.Add(new ZoneVertex
+                {
+                    ZoneVertexId = 6,
+                    Longitude = 23.0m,
+                    Latitude = 20.5m,
+                    ZoneId = 2
+                });
+                context.ZoneVertex.Add(new ZoneVertex
+                {
+                    ZoneVertexId = 7,
+                    Longitude = 22.5m,
+                    Latitude = 23.0m,
+                    ZoneId = 2
+                });
+                context.ZoneVertex.Add(new ZoneVertex
+                {
+                    ZoneVertexId = 8,
+                    Longitude = 19.5m,
+                    Latitude = 22.0m,
+                    ZoneId = 2
+                });
+
+                context.Zone.Add(new Zone
+                {
+                    ZoneId = 2,
+                    BattleId = 2,
+                    Name = "Alpha Zone",
+                    Type = ZoneTypes.NO_FIRE_ZONE
+                });
+                
+                context.ZoneVertex.Add(new ZoneVertex
+                {
+                    ZoneVertexId = 9,
+                    Longitude = 30.0m,
+                    Latitude = 25.0m,
+                    ZoneId = 3
+                });
+                context.ZoneVertex.Add(new ZoneVertex
+                {
+                    ZoneVertexId = 10,
+                    Longitude = 33.0m,
+                    Latitude = 26.0m,
+                    ZoneId = 3
+                });
+                context.ZoneVertex.Add(new ZoneVertex
+                {
+                    ZoneVertexId = 11,
+                    Longitude = 31.5m,
+                    Latitude = 28.5m,
+                    ZoneId = 3
+                });
+                
+                context.Zone.Add(new Zone
+                {
+                    ZoneId = 3,
+                    BattleId = 2,
+                    Name = "Bravo Zone",
+                    Type = ZoneTypes.SPAWN
+                });
                 
                 context.SaveChanges();
             }

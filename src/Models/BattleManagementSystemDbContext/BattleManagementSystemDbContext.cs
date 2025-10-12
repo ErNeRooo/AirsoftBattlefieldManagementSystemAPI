@@ -15,6 +15,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbC
         public DbSet<Location> Location { get; set; }
         public DbSet<Order> Order { get; set; }
         public DbSet<MapPing> MapPing { get; set; }
+        public DbSet<ZoneVertex> ZoneVertex { get; set; }
+        public DbSet<Zone> Zone { get; set; }
         public DbSet<Player> Player { get; set; }
         public DbSet<PlayerLocation> PlayerLocation { get; set; }
         public DbSet<Team> Team { get; set; }
@@ -36,6 +38,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbC
             BuildOrder();
             BuildDeath();
             BuildMapPing();
+            BuildZone();
+            BuildZoneVertex();
             BuildAccount();
             BuildPlayer();
             BuildBattle();
@@ -146,6 +150,24 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbC
                 .WithMany(player => player.MapPings)
                 .HasForeignKey(mapPing => mapPing.PlayerId)
                 .OnDelete(DeleteBehavior.Cascade);
+        }
+
+        private void BuildZoneVertex()
+        {
+            _modelBuilder.Entity<ZoneVertex>()
+                .HasOne(zoneVertex => zoneVertex.Zone)
+                .WithMany(zone => zone.Vertices)
+                .HasForeignKey(zoneVertex => zoneVertex.ZoneId)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
+        
+        private void BuildZone()
+        {
+            _modelBuilder.Entity<Zone>()
+                .HasOne(zone => zone.Battle)
+                .WithMany(battle => battle.Zones)
+                .HasForeignKey(zone => zone.BattleId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
 
         private void BuildAccount()

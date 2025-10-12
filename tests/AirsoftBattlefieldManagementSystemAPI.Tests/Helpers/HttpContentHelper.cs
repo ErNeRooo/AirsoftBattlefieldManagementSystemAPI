@@ -22,8 +22,7 @@ public static class HttpContentHelper
 
         if (string.IsNullOrWhiteSpace(json))
             return null;
-
-        // Parse to JObject
+        
         JObject jObj;
         try
         {
@@ -31,10 +30,9 @@ public static class HttpContentHelper
         }
         catch (JsonReaderException)
         {
-            return null; // Invalid JSON
+            return null; 
         }
         
-        // All good, deserialize
         return jObj.ToObject<T>();
     }
 }

@@ -28,6 +28,7 @@ using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Help
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.PlayerLocationHelper;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.RoomHelper;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.TeamHelper;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.ZoneHelper;
 using AirsoftBattlefieldManagementSystemAPI.Services.DeathService;
 using AirsoftBattlefieldManagementSystemAPI.Services.JoinCodeService;
 using AirsoftBattlefieldManagementSystemAPI.Services.KillService;
@@ -37,6 +38,7 @@ using AirsoftBattlefieldManagementSystemAPI.Services.OrderService;
 using AirsoftBattlefieldManagementSystemAPI.Services.PlayerService;
 using AirsoftBattlefieldManagementSystemAPI.Services.RoomService;
 using AirsoftBattlefieldManagementSystemAPI.Services.TeamService;
+using AirsoftBattlefieldManagementSystemAPI.Services.ZoneService;
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -119,6 +121,8 @@ namespace AirsoftBattlefieldManagementSystemAPI
                     cfg.AddProfile<DeathMappingProfile>();
                     cfg.AddProfile<OrderMappingProfile>();
                     cfg.AddProfile<MapPingMappingProfile>();
+                    cfg.AddProfile<ZoneMappingProfile>();
+                    cfg.AddProfile<ZoneVertexMappingProfile>();
                 });
                 return config.CreateMapper();
             });
@@ -132,6 +136,7 @@ namespace AirsoftBattlefieldManagementSystemAPI
             builder.Services.AddScoped<IDeathService, DeathService>();
             builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddScoped<IMapPingService, MapPingService>();
+            builder.Services.AddScoped<IZoneService, ZoneService>();
             
             builder.Services.AddScoped<IJoinCodeService, JoinCodeService>();
             builder.Services.AddScoped<IAuthorizationHelperService, AuthorizationHelperService>();
@@ -144,6 +149,7 @@ namespace AirsoftBattlefieldManagementSystemAPI
             builder.Services.AddScoped<IKillHelper, KillHelper>();
             builder.Services.AddScoped<IOrderHelper, OrderHelper>();
             builder.Services.AddScoped<IMapPingHelper, MapPingHelper>();
+            builder.Services.AddScoped<IZoneHelper, ZoneHelper>();
             builder.Services.AddScoped<ILocationHelper, LocationHelper>();
             builder.Services.AddScoped<IPlayerHelper, PlayerHelper>();
             builder.Services.AddScoped<IPlayerLocationHelper, PlayerLocationHelper>();

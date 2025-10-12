@@ -21,9 +21,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
         
         [HttpGet]
         [Route("teamId/{teamId}")]
-        public ActionResult<MapPingDto> GetAllOfTeamWithId(int teamId)
+        public ActionResult<MapPingDto> GetManyByTeamId(int teamId)
         {
-            List<MapPingDto> mapPingDtos = mapPingService.GetAllOfTeamWithId(teamId, User);
+            List<MapPingDto> mapPingDtos = mapPingService.GetManyByTeamId(teamId, User);
 
             return Ok(mapPingDtos);
         }

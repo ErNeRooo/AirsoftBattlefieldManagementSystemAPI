@@ -11,10 +11,22 @@ public class MapPingControllerCreateTests
     private HttpClient _client;
     private string _endpoint = "map-ping";
     
+    public class MapPingTestData
+    {
+        public int SenderPlayerId { get; set; }
+        public int BattleId { get; set; }
+        public decimal Longitude { get; set; }
+        public decimal Latitude { get; set; }
+        public short Accuracy { get; set; }
+        public short Bearing { get; set; }
+        public DateTimeOffset Time { get; set; }
+        public string Type { get; set; } = MapPingTypes.ENEMY;
+    }
+    
     public static IEnumerable<object[]> GetValidModelTestData()
     {
         var datetime = DateTimeOffset.Now;
-        var tests = new List<PlayerMapPingTestData>
+        var tests = new List<MapPingTestData>
         {
             new()
             {
@@ -71,21 +83,9 @@ public class MapPingControllerCreateTests
         return tests.Select(x => new object[] { x });
     }
     
-    public class PlayerMapPingTestData
-    {
-        public int SenderPlayerId { get; set; }
-        public int BattleId { get; set; }
-        public decimal Longitude { get; set; }
-        public decimal Latitude { get; set; }
-        public short Accuracy { get; set; }
-        public short Bearing { get; set; }
-        public DateTimeOffset Time { get; set; }
-        public string Type { get; set; } = MapPingTypes.ENEMY;
-    }
-    
     [Theory]
     [MemberData(nameof(GetValidModelTestData))]
-    public async void Create_ValidModel_ReturnsCreatedAndBattleDto(PlayerMapPingTestData testData)
+    public async void Create_ValidModel_ReturnsCreatedAndBattleDto(MapPingTestData testData)
     {
         var factory = new CustomWebApplicationFactory<Program>(testData.SenderPlayerId);
         _client = factory.CreateClient();

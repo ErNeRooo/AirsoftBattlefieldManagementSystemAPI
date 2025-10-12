@@ -11,7 +11,7 @@ public class MapPingControllerGetByIdTests
     private HttpClient _client;
     private string _endpoint = "map-ping/id/";
         
-    public class PlayerMapPingTestData
+    public class MapPingTestData
     {
         public int SenderPlayerId { get; set; }
         public int MapPingId { get; set; }
@@ -27,7 +27,7 @@ public class MapPingControllerGetByIdTests
     
     public static IEnumerable<object[]> GetTests()
     {
-        var tests = new List<PlayerMapPingTestData>
+        var tests = new List<MapPingTestData>
         {
             new()
             {
@@ -167,7 +167,7 @@ public class MapPingControllerGetByIdTests
     
     [Theory]
     [MemberData(nameof(GetTests))]
-    public async void GetById_Valid_ReturnsOkAndMapPingDto(PlayerMapPingTestData testData)
+    public async void GetById_Valid_ReturnsOkAndMapPingDto(MapPingTestData testData)
     {
         var factory = new CustomWebApplicationFactory<Program>(testData.SenderPlayerId);
         _client = factory.CreateClient();

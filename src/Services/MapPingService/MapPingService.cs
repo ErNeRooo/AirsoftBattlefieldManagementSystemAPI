@@ -25,7 +25,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.MapPingService
             return mapPingDto;
         }
 
-        public List<MapPingDto> GetAllOfTeamWithId(int teamId, ClaimsPrincipal user)
+        public List<MapPingDto> GetManyByTeamId(int teamId, ClaimsPrincipal user)
         {
             bool doesTeamExist = dbContext.Team.Any(team => team.TeamId == teamId);
             if(!doesTeamExist) throw new NotFoundException("Team not found.");

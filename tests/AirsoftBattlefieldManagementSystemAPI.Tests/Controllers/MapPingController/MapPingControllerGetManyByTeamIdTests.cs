@@ -6,12 +6,12 @@ using Shouldly;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Tests.Controllers.MapPingController;
 
-public class MapPingControllerGetAllOfTeamWithIdTests
+public class MapPingControllerGetManyByTeamIdTests
 {
     private HttpClient _client;
     private string _endpoint = "map-ping/teamId/";
         
-    public class PlayerMapPingTestData
+    public class MapPingTestData
     {
         public int SenderPlayerId { get; set; }
         public int TeamId { get; set; }
@@ -20,7 +20,7 @@ public class MapPingControllerGetAllOfTeamWithIdTests
     
     public static IEnumerable<object[]> GetTests()
     {
-        var tests = new List<PlayerMapPingTestData>
+        var tests = new List<MapPingTestData>
         {
             new()
             {
@@ -266,13 +266,13 @@ public class MapPingControllerGetAllOfTeamWithIdTests
     
     [Theory]
     [MemberData(nameof(GetTests))]
-    public async void GetAllOfTeamWithId_Valid_ReturnsOkAndMapPingDto(PlayerMapPingTestData testData)
+    public async void GetManyByTeamId_Valid_ReturnsOkAndListOfMapPingDtos(MapPingTestData testData)
     {
         var factory = new CustomWebApplicationFactory<Program>(testData.SenderPlayerId);
         _client = factory.CreateClient();
         
         var response = await _client.GetAsync($"{_endpoint}{testData.TeamId}");
-        var result = await response.Content.ReadFromJsonAsync<List<MapPingDto>>();
+        var result = await HttpContentJsonExtensions.ReadFromJsonAsync<List<MapPingDto>>(response.Content);
         
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         result.ShouldNotBeNull();
@@ -296,7 +296,7 @@ public class MapPingControllerGetAllOfTeamWithIdTests
     [InlineData(0)]
     [InlineData(234641)]
     [InlineData(-1)]
-    public async void GetAllOfTeamWithId_TeamDoesNotExist_ReturnsNotFound(int id)
+    public async void GetManyByTeamId_TeamDoesNotExist_ReturnsNotFound(int id)
     {
         var factory = new CustomWebApplicationFactory<Program>();
         _client = factory.CreateClient();
@@ -319,7 +319,7 @@ public class MapPingControllerGetAllOfTeamWithIdTests
     [InlineData(12, 3)]
     [InlineData(12, 2)]
     [InlineData(12, 1)]
-    public async void GetAllOfTeamWithId_ProvidedIdOfDifferentTeam_ReturnsForbidden(int senderPlayerId, int teamId)
+    public async void GetManyByTeamId_ProvidedIdOfDifferentTeam_ReturnsForbidden(int senderPlayerId, int teamId)
     {
         var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
         _client = factory.CreateClient();

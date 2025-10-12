@@ -12,6 +12,7 @@ using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Help
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.PlayerLocationHelper;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.RoomHelper;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.TeamHelper;
+using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.Helpers.ZoneHelper;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService;
 
@@ -23,6 +24,7 @@ public interface IDbContextHelperService
     public IKillHelper Kill { get; }
     public IOrderHelper Order { get; }
     public IMapPingHelper MapPing { get; }
+    public IZoneHelper Zone { get; }
     public ILocationHelper Location { get; }
     public IPlayerHelper Player { get; }
     public IPlayerLocationHelper PlayerLocation { get; }

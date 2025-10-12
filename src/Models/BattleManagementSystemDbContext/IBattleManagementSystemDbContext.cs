@@ -15,6 +15,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbC
         DbSet<Location> Location { get; set; }
         DbSet<Order> Order { get; set; }
         DbSet<MapPing> MapPing { get; set; }
+        DbSet<ZoneVertex> ZoneVertex { get; set; }
+        DbSet<Zone> Zone { get; set; }
         DbSet<Player> Player { get; set; }
         DbSet<PlayerLocation> PlayerLocation { get; set; }
         DbSet<Team> Team { get; set; }
