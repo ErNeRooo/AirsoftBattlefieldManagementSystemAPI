@@ -1,4 +1,5 @@
 ﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Team;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Zone;
 using AirsoftBattlefieldManagementSystemAPI.Services.TeamService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -53,6 +54,24 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
             teamService.Leave(User);
 
             return Ok();
+        }
+        
+        [HttpPost]
+        [Route("spawn/teamId/{teamId}")]
+        public ActionResult<TeamDto> CreateSpawn([FromBody] PostZoneDto zoneDto, int teamId)
+        {
+            TeamDto team = teamService.CreateSpawn(teamId, zoneDto, User);
+
+            return Created($"/zone/id/{team.SpawnZoneId}", team);
+        }
+        
+        [HttpDelete]
+        [Route("spawn/teamId/{teamId}")]
+        public ActionResult DeleteSpawn(int teamId)
+        {
+            teamService.DeleteSpawn(teamId, User);
+
+            return NoContent();
         }
     }
 }

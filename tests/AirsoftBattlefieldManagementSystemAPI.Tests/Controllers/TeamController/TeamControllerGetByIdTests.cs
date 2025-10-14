@@ -11,11 +11,11 @@ public class TeamControllerGetByIdTests
     private string _endpoint = "team/id/";
     
     [Theory]
-    [InlineData(1, 1, "Red", 1, 1)]
-    [InlineData(1, 2, "Blue", 1, 2)]
-    [InlineData(2, 1, "Red", 1, 1)]
-    [InlineData(3, 3, "Blue", 2, 3)]
-    public async void GetById_ValidId_ReturnsOkAndTeamDto(int senderPlayerId, int teamId, string name, int roomId, int officerPlayerId)
+    [InlineData(1, 1, "Red", 1, 1, 0)]
+    [InlineData(1, 2, "Blue", 1, 2, 0)]
+    [InlineData(2, 1, "Red", 1, 1, 0)]
+    [InlineData(3, 3, "Blue", 2, 3, 3)]
+    public async void GetById_ValidId_ReturnsOkAndTeamDto(int senderPlayerId, int teamId, string name, int roomId, int officerPlayerId, int spawnZoneId)
     {
         var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
         _client = factory.CreateClient();
@@ -29,6 +29,7 @@ public class TeamControllerGetByIdTests
         result.Name.ShouldBe(name);
         result.RoomId.ShouldBe(roomId);
         result.OfficerPlayerId.ShouldBe(officerPlayerId);
+        result.SpawnZoneId.ShouldBe(spawnZoneId);
     }
     
     [Theory]

@@ -3,16 +3,25 @@ using AirsoftBattlefieldManagementSystemAPI.Authorization;
 using AirsoftBattlefieldManagementSystemAPI.Exceptions;
 using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Team;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Zone;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.ClaimsHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService;
+using AirsoftBattlefieldManagementSystemAPI.Services.ZoneService;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.TeamService
 {
-    public class TeamService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IDbContextHelperService dbHelper, IAuthorizationHelperService authorizationHelperService, IClaimsHelperService claimsHelper) : ITeamService
+    public class TeamService(
+        IMapper mapper, 
+        IBattleManagementSystemDbContext dbContext, 
+        IDbContextHelperService dbHelper, 
+        IAuthorizationHelperService authorizationHelperService, 
+        IClaimsHelperService claimsHelper,
+        IZoneService zoneService
+        ) : ITeamService
     {
         public TeamDto GetById(int id, ClaimsPrincipal user)
         {
@@ -64,7 +73,35 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.TeamService
             dbContext.Team.Remove(team);
             dbContext.SaveChanges();
         }
-        
+
+        public TeamDto CreateSpawn(int teamId, PostZoneDto postZoneDto, ClaimsPrincipal user)
+        {
+            Team team = dbHelper.Team.FindById(teamId);
+            Room room = dbHelper.Room.FindById(team.RoomId);
+            
+            authorizationHelperService.CheckPlayerOwnsResource(user, room.AdminPlayerId);
+
+            ZoneDto zoneDto = zoneService.Create(postZoneDto, user);
+            
+            team.SpawnZoneId = zoneDto.ZoneId;
+            
+            dbContext.Team.Update(team);
+            dbContext.SaveChanges();
+
+            return mapper.Map<TeamDto>(team);
+        }
+
+        public void DeleteSpawn(int teamId, ClaimsPrincipal user)
+        {
+            Team team = dbHelper.Team.FindById(teamId);
+            Room room = dbHelper.Room.FindById(team.RoomId);
+            
+            authorizationHelperService.CheckPlayerOwnsResource(user, room.AdminPlayerId);
+            
+            dbContext.Team.Remove(team);
+            dbContext.SaveChanges();
+        }
+
         public void Leave(ClaimsPrincipal user)
         {
             Player player = dbHelper.Player.FindSelf(user);

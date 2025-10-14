@@ -219,7 +219,8 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     Name = "Blue",
                     TeamId = 3,
                     RoomId = 2,
-                    OfficerPlayerId = 3
+                    OfficerPlayerId = 3,
+                    SpawnZoneId = 3
                 });
                 context.Team.Add(new Team
                 {

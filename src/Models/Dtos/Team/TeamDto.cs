@@ -1,4 +1,6 @@
-﻿namespace AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Team
+﻿using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Zone;
+
+namespace AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Team
 {
     public class TeamDto
     {
@@ -6,5 +8,7 @@
         public string Name { get; set; }
         public int RoomId { get; set; }
         public int OfficerPlayerId { get; set; }
+        public int SpawnZoneId { get; set; }
+        public ZoneDto? SpawnZone { get; set; }
     }
 }

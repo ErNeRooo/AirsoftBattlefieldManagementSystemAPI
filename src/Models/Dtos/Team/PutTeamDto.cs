@@ -6,5 +6,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Team
     {
         public string? Name { get; set; }
         public int? OfficerPlayerId { get; set; }
+        
     }
 }
