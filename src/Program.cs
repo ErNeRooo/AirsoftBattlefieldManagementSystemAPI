@@ -12,6 +12,7 @@ using AirsoftBattlefieldManagementSystemAPI.Middleware;
 using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles;
+using AirsoftBattlefieldManagementSystemAPI.Realtime;
 using AirsoftBattlefieldManagementSystemAPI.Services.AccountService;
 using AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.BattleService;
@@ -45,6 +46,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NLog.Web;
@@ -165,6 +167,9 @@ namespace AirsoftBattlefieldManagementSystemAPI
             builder.Services.AddFluentValidationAutoValidation();
             builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
+            builder.Services.AddSignalR();
+            builder.Services.AddSingleton<IUserIdProvider, PlayerIdProvider>();
+
             builder.WebHost.UseUrls("http://0.0.0.0:8080");
             
             builder.Services.AddDbContext<IBattleManagementSystemDbContext, BattleManagementSystemDbContext>(
@@ -203,7 +208,7 @@ namespace AirsoftBattlefieldManagementSystemAPI
 
             app.UseAuthorization();
 
-
+            app.MapHub<RoomNotificationHub>("/roomHub");
             app.MapControllers();
 
             app.Run();

@@ -2,14 +2,24 @@
 using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Death;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
+using AirsoftBattlefieldManagementSystemAPI.Models.Helpers;
+using AirsoftBattlefieldManagementSystemAPI.Realtime;
 using AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.ClaimsHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService;
 using AutoMapper;
+using Microsoft.AspNetCore.SignalR;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.DeathService
 {
-    public class DeathService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IClaimsHelperService claimsHelper, IAuthorizationHelperService authorizationHelper, IDbContextHelperService dbHelper) : IDeathService
+    public class DeathService(
+        IMapper mapper, 
+        IBattleManagementSystemDbContext dbContext, 
+        IClaimsHelperService claimsHelper, 
+        IAuthorizationHelperService authorizationHelper, 
+        IDbContextHelperService dbHelper,
+        IHubContext<RoomNotificationHub, IRoomNotificationClient> hubContext
+        ) : IDeathService
     {
         public DeathDto GetById(int id, ClaimsPrincipal user)
         {
@@ -45,45 +55,65 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.DeathService
         {
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
             Player player = dbHelper.Player.FindById(playerId);
-            Room room = dbHelper.Room.FindByIdIncludingBattle(player.RoomId);
+            Room room = dbHelper.Room.FindByIdIncludingRelated(player.RoomId);
 
             Location location = mapper.Map<Location>(deathDto);
             dbContext.Location.Add(location);
             
             dbContext.SaveChanges();
             
-            Death death = new Death();
+            Death death = new();
             death.LocationId = location.LocationId;
             death.PlayerId = playerId;
             death.BattleId = room.Battle.BattleId;
             dbContext.Death.Add(death);
 
             dbContext.SaveChanges();
+            
+            DeathDto responseDeathDto = mapper.Map<DeathDto>(death);            
+            
+            IEnumerable<string> playerIds = room.GetAllPlayerIdsWithoutSelf(player.PlayerId);
 
-            return mapper.Map<DeathDto>(death);
+            hubContext.Clients.Users(playerIds).DeathCreated(responseDeathDto);
+
+            return responseDeathDto;
         }
 
         public DeathDto Update(int id, PutDeathDto deathDto, ClaimsPrincipal user)
         {
-            Death previousDeath = dbHelper.Death.FindById(id);
+            Death death = dbHelper.Death.FindById(id);
+            Player player = dbHelper.Player.FindById(death.PlayerId);
+            Room room = dbHelper.Room.FindByIdIncludingPlayers(player.RoomId);
             
-            authorizationHelper.CheckPlayerOwnsResource(user, previousDeath.PlayerId);
+            authorizationHelper.CheckPlayerOwnsResource(user, death.PlayerId);
             
-            mapper.Map(deathDto, previousDeath.Location);
-            dbContext.Location.Update(previousDeath.Location);
+            mapper.Map(deathDto, death.Location);
+            dbContext.Location.Update(death.Location);
             dbContext.SaveChanges();
             
-            return mapper.Map<DeathDto>(previousDeath);
+            DeathDto responseDeathDto = mapper.Map<DeathDto>(death);            
+            
+            IEnumerable<string> playerIds = room.GetAllPlayerIdsWithoutSelf(player.PlayerId);
+
+            hubContext.Clients.Users(playerIds).DeathUpdated(responseDeathDto);
+            
+            return responseDeathDto;
         }
 
         public void DeleteById(int id, ClaimsPrincipal user)
         {
             Death death = dbHelper.Death.FindById(id);
+            Player player = dbHelper.Player.FindById(death.PlayerId);
+            Room room = dbHelper.Room.FindByIdIncludingPlayers(player.RoomId);
             
             authorizationHelper.CheckPlayerOwnsResource(user, death.PlayerId);
 
             dbContext.Death.Remove(death);
             dbContext.SaveChanges();
+            
+            IEnumerable<string> playerIds = room.GetAllPlayerIdsWithoutSelf(player.PlayerId);
+
+            hubContext.Clients.Users(playerIds).DeathDeleted(id);
         }
     }
 }

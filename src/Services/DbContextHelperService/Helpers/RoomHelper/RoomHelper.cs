@@ -26,6 +26,17 @@ public class RoomHelper(IBattleManagementSystemDbContext dbContext) : IRoomHelpe
             
         return room;
     }
+    
+    public Room FindByIdIncludingPlayers(int? id)
+    {
+        Room? room = dbContext.Room
+            .Include(room => room.Players)
+            .FirstOrDefault(r => r.RoomId == id);
+
+        if(room is null) throw new NotFoundException($"Room with id {id} not found");
+            
+        return room;
+    }
         
     public Room FindByIdIncludingRelated(int? id)
     {

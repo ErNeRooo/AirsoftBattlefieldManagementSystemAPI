@@ -3,13 +3,23 @@ using System.Security.Claims;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Location;
 using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
+using AirsoftBattlefieldManagementSystemAPI.Models.Helpers;
+using AirsoftBattlefieldManagementSystemAPI.Realtime;
 using AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.ClaimsHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService;
+using Microsoft.AspNetCore.SignalR;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
 {
-    public class LocationService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IClaimsHelperService claimsHelper, IAuthorizationHelperService authorizationHelper, IDbContextHelperService dbHelper) : ILocationService
+    public class LocationService(
+        IMapper mapper, 
+        IBattleManagementSystemDbContext dbContext, 
+        IClaimsHelperService claimsHelper, 
+        IAuthorizationHelperService authorizationHelper, 
+        IDbContextHelperService dbHelper,
+        IHubContext<RoomNotificationHub, IRoomNotificationClient> hubContext
+        ) : ILocationService
     {
         public LocationDto GetById(int id, ClaimsPrincipal user)
         {
@@ -54,7 +64,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
                 {
                     PlayerId = targetPlayerId,
                     LocationId = l.LocationId,
-                    BattleId = room.Battle.BattleId,
+                    BattleId = room.Battle?.BattleId ?? 0,
                     Longitude = l.Longitude,
                     Latitude = l.Latitude,
                     Accuracy = l.Accuracy,
@@ -70,7 +80,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
         {
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
             Player player = dbHelper.Player.FindById(playerId);
-            Room room = dbHelper.Room.FindByIdIncludingBattle(player.RoomId);
+            Room room = dbHelper.Room.FindByIdIncludingRelated(player.RoomId);
 
             Location location = mapper.Map<Location>(locationDto);
             dbContext.Location.Add(location);
@@ -80,7 +90,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
             PlayerLocation playerLocation = new PlayerLocation();
             playerLocation.LocationId = location.LocationId;
             playerLocation.PlayerId = playerId;
-            playerLocation.BattleId = room.Battle.BattleId;
+            playerLocation.BattleId = room.Battle?.BattleId ?? 0;
             dbContext.PlayerLocation.Add(playerLocation);
 
             dbContext.SaveChanges();
@@ -89,7 +99,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
             {
                 LocationId = location.LocationId,
                 PlayerId = playerId,
-                BattleId = room.Battle.BattleId,
+                BattleId = room.Battle?.BattleId ?? 0,
                 Longitude = location.Longitude,
                 Latitude = location.Latitude,
                 Accuracy = location.Accuracy,
@@ -97,6 +107,12 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
                 Time = location.Time
             };
 
+            IEnumerable<string> playerIds = player.IsDead
+                ? room.GetAllPlayerIdsWithoutSelf(player.PlayerId)
+                : room.GetTeamPlayerIdsWithoutSelf(player.TeamId, player.PlayerId);
+
+            hubContext.Clients.Users(playerIds).PlayerLocationCreated(locationToReturn);
+            
             return locationToReturn;
         }
 
@@ -104,6 +120,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
         {
             Location oldLocation = dbHelper.Location.FindById(id);
             PlayerLocation playerLocation = dbHelper.PlayerLocation.FindById(id);
+            Player player = dbHelper.Player.FindById(playerLocation.PlayerId);
+            Room room = dbHelper.Room.FindByIdIncludingPlayers(player.RoomId);
 
             authorizationHelper.CheckPlayerOwnsResource(user, playerLocation.PlayerId);
 
@@ -111,7 +129,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
             dbContext.Location.Update(oldLocation);
             dbContext.SaveChanges();
             
-            LocationDto locationToReturn = new LocationDto
+            LocationDto locationToReturn = new()
             {
                 LocationId = oldLocation.LocationId,
                 PlayerId = playerLocation.PlayerId,
@@ -123,6 +141,12 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
                 Time = oldLocation.Time
             };
 
+            IEnumerable<string> playerIds = player.IsDead
+                ? room.GetAllPlayerIdsWithoutSelf(player.PlayerId)
+                : room.GetTeamPlayerIdsWithoutSelf(player.TeamId, player.PlayerId);
+
+            hubContext.Clients.Users(playerIds).PlayerLocationUpdated(locationToReturn);
+            
             return locationToReturn;
         }
 
@@ -130,11 +154,19 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
         {
             Location location = dbHelper.Location.FindById(id);
             PlayerLocation playerLocation = dbHelper.PlayerLocation.FindById(id);
-
+            Player player = dbHelper.Player.FindById(playerLocation.PlayerId);
+            Room room = dbHelper.Room.FindByIdIncludingPlayers(player.RoomId);
+            
             authorizationHelper.CheckPlayerOwnsResource(user, playerLocation.PlayerId);
 
             dbContext.Location.Remove(location);
             dbContext.SaveChanges();
+            
+            IEnumerable<string> playerIds = player.IsDead
+                ? room.GetAllPlayerIdsWithoutSelf(player.PlayerId)
+                : room.GetTeamPlayerIdsWithoutSelf(player.TeamId, player.PlayerId);
+            
+            hubContext.Clients.Users(playerIds).PlayerLocationDeleted(id);
         }
     }
 }

@@ -2,18 +2,31 @@
 using AirsoftBattlefieldManagementSystemAPI.Enums;
 using AirsoftBattlefieldManagementSystemAPI.Exceptions;
 using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
+using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Player;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Room;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
+using AirsoftBattlefieldManagementSystemAPI.Models.Helpers;
+using AirsoftBattlefieldManagementSystemAPI.Realtime;
 using AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.ClaimsHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.JoinCodeService;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
 {
-    public class RoomService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IDbContextHelperService dbHelper, IPasswordHasher<Room> passwordHasher, IJoinCodeService joinCodeService, IAuthorizationHelperService authorizationHelperService, IClaimsHelperService claimsHelper) : IRoomService
+    public class RoomService(
+        IMapper mapper, 
+        IBattleManagementSystemDbContext dbContext, 
+        IDbContextHelperService dbHelper, 
+        IPasswordHasher<Room> passwordHasher, 
+        IJoinCodeService joinCodeService, 
+        IAuthorizationHelperService authorizationHelperService, 
+        IClaimsHelperService claimsHelper,
+        IHubContext<RoomNotificationHub, IRoomNotificationClient> hubContext
+        ) : IRoomService
     {
         public RoomWithRelatedEntitiesDto GetById(int id)
         {
@@ -80,19 +93,29 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
             dbContext.Room.Update(updatedRoom);
             dbContext.SaveChanges();
             
-            return mapper.Map<RoomDto>(updatedRoom);
+            RoomDto responseRoomDto = mapper.Map<RoomDto>(updatedRoom);            
+            
+            IEnumerable<string> playerIds = updatedRoom.GetAllPlayerIdsWithoutSelf(player.PlayerId);
+
+            hubContext.Clients.Users(playerIds).RoomUpdated(responseRoomDto);
+            
+            return responseRoomDto;
         }
 
         public void Delete(ClaimsPrincipal user)
         {
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
-            Player player = dbHelper.Player.FindById(playerId);
-            Room room = dbHelper.Room.FindById(player.RoomId);
+            Player player = dbHelper.Player.FindByIdIncludingRoom(playerId);
+            Room room = dbHelper.Room.FindByIdIncludingPlayers(player.RoomId);
 
             authorizationHelperService.CheckPlayerOwnsResource(user, room.AdminPlayerId);
 
             dbContext.Room.Remove(room);
             dbContext.SaveChanges();
+            
+            IEnumerable<string> playerIds = room.GetAllPlayerIdsWithoutSelf(player.PlayerId);
+
+            hubContext.Clients.Users(playerIds).RoomDeleted();
         }
 
         public RoomWithRelatedEntitiesDto Join(LoginRoomDto roomDto, ClaimsPrincipal user)
@@ -112,8 +135,15 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
                 player.RoomId = room.RoomId;
                 dbContext.Player.Update(player);
                 dbContext.SaveChanges();
+                
+                RoomWithRelatedEntitiesDto responseRoomDto = mapper.Map<RoomWithRelatedEntitiesDto>(room);            
+            
+                IEnumerable<string> playerIds = room.GetAllPlayerIdsWithoutSelf(player.PlayerId);
 
-                return mapper.Map<RoomWithRelatedEntitiesDto>(room);
+                PlayerDto playerWhoJoined = mapper.Map<PlayerDto>(player);
+                hubContext.Clients.Users(playerIds).RoomJoined(playerWhoJoined);
+
+                return responseRoomDto;
             }
             
             throw new WrongPasswordException("Wrong room password");
@@ -124,15 +154,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
 
             Player player = dbHelper.Player.FindById(playerId);
-
-            if(player.RoomId is not null && player.RoomId != 0)
-            {
-                Room room = dbHelper.Room.FindById(player.RoomId);
+            
+            if(player.RoomId is null || player.RoomId == 0) return;
+            
+            Room room = dbHelper.Room.FindByIdIncludingPlayers(player.RoomId);
+            
+            if(room.AdminPlayerId == playerId) room.AdminPlayerId = null;
                 
-                if(room.AdminPlayerId == playerId) room.AdminPlayerId = null;
-                
-                dbContext.Room.Update(room);
-            }
+            dbContext.Room.Update(room);
             
             if(player.TeamId is not null && player.TeamId != 0)
             {
@@ -151,6 +180,10 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
             dbContext.Player.Update(player);
             
             dbContext.SaveChanges();
+            
+            IEnumerable<string> playerIds = room.GetAllPlayerIdsWithoutSelf(player.PlayerId);
+
+            hubContext.Clients.Users(playerIds).PlayerLeftRoom(playerId);
         }
         
         private void ClearPlayerMapPings(int playerId)

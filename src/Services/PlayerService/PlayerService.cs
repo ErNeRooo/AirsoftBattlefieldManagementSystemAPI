@@ -6,13 +6,24 @@ using Microsoft.IdentityModel.Tokens;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Player;
 using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
+using AirsoftBattlefieldManagementSystemAPI.Models.Helpers;
+using AirsoftBattlefieldManagementSystemAPI.Realtime;
 using AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.ClaimsHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService;
+using Microsoft.AspNetCore.SignalR;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
 {
-    public class PlayerService(IBattleManagementSystemDbContext dbContext, IMapper mapper, IAuthenticationSettings authenticationSettings, IAuthorizationHelperService authorizationHelper, IDbContextHelperService dbHelper, IClaimsHelperService claimsHelper) : IPlayerService
+    public class PlayerService(
+        IBattleManagementSystemDbContext dbContext, 
+        IMapper mapper, 
+        IAuthenticationSettings authenticationSettings, 
+        IAuthorizationHelperService authorizationHelper, 
+        IDbContextHelperService dbHelper, 
+        IClaimsHelperService claimsHelper,
+        IHubContext<RoomNotificationHub, IRoomNotificationClient> hubContext
+        ) : IPlayerService
     {
         public PlayerDto GetMe(ClaimsPrincipal user)
         {
@@ -51,6 +62,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
         public PlayerDto KickFromRoom(int playerId, ClaimsPrincipal user)
         {
             Player targetPlayer = dbHelper.Player.FindByIdIncludingAllRelatedEntities(playerId);
+            Room room = dbHelper.Room.FindByIdIncludingPlayers(targetPlayer.RoomId);
             
             authorizationHelper.CheckIfPlayerIsNotSelf(user, targetPlayer.PlayerId);
             authorizationHelper.CheckPlayerOwnsResource(user, targetPlayer.Room.AdminPlayerId);
@@ -69,16 +81,23 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
             dbContext.Player.Update(targetPlayer);
             dbContext.SaveChanges();
             
-            return mapper.Map<PlayerDto>(targetPlayer);
+            PlayerDto responsePlayerDto = mapper.Map<PlayerDto>(targetPlayer);            
+            
+            IEnumerable<string> playerIds = room.GetAllPlayerIdsWithoutSelf(targetPlayer.PlayerId);
+
+            hubContext.Clients.Users(playerIds).PlayerLeftRoom(playerId);
+            
+            return responsePlayerDto;
         }
         
         public PlayerDto KickFromTeam(int playerId, ClaimsPrincipal user)
         {
             Player targetPlayer = dbHelper.Player.FindByIdIncludingAllRelatedEntities(playerId);
+            Room room = dbHelper.Room.FindByIdIncludingPlayers(targetPlayer.RoomId);
             
             authorizationHelper.CheckIfPlayerIsNotSelf(user, targetPlayer.PlayerId);
             authorizationHelper.CheckPlayerIsInTheSameRoomAsResource(user, targetPlayer.RoomId); 
-            authorizationHelper.CheckIfPlayerIsAdminOrOfficerOfTargetPlayer(user, targetPlayer.Team.OfficerPlayerId ?? 0, targetPlayer.Room.AdminPlayerId ?? 0);
+            authorizationHelper.CheckIfPlayerIsAdminOrOfficerOfTargetPlayer(user, targetPlayer.Team.OfficerPlayerId ?? 0, room.AdminPlayerId ?? 0);
             
             if(targetPlayer.PlayerId == targetPlayer.Team.OfficerPlayerId)
             {
@@ -91,7 +110,13 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
             
             dbContext.SaveChanges();
             
-            return mapper.Map<PlayerDto>(targetPlayer);
+            PlayerDto responsePlayerDto = mapper.Map<PlayerDto>(targetPlayer);            
+            
+            IEnumerable<string> playerIds = room.GetAllPlayerIdsWithoutSelf(targetPlayer.PlayerId);
+
+            hubContext.Clients.Users(playerIds).PlayerLeftTeam(playerId);
+            
+            return responsePlayerDto;
         }
 
         private void ClearPlayerMapPings(int playerId)
@@ -129,7 +154,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
             authorizationHelper.CheckPlayerOwnsResource(user, playerId);
             
-            Player playerToUpdate = dbHelper.Player.FindById(playerId);
+            Player playerToUpdate = dbHelper.Player.FindByIdIncludingRoom(playerId);
+            Room room = dbHelper.Room.FindByIdIncludingPlayers(playerToUpdate.RoomId);
             
             if(playerDto.TeamId is not null)
             {
@@ -154,7 +180,13 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
             dbContext.Player.Update(playerToUpdate);
             dbContext.SaveChanges();
             
-            return mapper.Map<PlayerDto>(playerToUpdate);
+            PlayerDto responsePlayerDto = mapper.Map<PlayerDto>(playerToUpdate);            
+            
+            IEnumerable<string> playerIds = room.GetAllPlayerIdsWithoutSelf(playerToUpdate.PlayerId);
+
+            hubContext.Clients.Users(playerIds).PlayerUpdated(responsePlayerDto);
+            
+            return responsePlayerDto;
         }
 
         private Team? GetPreviousTeam(Player player) => dbContext.Team.FirstOrDefault(team => team.TeamId == player.TeamId);
@@ -163,18 +195,23 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
         {
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
             Player player = dbHelper.Player.FindById(playerId);
+            Room room = dbHelper.Room.FindByIdIncludingPlayers(player.RoomId);
 
             authorizationHelper.CheckPlayerOwnsResource(user, playerId);
             
             dbContext.Player.Remove(player);
             dbContext.SaveChanges();
+            
+            IEnumerable<string> playerIds = room.GetAllPlayerIdsWithoutSelf(player.PlayerId);
+
+            hubContext.Clients.Users(playerIds).PlayerDeleted(player.PlayerId);
         }
 
         public string GenerateJwt(int playerId)
         {
             List<Claim> claims = new List<Claim>
             {
-                new Claim("playerId", $"{playerId}")
+                new("playerId", $"{playerId}")
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey));

@@ -3,14 +3,22 @@ using AirsoftBattlefieldManagementSystemAPI.Exceptions;
 using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Order;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
+using AirsoftBattlefieldManagementSystemAPI.Models.Helpers;
+using AirsoftBattlefieldManagementSystemAPI.Realtime;
 using AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperService;
-using AirsoftBattlefieldManagementSystemAPI.Services.ClaimsHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService;
 using AutoMapper;
+using Microsoft.AspNetCore.SignalR;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.OrderService
 {
-    public class OrderService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IAuthorizationHelperService authorizationHelper, IDbContextHelperService dbHelper, IClaimsHelperService claimsHelper) : IOrderService
+    public class OrderService(
+        IMapper mapper, 
+        IBattleManagementSystemDbContext dbContext, 
+        IAuthorizationHelperService authorizationHelper, 
+        IDbContextHelperService dbHelper, 
+        IHubContext<RoomNotificationHub, IRoomNotificationClient> hubContext
+        ) : IOrderService
     {
         public OrderDto GetById(int id, ClaimsPrincipal user)
         {
@@ -35,7 +43,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.OrderService
             
             authorizationHelper.CheckPlayerOwnsResource(user, team.OfficerPlayerId);
             
-            Room room = dbHelper.Room.FindByIdIncludingBattle(targetPlayer.RoomId);
+            Room room = dbHelper.Room.FindByIdIncludingRelated(targetPlayer.RoomId);
 
             if (room.Battle is null) throw new ForbidException("Can't create order because there is no battle.");
             
@@ -52,6 +60,12 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.OrderService
             dbContext.Order.Add(order);
 
             dbContext.SaveChanges();
+            
+            OrderDto responseOrderDto = mapper.Map<OrderDto>(order);            
+            
+            IEnumerable<string> playerIds = room.GetTeamPlayerIdsWithoutSelf(team.TeamId, targetPlayer.PlayerId);
+
+            hubContext.Clients.Users(playerIds).OrderCreated(responseOrderDto);
 
             return mapper.Map<OrderDto>(order);
         }
@@ -61,11 +75,16 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.OrderService
             Order order = dbHelper.Order.FindById(id);
             Player player = dbHelper.Player.FindById(order.PlayerId);
             Team team = dbHelper.Team.FindById(player.TeamId);
-
+            Room room = dbHelper.Room.FindByIdIncludingPlayers(player.RoomId);
+            
             authorizationHelper.CheckPlayerOwnsResource(user, team.OfficerPlayerId);
             
             dbContext.Order.Remove(order);
             dbContext.SaveChanges();
+            
+            IEnumerable<string> playerIds = room.GetTeamPlayerIdsWithoutSelf(team.TeamId, player.PlayerId);
+
+            hubContext.Clients.Users(playerIds).OrderDeleted(id);
         }
     }
 }

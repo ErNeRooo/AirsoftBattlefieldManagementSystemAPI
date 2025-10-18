@@ -2,13 +2,23 @@
 using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Battle;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
+using AirsoftBattlefieldManagementSystemAPI.Models.Helpers;
+using AirsoftBattlefieldManagementSystemAPI.Realtime;
 using AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperService;
+using AirsoftBattlefieldManagementSystemAPI.Services.ClaimsHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService;
 using AutoMapper;
+using Microsoft.AspNetCore.SignalR;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Services.BattleService
 {
-    public class BattleService(IMapper mapper, IBattleManagementSystemDbContext dbContext, IAuthorizationHelperService authorizationHelper, IDbContextHelperService dbHelper) : IBattleService
+    public class BattleService(
+        IMapper mapper, 
+        IBattleManagementSystemDbContext dbContext, 
+        IAuthorizationHelperService authorizationHelper, 
+        IDbContextHelperService dbHelper,
+        IClaimsHelperService claimsHelper,
+        IHubContext<RoomNotificationHub, IRoomNotificationClient> hubContext) : IBattleService
     {
         public BattleDto GetById(int id, ClaimsPrincipal user)
         {
@@ -21,40 +31,61 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.BattleService
             return battleDto;
         }
 
-        public BattleDto Create(PostBattleDto battleDto, ClaimsPrincipal user)
+        public BattleDto Create(PostBattleDto postBattleDto, ClaimsPrincipal user)
         {
-            Room room = dbHelper.Room.FindById(battleDto.RoomId);
+            int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
+            Room room = dbHelper.Room.FindByIdIncludingPlayers(postBattleDto.RoomId);
             
             authorizationHelper.CheckPlayerOwnsResource(user, room.AdminPlayerId);
             
-            Battle battle = mapper.Map<Battle>(battleDto);
+            Battle battle = mapper.Map<Battle>(postBattleDto);
             dbContext.Battle.Add(battle);
             dbContext.SaveChanges();
+
+            BattleDto responseBattleDto = mapper.Map<BattleDto>(battle);            
             
-            return mapper.Map<BattleDto>(battle);
+            IEnumerable<string> playerIds = room.GetAllPlayerIdsWithoutSelf(playerId);
+
+            hubContext.Clients.Users(playerIds).BattleCreated(responseBattleDto);
+            
+            return responseBattleDto;
         }
 
         public BattleDto Update(int id, PutBattleDto battleDto, ClaimsPrincipal user)
         {
-            Battle previousBattle = dbHelper.Battle.FindByIdIncludingRoom(id);
+            int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
+            Battle battle = dbHelper.Battle.FindByIdIncludingRoom(id);
+            Room room = dbHelper.Room.FindByIdIncludingPlayers(battle.RoomId);
             
-            authorizationHelper.CheckPlayerOwnsResource(user, previousBattle.Room.AdminPlayerId);
+            authorizationHelper.CheckPlayerOwnsResource(user, battle.Room.AdminPlayerId);
             
-            mapper.Map(battleDto, previousBattle);
-            dbContext.Battle.Update(previousBattle);
+            mapper.Map(battleDto, battle);
+            dbContext.Battle.Update(battle);
             dbContext.SaveChanges();
             
-            return mapper.Map<BattleDto>(previousBattle);
+            BattleDto responseBattleDto = mapper.Map<BattleDto>(battle);            
+            
+            IEnumerable<string> playerIds = room.GetAllPlayerIdsWithoutSelf(playerId);
+
+            hubContext.Clients.Users(playerIds).BattleUpdated(responseBattleDto);
+            
+            return responseBattleDto;
         }
 
         public void Delete(int id, ClaimsPrincipal user)
         {
+            int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
             Battle battle = dbHelper.Battle.FindByIdIncludingRoom(id);
+            Room room = dbHelper.Room.FindByIdIncludingPlayers(battle.RoomId);
             
             authorizationHelper.CheckPlayerOwnsResource(user, battle.Room.AdminPlayerId);
             
             dbContext.Battle.Remove(battle);
             dbContext.SaveChanges();
+            
+            IEnumerable<string> playerIds = room.GetAllPlayerIdsWithoutSelf(playerId);
+
+            hubContext.Clients.Users(playerIds).BattleDeleted(id);
         }
     }
 }
