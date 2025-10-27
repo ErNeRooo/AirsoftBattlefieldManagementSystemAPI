@@ -5,4 +5,5 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService.
 public interface IPlayerLocationHelper
 {
     public PlayerLocation FindById(int? id);
+    public List<PlayerLocation> FindAllOfPlayerIncludingLocation(Player player);
 }

@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using AirsoftBattlefieldManagementSystemAPI.Exceptions;
 using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Death;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
@@ -57,15 +58,20 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.DeathService
             Player player = dbHelper.Player.FindById(playerId);
             Room room = dbHelper.Room.FindByIdIncludingRelated(player.RoomId);
 
+            if (room.Battle is null) throw new ForbidException("Can't create order because there is no battle.");
+            
             Location location = mapper.Map<Location>(deathDto);
             dbContext.Location.Add(location);
             
             dbContext.SaveChanges();
             
-            Death death = new();
-            death.LocationId = location.LocationId;
-            death.PlayerId = playerId;
-            death.BattleId = room.Battle?.BattleId ?? 0;
+            Death death = new()
+            {
+                LocationId = location.LocationId,
+                PlayerId = playerId,
+                BattleId = room.Battle.BattleId
+            };
+
             dbContext.Death.Add(death);
 
             dbContext.SaveChanges();

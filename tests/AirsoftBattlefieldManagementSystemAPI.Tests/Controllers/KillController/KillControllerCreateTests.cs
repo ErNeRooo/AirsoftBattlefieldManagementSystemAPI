@@ -110,4 +110,23 @@ public class KillControllerCreateTests
         result.Bearing.ShouldBe(testData.Bearing);
         result.Time.ShouldBe(testData.Time);
     }
+        
+    [Theory]
+    [InlineData(13)]
+    public async void Create_NoBattle_ReturnsForbidden(int senderPlayerId)
+    {
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
+        _client = factory.CreateClient();
+
+        var model = new PostKillDto()
+        {
+            Time = DateTimeOffset.Now,
+        };
+        
+        var response = await _client.PostAsync($"{_endpoint}", model.ToJsonHttpContent());
+        var result = await response.Content.DeserializeFromHttpContentAsync<KillDto>();
+        
+        response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+        result.ShouldBeNull();
+    }
 }

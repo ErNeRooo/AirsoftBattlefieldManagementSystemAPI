@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using System.Security.Claims;
+using AirsoftBattlefieldManagementSystemAPI.Exceptions;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Location;
 using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
@@ -54,23 +55,18 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
 
             authorizationHelper.CheckTargetPlayerIsInTheSameTeam(user, targetPlayerId, player.TeamId ?? 0);
             
-            Room room = dbHelper.Room.FindByIdIncludingBattle(targetPlayer.RoomId);
+            List<PlayerLocation> playerLocations = dbHelper.PlayerLocation.FindAllOfPlayerIncludingLocation(targetPlayer);
             
-            List<Location> locations = dbHelper.Location.FindAllOfPlayer(targetPlayer);
-
-            List<LocationDto> locationDtos = locations.Select(l =>
+            List<LocationDto> locationDtos = playerLocations.Select(pl => new LocationDto
             {
-                return new LocationDto
-                {
-                    PlayerId = targetPlayerId,
-                    LocationId = l.LocationId,
-                    BattleId = room.Battle?.BattleId ?? 0,
-                    Longitude = l.Longitude,
-                    Latitude = l.Latitude,
-                    Accuracy = l.Accuracy,
-                    Bearing = l.Bearing,
-                    Time = l.Time
-                };
+                PlayerId = pl.PlayerId,
+                LocationId = pl.LocationId,
+                BattleId = pl.BattleId,
+                Longitude = pl.Location.Longitude,
+                Latitude = pl.Location.Latitude,
+                Accuracy = pl.Location.Accuracy,
+                Bearing = pl.Location.Bearing,
+                Time = pl.Location.Time
             }).ToList();
 
             return locationDtos;
@@ -82,6 +78,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
             Player player = dbHelper.Player.FindById(playerId);
             Room room = dbHelper.Room.FindByIdIncludingRelated(player.RoomId);
 
+            if (room.Battle is null) throw new ForbidException("Can't create order because there is no battle.");
+            
             Location location = mapper.Map<Location>(locationDto);
             dbContext.Location.Add(location);
 
@@ -99,7 +97,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
             {
                 LocationId = location.LocationId,
                 PlayerId = playerId,
-                BattleId = room.Battle?.BattleId ?? 0,
+                BattleId = room.Battle.BattleId,
                 Longitude = location.Longitude,
                 Latitude = location.Latitude,
                 Accuracy = location.Accuracy,
