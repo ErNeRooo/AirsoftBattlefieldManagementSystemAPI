@@ -121,12 +121,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
         public RoomWithRelatedEntitiesDto Join(LoginRoomDto roomDto, ClaimsPrincipal user)
         {
             string joinCode = roomDto.JoinCode;
-            string password = roomDto.Password is null ? "" : roomDto.Password;
+            string password = roomDto.Password ?? "";
 
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
 
             Room room = dbHelper.Room.FindByJoinCodeIncludingRelated(joinCode);
             Player player = dbHelper.Player.FindById(playerId);
+            
+            if(player.RoomId != 0 && player.RoomId is not null) throw new PlayerAlreadyInsideRoomException("You are already inside a room");
 
             var verificationResult = passwordHasher.VerifyHashedPassword(room, room.PasswordHash, password);
 
