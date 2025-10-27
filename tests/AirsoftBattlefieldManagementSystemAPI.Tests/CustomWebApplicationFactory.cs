@@ -166,6 +166,14 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     RoomId = 4,
                     TeamId = 7
                 });
+                context.Player.Add(new Player
+                {
+                    PlayerId = 14,
+                    Name = "aaaaa",
+                    IsDead = false,
+                    RoomId = 5,
+                    TeamId = null
+                });
                 
                 context.Room.Add(new Room
                 {
@@ -197,6 +205,14 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
                     JoinCode = "yuiyui",
                     MaxPlayers = 22,
                     AdminPlayerId = null,
+                    PasswordHash = ""
+                });
+                context.Room.Add(new Room
+                {
+                    RoomId = 5,
+                    JoinCode = "awawaw",
+                    MaxPlayers = 20,
+                    AdminPlayerId = 14,
                     PasswordHash = ""
                 });
 

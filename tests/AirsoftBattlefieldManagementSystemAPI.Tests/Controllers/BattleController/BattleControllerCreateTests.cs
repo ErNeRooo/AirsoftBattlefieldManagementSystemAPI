@@ -11,8 +11,7 @@ public class BattleControllerCreateTests
     private string _endpoint = "battle";
         
     [Theory]
-    [InlineData(1, 1, "Monte Casino")]
-    [InlineData(3, 2, "Omaha Beach")]
+    [InlineData(14, 5, "Monte Casino")]
     public async void Create_ValidModel_ReturnsCreatedAndBattleDto(int senderPlayerId, int roomId, string name)
     {
         var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
@@ -55,5 +54,24 @@ public class BattleControllerCreateTests
         var response = await _client.PostAsync($"{_endpoint}", model.ToJsonHttpContent());
 
         response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+    }
+    
+    [Theory]
+    [InlineData(1, 1)]
+    [InlineData(3, 2)]
+    public async void Create_RoomAlreadyHasBattle_ReturnsBadRequest(int senderPlayerId, int roomId)
+    {
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
+        _client = factory.CreateClient();
+
+        var model = new PostBattleDto
+        {
+            Name = "Nice Battle",
+            RoomId = roomId
+        };
+        
+        var response = await _client.PostAsync($"{_endpoint}", model.ToJsonHttpContent());
+
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
 }

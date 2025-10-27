@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using AirsoftBattlefieldManagementSystemAPI.Exceptions;
 using AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbContext;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Battle;
 using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
@@ -34,9 +35,10 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.BattleService
         public BattleDto Create(PostBattleDto postBattleDto, ClaimsPrincipal user)
         {
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
-            Room room = dbHelper.Room.FindByIdIncludingPlayers(postBattleDto.RoomId);
+            Room room = dbHelper.Room.FindByIdIncludingRelated(postBattleDto.RoomId);
             
             authorizationHelper.CheckPlayerOwnsResource(user, room.AdminPlayerId);
+            if(room.Battle is not null) throw new BadRequestException("There is already a battle in this room.");
             
             Battle battle = mapper.Map<Battle>(postBattleDto);
             dbContext.Battle.Add(battle);

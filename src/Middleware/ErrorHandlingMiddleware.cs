@@ -21,6 +21,11 @@ namespace AirsoftBattlefieldManagementSystemAPI.Middleware
                 context.Response.StatusCode = 400;
                 await context.Response.WriteAsync(e.Message);
             }
+            catch (BadRequestException e)
+            {
+                context.Response.StatusCode = 400;
+                await context.Response.WriteAsync(e.Message);
+            }
             catch (ForbidException e)
             {
                 context.Response.StatusCode = 403;
