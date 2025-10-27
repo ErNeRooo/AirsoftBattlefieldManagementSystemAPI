@@ -60,11 +60,10 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
             }
 
             Room room = mapper.Map<Room>(roomDto);
-            if (room.PasswordHash is null) room.PasswordHash = "";
 
             room.AdminPlayerId = playerId;
 
-            var hash = passwordHasher.HashPassword(room, room.PasswordHash);
+            var hash = passwordHasher.HashPassword(room, roomDto.Password ?? "");
             room.PasswordHash = hash;
 
             dbContext.Room.Add(room);
@@ -87,8 +86,11 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
             
             Room updatedRoom = mapper.Map(roomDto, previousRoom);
 
-            var hash = passwordHasher.HashPassword(updatedRoom, updatedRoom.PasswordHash);
-            updatedRoom.PasswordHash = hash;
+            if (!string.IsNullOrEmpty(roomDto.Password))
+            {
+                var hash = passwordHasher.HashPassword(updatedRoom, updatedRoom.PasswordHash);
+                updatedRoom.PasswordHash = hash;
+            }
             
             dbContext.Room.Update(updatedRoom);
             dbContext.SaveChanges();
