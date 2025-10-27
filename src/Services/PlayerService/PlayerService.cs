@@ -67,7 +67,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
             authorizationHelper.CheckIfPlayerIsNotSelf(user, targetPlayer.PlayerId);
             authorizationHelper.CheckPlayerOwnsResource(user, targetPlayer.Room.AdminPlayerId);
 
-            if(targetPlayer.PlayerId == targetPlayer.Team.OfficerPlayerId)
+            if(targetPlayer.PlayerId == targetPlayer.Team?.OfficerPlayerId)
             {
                 UnassignTeamOfficer(targetPlayer.Team);
             }

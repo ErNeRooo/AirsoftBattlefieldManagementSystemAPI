@@ -46,8 +46,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.TeamService
             Room room = dbHelper.Room.FindByIdIncludingPlayers(teamDto.RoomId);
             Team team = mapper.Map<Team>(teamDto);
             
-            team.OfficerPlayerId = claimsHelper.GetIntegerClaimValue("playerId", user);
-            
             dbContext.Team.Add(team);
             dbContext.SaveChanges();
             

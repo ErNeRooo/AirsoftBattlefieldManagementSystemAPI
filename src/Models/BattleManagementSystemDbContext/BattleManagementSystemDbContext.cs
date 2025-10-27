@@ -242,6 +242,13 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.BattleManagementSystemDbC
                 .WithMany(room => room.Teams)
                 .HasForeignKey(team => team.RoomId)
                 .OnDelete(DeleteBehavior.SetNull);
+            
+            _modelBuilder
+                .Entity<Team>()
+                .HasOne(team => team.SpawnZone)
+                .WithOne(zone => zone.Team)
+                .HasForeignKey<Team>(team => team.SpawnZoneId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
         
         private void BuildRoom()

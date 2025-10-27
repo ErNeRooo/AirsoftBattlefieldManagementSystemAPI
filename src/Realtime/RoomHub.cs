@@ -8,6 +8,7 @@ using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Player;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Room;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Team;
 using AirsoftBattlefieldManagementSystemAPI.Models.Dtos.Zone;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace AirsoftBattlefieldManagementSystemAPI.Realtime;
@@ -26,9 +27,9 @@ public interface IRoomNotificationClient
     Task KillUpdated(KillDto killDto);
     Task KillDeleted(int killId);
     
-    Task PlayerLocationCreated(LocationDto locationDto);
-    Task PlayerLocationUpdated(LocationDto locationDto);
-    Task PlayerLocationDeleted(int locationId);
+    Task LocationCreated(LocationDto locationDto);
+    Task LocationUpdated(LocationDto locationDto);
+    Task LocationDeleted(int locationId);
     
     Task MapPingCreated(MapPingDto mapPingDto);
     Task MapPingUpdated(MapPingDto mapPingDto);
@@ -56,6 +57,7 @@ public interface IRoomNotificationClient
     Task ZoneDeleted(int teamId);
 }
 
+[Authorize]
 public sealed class RoomNotificationHub : Hub<IRoomNotificationClient>
 {
     

@@ -345,7 +345,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Migrations
 
                     b.HasIndex("RoomId");
 
-                    b.HasIndex("SpawnZoneId");
+                    b.HasIndex("SpawnZoneId")
+                        .IsUnique()
+                        .HasFilter("[SpawnZoneId] IS NOT NULL");
 
                     b.ToTable("Team");
                 });
@@ -358,7 +360,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ZoneId"));
 
-                    b.Property<int>("BattleId")
+                    b.Property<int?>("BattleId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -595,8 +597,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Zone", "SpawnZone")
-                        .WithMany()
-                        .HasForeignKey("SpawnZoneId");
+                        .WithOne("Team")
+                        .HasForeignKey("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Team", "SpawnZoneId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("OfficerPlayer");
 
@@ -610,8 +613,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Migrations
                     b.HasOne("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Battle", "Battle")
                         .WithMany("Zones")
                         .HasForeignKey("BattleId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Battle");
                 });
@@ -674,6 +676,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Migrations
 
             modelBuilder.Entity("AirsoftBattlefieldManagementSystemAPI.Models.Entities.Zone", b =>
                 {
+                    b.Navigation("Team");
+
                     b.Navigation("Vertices");
                 });
 #pragma warning restore 612, 618

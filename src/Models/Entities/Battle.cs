@@ -12,5 +12,5 @@ public class Battle
     public virtual List<Death> Deaths { get; set; }
     public virtual List<Order> Orders { get; set; }
     public virtual List<MapPing> MapPings { get; set; }
-    public virtual List<Zone> Zones { get; set; }
+    public virtual List<Zone>? Zones { get; set; }
 }

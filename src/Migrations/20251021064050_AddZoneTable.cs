@@ -58,7 +58,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BattleId = table.Column<int>(type: "int", nullable: false)
+                    BattleId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -95,7 +95,9 @@ namespace AirsoftBattlefieldManagementSystemAPI.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Team_SpawnZoneId",
                 table: "Team",
-                column: "SpawnZoneId");
+                column: "SpawnZoneId",
+                unique: true,
+                filter: "[SpawnZoneId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MapPing_BattleId",
@@ -127,7 +129,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Migrations
                 table: "Team",
                 column: "SpawnZoneId",
                 principalTable: "Zone",
-                principalColumn: "ZoneId");
+                principalColumn: "ZoneId",
+                onDelete: ReferentialAction.SetNull);
         }
 
         /// <inheritdoc />

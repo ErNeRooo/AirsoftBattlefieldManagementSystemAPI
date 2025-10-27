@@ -43,6 +43,7 @@ using AirsoftBattlefieldManagementSystemAPI.Services.ZoneService;
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -60,6 +61,18 @@ namespace AirsoftBattlefieldManagementSystemAPI
         {   
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("localReactClient", policyBuilder =>
+                {
+                    policyBuilder
+                        .WithOrigins("http://localhost:5173")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
+            });
+            
             builder.Logging.ClearProviders();
             builder.Host.UseNLog();
 
@@ -68,22 +81,41 @@ namespace AirsoftBattlefieldManagementSystemAPI
             builder.Configuration.GetSection("Authentication").Bind(authenticationSettings);
 
             builder.Services.AddSingleton<IAuthenticationSettings>(authenticationSettings);
-            builder.Services.AddAuthentication(option =>
-            {
-                option.DefaultAuthenticateScheme = "Bearer";
-                option.DefaultScheme = "Bearer";
-                option.DefaultChallengeScheme = "Bearer";
-            }).AddJwtBearer(cfg =>
-            {
-                cfg.RequireHttpsMetadata = false;
-                cfg.SaveToken = true;
-                cfg.TokenValidationParameters = new TokenValidationParameters
+            builder.Services
+                .AddAuthentication(options =>
                 {
-                    ValidIssuer = authenticationSettings.JwtIssuer,
-                    ValidAudience = authenticationSettings.JwtIssuer,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey))
-                };
-            });
+                    options.DefaultAuthenticateScheme = "Bearer";
+                    options.DefaultScheme = "Bearer";
+                    options.DefaultChallengeScheme = "Bearer";
+                })
+                .AddJwtBearer(options =>
+                {
+                    options.RequireHttpsMetadata = false;
+                    options.SaveToken = true;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = authenticationSettings.JwtIssuer,
+                        ValidAudience = authenticationSettings.JwtIssuer,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey))
+                    };
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+
+                            // If the request is for our hub
+                            var path = context.HttpContext.Request.Path;
+                            if (!string.IsNullOrEmpty(accessToken) &&
+                                path.StartsWithSegments("/roomHub"))
+                            {
+                                context.Token = accessToken; // Use token from query
+                            }
+
+                            return Task.CompletedTask;
+                        }
+                    };
+                });
 
             builder.Services.AddAuthorization(options =>
             {
@@ -190,6 +222,8 @@ namespace AirsoftBattlefieldManagementSystemAPI
             var app = builder.Build();
 
             app.UseMiddleware<ErrorHandlingMiddleware>();
+
+            app.UseCors("localReactClient");
 
             app.UseAuthentication();
 

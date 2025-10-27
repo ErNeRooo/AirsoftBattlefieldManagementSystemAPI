@@ -10,7 +10,7 @@ public class Team
         
     
     public virtual Room Room { get; set; }
-    public virtual Player OfficerPlayer { get; set; }
+    public virtual Player? OfficerPlayer { get; set; }
     public virtual Zone SpawnZone { get; set; }
     public virtual List<Player> Players { get; set; }
 }

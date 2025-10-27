@@ -111,7 +111,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
                 ? room.GetAllPlayerIdsWithoutSelf(player.PlayerId)
                 : room.GetTeamPlayerIdsWithoutSelf(player.TeamId, player.PlayerId);
 
-            hubContext.Clients.Users(playerIds).PlayerLocationCreated(locationToReturn);
+            hubContext.Clients.Users(playerIds).LocationCreated(locationToReturn);
             
             return locationToReturn;
         }
@@ -145,7 +145,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
                 ? room.GetAllPlayerIdsWithoutSelf(player.PlayerId)
                 : room.GetTeamPlayerIdsWithoutSelf(player.TeamId, player.PlayerId);
 
-            hubContext.Clients.Users(playerIds).PlayerLocationUpdated(locationToReturn);
+            hubContext.Clients.Users(playerIds).LocationUpdated(locationToReturn);
             
             return locationToReturn;
         }
@@ -166,7 +166,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.LocationService
                 ? room.GetAllPlayerIdsWithoutSelf(player.PlayerId)
                 : room.GetTeamPlayerIdsWithoutSelf(player.TeamId, player.PlayerId);
             
-            hubContext.Clients.Users(playerIds).PlayerLocationDeleted(id);
+            hubContext.Clients.Users(playerIds).LocationDeleted(id);
         }
     }
 }
