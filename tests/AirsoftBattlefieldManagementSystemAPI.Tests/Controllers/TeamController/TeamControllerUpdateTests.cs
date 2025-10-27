@@ -39,6 +39,7 @@ public class TeamControllerUpdateTests
     [Theory]
     [InlineData(1, 1, "White", null)]
     [InlineData(1, 1, null, null)]
+    [InlineData(1, 1, "", null)]
     [InlineData(3, 3, null, 4)]
     [InlineData(3, 3, null, null)]
     public async void Update_NotAllFieldsSpecified_ReturnsOkAndTeamDto(int senderPlayerId, int teamId, string? name, int? officerPlayerId)
@@ -61,9 +62,10 @@ public class TeamControllerUpdateTests
         var result = await response.Content.DeserializeFromHttpContentAsync<TeamDto>();
         
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        resultFromGet.ShouldNotBeNull();
         result.ShouldNotBeNull();
         result.TeamId.ShouldBe(teamId);
-        result.Name.ShouldBe(name ?? resultFromGet.Name);
+        result.Name.ShouldBe(string.IsNullOrEmpty(name) ? resultFromGet.Name : name);
         result.OfficerPlayerId.ShouldBe(officerPlayerId ?? resultFromGet.OfficerPlayerId);
     }
     

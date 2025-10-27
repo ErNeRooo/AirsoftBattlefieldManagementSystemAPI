@@ -60,6 +60,8 @@ public class ZoneControllerUpdateTests
     [Theory]
     [InlineData(1, 1, null, ZoneTypes.NO_FIRE_ZONE)]
     [InlineData(3, 2, null, null)]
+    [InlineData(3, 2, null, "")]
+    [InlineData(3, 2, "", null)]
     [InlineData(3, 3, "adsw", null)]
     public async void Update_ValidButNotAllFieldsSpecified_ReturnsOkAndZoneDto(int senderPlayerId, int zoneId, string? name, string? type)
     {
@@ -88,8 +90,8 @@ public class ZoneControllerUpdateTests
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         resultZone.ShouldNotBeNull();
         resultZone.ZoneId.ShouldBe(zoneId);
-        resultZone.Name.ShouldBe(name ?? zoneBeforeUpdate.Name);
-        resultZone.Type.ShouldBe(type ?? zoneBeforeUpdate.Type);
+        resultZone.Name.ShouldBe(string.IsNullOrEmpty(name) ? zoneBeforeUpdate.Name : name);
+        resultZone.Type.ShouldBe(string.IsNullOrEmpty(type) ? zoneBeforeUpdate.Type : type);
         
         for (int i = 0; i < resultZone.Vertices.Count; i++)
         {

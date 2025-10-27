@@ -37,6 +37,7 @@ public class BattleControllerUpdateTests
     
     [Theory]
     [InlineData(1, 1, null, null)]
+    [InlineData(1, 1, null, "")]
     [InlineData(3, 2, null, null)]
     [InlineData(1, 1, true, null)]
     [InlineData(1, 1, null, "Epic Battle")]
@@ -62,9 +63,10 @@ public class BattleControllerUpdateTests
         var result = await response.Content.DeserializeFromHttpContentAsync<BattleDto>();
         
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        resultFromGet.ShouldNotBeNull();
         result.ShouldNotBeNull();
         result.BattleId.ShouldBe(battleId);
-        result.Name.ShouldBe(name ?? resultFromGet.Name);
+        result.Name.ShouldBe(string.IsNullOrEmpty(name) ? resultFromGet.Name : name);
         result.IsActive.ShouldBe(isActive ?? resultFromGet.IsActive);
         result.RoomId.ShouldBe(resultFromGet.RoomId);
     }

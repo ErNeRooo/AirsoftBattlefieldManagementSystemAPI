@@ -10,9 +10,11 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles
         public ZoneMappingProfile()
         {
             CreateMap<Zone, ZoneDto>();
+            
             CreateMap<PutZoneDto, Zone>()
-                .ForMember(dest => dest.Name, opt => opt.Condition(src => src.Name != null))
-                .ForMember(dest => dest.Type, opt => opt.Condition(src => src.Type != null));;
+                .ForMember(dest => dest.Name, opt => opt.Condition(src => !string.IsNullOrEmpty(src.Name)))
+                .ForMember(dest => dest.Type, opt => opt.Condition(src => !string.IsNullOrEmpty(src.Type)));
+            
             CreateMap<PostZoneDto, Zone>();
         }
     }
