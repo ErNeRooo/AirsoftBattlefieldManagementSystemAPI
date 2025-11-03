@@ -8,7 +8,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
         public PlayerDto GetMe(ClaimsPrincipal user);
         public PlayerDto GetById(int playerId, ClaimsPrincipal user);
         public PlayerDto Create(PostPlayerDto playerDto);
-        public PlayerDto Update(PutPlayerDto playerDto, ClaimsPrincipal user);
+        public PlayerDto Update(PutPlayerDto playerDto, int playerId, ClaimsPrincipal user);
         public PlayerDto KickFromRoom(int playerId, ClaimsPrincipal user);
         public PlayerDto KickFromTeam(int playerId, ClaimsPrincipal user);
         public void Delete(ClaimsPrincipal user);

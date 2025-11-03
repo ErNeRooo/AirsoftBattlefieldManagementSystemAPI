@@ -11,12 +11,12 @@ namespace AirsoftBattlefieldManagementSystemAPI.Tests.Controllers.PlayerControll
 public class PlayerControllerUpdateTests
 {
     private HttpClient _client;
-    private readonly string _endpoint = "player";
+    private readonly string _endpoint = "player/playerid/";
 
     [Theory]
     [InlineData(4, "Chisato", true, 3)]
     [InlineData(4, "Takina", false, 4)]
-    public async Task Update_ValidModel_ReturnsOkAndPlayerDto(int senderPlayerId, string name, bool isDead, int teamId)
+    public async Task Update_Self_ReturnsOkAndPlayerDto(int senderPlayerId, string name, bool isDead, int teamId)
     {
         // Arrange
         var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
@@ -30,7 +30,7 @@ public class PlayerControllerUpdateTests
         };
         
         // Act
-        var response = await _client.PutAsync($"{_endpoint}", model.ToJsonHttpContent());
+        var response = await _client.PutAsync($"{_endpoint}{senderPlayerId}", model.ToJsonHttpContent());
         PlayerDto? resultPlayer = await response.Content.DeserializeFromHttpContentAsync<PlayerDto>();
         
         // Assert
@@ -39,6 +39,59 @@ public class PlayerControllerUpdateTests
         resultPlayer.Name.ShouldBe(name);
         resultPlayer.TeamId.ShouldBe(teamId);
         resultPlayer.IsDead.ShouldBe(isDead);
+    }
+    
+    [Theory]
+    [InlineData(1,2,1)]
+    [InlineData(3,10,3)]
+    public async Task Update_TeamOfOtherPlayerAsAdmin_ReturnsOkAndPlayerDto(int senderPlayerId, int targetPlayerId, int teamId)
+    {
+        // Arrange
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
+        _client = factory.CreateClient();
+        
+        using var scope = factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<BattleManagementSystemDbContext>();
+        
+        var model = new PutPlayerDto
+        {
+            TeamId = teamId,
+        };
+        
+        Player? playerBeforeUpdate = dbContext.Player.FirstOrDefault(player => player.PlayerId == targetPlayerId);
+        
+        // Act
+        var response = await _client.PutAsync($"{_endpoint}{targetPlayerId}", model.ToJsonHttpContent());
+        PlayerDto? resultPlayer = await response.Content.DeserializeFromHttpContentAsync<PlayerDto>();
+        
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        resultPlayer.ShouldNotBeNull();
+        resultPlayer.Name.ShouldBe(playerBeforeUpdate!.Name);
+        resultPlayer.TeamId.ShouldBe(teamId);
+        resultPlayer.IsDead.ShouldBe(playerBeforeUpdate!.IsDead);
+    }
+    
+    [Theory]
+    [InlineData(2,1,2)]
+    [InlineData(9,4,5)]
+    [InlineData(10,4,5)]
+    public async Task Update_TeamOfOtherPlayerAsNotAdmin_ReturnsForbidden(int senderPlayerId, int targetPlayerId, int teamId)
+    {
+        // Arrange
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
+        _client = factory.CreateClient();
+        
+        var model = new PutPlayerDto
+        {
+            TeamId = teamId,
+        };
+        
+        // Act
+        var response = await _client.PutAsync($"{_endpoint}{targetPlayerId}", model.ToJsonHttpContent());
+        
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
     }
     
     [Theory]
@@ -60,7 +113,7 @@ public class PlayerControllerUpdateTests
         int? previousTeamId = dbContext.Player.First(player => player.PlayerId == senderPlayerId).TeamId;
         
         // Act
-        var response = await _client.PutAsync($"{_endpoint}", model.ToJsonHttpContent());
+        var response = await _client.PutAsync($"{_endpoint}{senderPlayerId}", model.ToJsonHttpContent());
         
         // Assert
         Team resultTeam = dbContext.Team.First(team => team.TeamId == previousTeamId);
@@ -88,7 +141,7 @@ public class PlayerControllerUpdateTests
         var model = new PutPlayerDto { TeamId = targetTeamId };
         
         // Act
-        var response = await _client.PutAsync($"{_endpoint}", model.ToJsonHttpContent());
+        var response = await _client.PutAsync($"{_endpoint}{senderPlayerId}", model.ToJsonHttpContent());
         
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -97,17 +150,18 @@ public class PlayerControllerUpdateTests
     }
     
     [Theory]
-    [InlineData(3)]
-    public async Task Update_GivenTeamIdOfForeignRoom_ReturnsForbidden(int teamId)
+    [InlineData(1, 3)]
+    [InlineData(4, 1)]
+    public async Task Update_GivenTeamIdOfForeignRoom_ReturnsForbidden(int senderPlayerId, int teamId)
     {
         // Arrange
-        var factory = new CustomWebApplicationFactory<Program>();
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
         _client = factory.CreateClient();
         
         var model = new PutPlayerDto { TeamId = teamId };
         
         // Act
-        var response = await _client.PutAsync($"{_endpoint}", model.ToJsonHttpContent());
+        var response = await _client.PutAsync($"{_endpoint}{senderPlayerId}", model.ToJsonHttpContent());
         
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
@@ -119,10 +173,10 @@ public class PlayerControllerUpdateTests
     [InlineData(1, null, null, 2)]
     [InlineData(1, null, true, null)]
     [InlineData(1, "", true, null)]
-    public async Task Update_GivenOnlySpecificField_ReturnsOkAndPlayerDto(int playerId, string? name, bool? isDead, int? teamId)
+    public async Task Update_GivenOnlySpecificField_ReturnsOkAndPlayerDto(int senderPlayerId, string? name, bool? isDead, int? teamId)
     {
         // Arrange
-        var factory = new CustomWebApplicationFactory<Program>();
+        var factory = new CustomWebApplicationFactory<Program>(senderPlayerId);
         _client = factory.CreateClient();
         
         var model = new PutPlayerDto
@@ -135,10 +189,10 @@ public class PlayerControllerUpdateTests
         using var scope = factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<BattleManagementSystemDbContext>();
         
-        Player? playerBeforeUpdate = dbContext.Player.FirstOrDefault(player => player.PlayerId == playerId);
+        Player? playerBeforeUpdate = dbContext.Player.FirstOrDefault(player => player.PlayerId == senderPlayerId);
         
         // Act
-        var response = await _client.PutAsync($"{_endpoint}", model.ToJsonHttpContent());
+        var response = await _client.PutAsync($"{_endpoint}{senderPlayerId}", model.ToJsonHttpContent());
         PlayerDto? resultPlayer = await response.Content.DeserializeFromHttpContentAsync<PlayerDto>();
         
         // Assert

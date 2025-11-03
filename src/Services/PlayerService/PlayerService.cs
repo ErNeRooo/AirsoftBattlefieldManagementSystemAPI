@@ -149,14 +149,14 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
             dbContext.Team.Update(team);
         }
 
-        public PlayerDto Update(PutPlayerDto playerDto, ClaimsPrincipal user)
+        public PlayerDto Update(PutPlayerDto playerDto, int playerId, ClaimsPrincipal user)
         {
-            int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
-            authorizationHelper.CheckPlayerOwnsResource(user, playerId);
+            int selfPlayerId = claimsHelper.GetIntegerClaimValue("playerId", user);
             
-            Player playerToUpdate = dbHelper.Player.FindByIdIncludingRoom(playerId);
-            Room room = dbHelper.Room.FindByIdIncludingPlayers(playerToUpdate.RoomId);
-            
+            Player targetPlayer = dbHelper.Player.FindByIdIncludingRoom(playerId);
+            Room room = dbHelper.Room.FindByIdIncludingPlayers(targetPlayer.RoomId);
+            if(selfPlayerId != playerId) authorizationHelper.CheckPlayerOwnsResource(user, room.AdminPlayerId);
+                
             if(playerDto.TeamId is not null)
             {
                 Team targetTeam = dbHelper.Team.FindById(playerDto.TeamId);
@@ -164,7 +164,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
                 authorizationHelper.CheckPlayerIsInTheSameRoomAsResource(user, targetTeam.RoomId,
                     $"Target team {targetTeam.TeamId} is not in the same room as player");
 
-                Team? previousTeam = GetPreviousTeam(playerToUpdate);
+                Team? previousTeam = GetPreviousTeam(targetPlayer);
 
                 if (previousTeam?.OfficerPlayerId == playerId)
                 {
@@ -172,17 +172,19 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
                     dbContext.SaveChanges();
                 }
                 
-                ClearPlayerOrders(playerToUpdate.PlayerId);
-                ClearPlayerMapPings(playerToUpdate.PlayerId);
+                ClearPlayerOrders(targetPlayer.PlayerId);
+                ClearPlayerMapPings(targetPlayer.PlayerId);
             }
 
-            mapper.Map(playerDto, playerToUpdate);
-            dbContext.Player.Update(playerToUpdate);
+            if(selfPlayerId == targetPlayer.PlayerId) mapper.Map(playerDto, targetPlayer);
+            else targetPlayer.TeamId = playerDto.TeamId;
+            
+            dbContext.Player.Update(targetPlayer);
             dbContext.SaveChanges();
             
-            PlayerDto responsePlayerDto = mapper.Map<PlayerDto>(playerToUpdate);            
+            PlayerDto responsePlayerDto = mapper.Map<PlayerDto>(targetPlayer);            
             
-            IEnumerable<string> playerIds = room.GetAllPlayerIdsWithoutSelf(playerToUpdate.PlayerId);
+            IEnumerable<string> playerIds = room.GetAllPlayerIdsWithoutSelf(targetPlayer.PlayerId);
 
             hubContext.Clients.Users(playerIds).PlayerUpdated(responsePlayerDto);
             

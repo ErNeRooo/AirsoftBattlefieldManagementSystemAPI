@@ -52,10 +52,10 @@ namespace AirsoftBattlefieldManagementSystemAPI.Controllers
             return Ok(playerDto);
         }
 
-        [HttpPut("")]
-        public ActionResult<PlayerDto> Update([FromBody] PutPlayerDto playerDto)
+        [HttpPut("playerId/{playerId}")]
+        public ActionResult<PlayerDto> Update([FromBody] PutPlayerDto playerDto, int playerId)
         {
-            PlayerDto player = playerService.Update(playerDto, User);
+            PlayerDto player = playerService.Update(playerDto, playerId, User);
 
             return Ok(player);
         }
