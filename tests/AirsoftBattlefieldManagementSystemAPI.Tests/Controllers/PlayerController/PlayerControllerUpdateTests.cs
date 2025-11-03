@@ -114,11 +114,12 @@ public class PlayerControllerUpdateTests
     }
     
     [Theory]
-    [InlineData(null, null, null)]
-    [InlineData("Takina", null, null)]
-    [InlineData(null, null, 2)]
-    [InlineData(null, true, null)]
-    public async Task Update_GivenOnlySpecificField_ReturnsOkAndPlayerDto(string? name, bool? isDead, int? teamId)
+    [InlineData(1, null, null, null)]
+    [InlineData(1, "Takina", null, null)]
+    [InlineData(1, null, null, 2)]
+    [InlineData(1, null, true, null)]
+    [InlineData(1, "", true, null)]
+    public async Task Update_GivenOnlySpecificField_ReturnsOkAndPlayerDto(int playerId, string? name, bool? isDead, int? teamId)
     {
         // Arrange
         var factory = new CustomWebApplicationFactory<Program>();
@@ -131,6 +132,11 @@ public class PlayerControllerUpdateTests
             IsDead = isDead
         };
         
+        using var scope = factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<BattleManagementSystemDbContext>();
+        
+        Player? playerBeforeUpdate = dbContext.Player.FirstOrDefault(player => player.PlayerId == playerId);
+        
         // Act
         var response = await _client.PutAsync($"{_endpoint}", model.ToJsonHttpContent());
         PlayerDto? resultPlayer = await response.Content.DeserializeFromHttpContentAsync<PlayerDto>();
@@ -140,7 +146,7 @@ public class PlayerControllerUpdateTests
         resultPlayer.ShouldNotBeNull();
         resultPlayer.PlayerId.ShouldBe(1);
         resultPlayer.RoomId.ShouldBe(1);
-        resultPlayer.Name.ShouldBe(name ?? "Chisato");
+        resultPlayer.Name.ShouldBe(string.IsNullOrEmpty(name) ? playerBeforeUpdate?.Name : name);
         resultPlayer.TeamId.ShouldBe(teamId ?? 1);
         resultPlayer.IsDead.ShouldBe(isDead ?? false);
     }
