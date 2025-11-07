@@ -37,7 +37,7 @@ public class PlayerControllerUpdateTests
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         resultPlayer.ShouldNotBeNull();
         resultPlayer.Name.ShouldBe(name);
-        resultPlayer.TeamId.ShouldBe(teamId);
+        resultPlayer.TeamId.ShouldBe(teamId == 0 ? null : teamId);
         resultPlayer.IsDead.ShouldBe(isDead);
     }
     

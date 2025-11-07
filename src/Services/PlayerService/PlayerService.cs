@@ -156,8 +156,12 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
             Player targetPlayer = dbHelper.Player.FindByIdIncludingRoom(playerId);
             Room room = dbHelper.Room.FindByIdIncludingPlayers(targetPlayer.RoomId);
             if(selfPlayerId != playerId) authorizationHelper.CheckPlayerOwnsResource(user, room.AdminPlayerId);
+
+            if (playerDto.TeamId == 0)
+            {
                 
-            if(playerDto.TeamId is not null)
+            }
+            else if(playerDto.TeamId is not null)
             {
                 Team targetTeam = dbHelper.Team.FindById(playerDto.TeamId);
                 

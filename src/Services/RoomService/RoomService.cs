@@ -80,7 +80,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
         {
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
             Player player = dbHelper.Player.FindById(playerId);
-            Room previousRoom = dbHelper.Room.FindById(player.RoomId);
+            Room previousRoom = dbHelper.Room.FindByIdIncludingPlayers(player.RoomId);
 
             if(previousRoom.AdminPlayerId is not null) authorizationHelperService.CheckPlayerOwnsResource(user, previousRoom.AdminPlayerId);
             
@@ -97,7 +97,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
             
             RoomDto responseRoomDto = mapper.Map<RoomDto>(updatedRoom);            
             
-            IEnumerable<string> playerIds = updatedRoom.GetAllPlayerIdsWithoutSelf(player.PlayerId);
+            IList<string> playerIds = updatedRoom.GetAllPlayerIdsWithoutSelf(player.PlayerId).ToList();
 
             hubContext.Clients.Users(playerIds).RoomUpdated(responseRoomDto);
             
