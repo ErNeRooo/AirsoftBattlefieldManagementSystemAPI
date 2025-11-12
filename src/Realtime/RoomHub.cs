@@ -40,7 +40,6 @@ public interface IRoomNotificationClient
     Task OrderDeleted(int orderId);
     
     Task PlayerUpdated(PlayerDto playerDto);
-    Task PlayerDeleted(int playerId);
     Task PlayerLeftTeam(int playerId);
     Task PlayerLeftRoom(int playerId);
     

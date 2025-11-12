@@ -58,7 +58,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.DeathService
             Player player = dbHelper.Player.FindById(playerId);
             Room room = dbHelper.Room.FindByIdIncludingRelated(player.RoomId);
 
-            if (room.Battle is null) throw new ForbidException("Can't create order because there is no battle.");
+            if (room.Battle is null) throw new ForbidException("Can't create death because there is no battle.");
             
             Location location = mapper.Map<Location>(deathDto);
             dbContext.Location.Add(location);

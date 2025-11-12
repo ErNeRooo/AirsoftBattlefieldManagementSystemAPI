@@ -64,6 +64,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
             Player targetPlayer = dbHelper.Player.FindByIdIncludingAllRelatedEntities(playerId);
             Room room = dbHelper.Room.FindByIdIncludingPlayers(targetPlayer.RoomId);
             
+            IList<string> playerIds = room.Players.Select(p => p.PlayerId.ToString()).ToList();
+            
             authorizationHelper.CheckIfPlayerIsNotSelf(user, targetPlayer.PlayerId);
             authorizationHelper.CheckPlayerOwnsResource(user, targetPlayer.Room.AdminPlayerId);
 
@@ -83,8 +85,6 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
             
             PlayerDto responsePlayerDto = mapper.Map<PlayerDto>(targetPlayer);            
             
-            IEnumerable<string> playerIds = room.GetAllPlayerIdsWithoutSelf(targetPlayer.PlayerId);
-
             hubContext.Clients.Users(playerIds).PlayerLeftRoom(playerId);
             
             return responsePlayerDto;
@@ -210,7 +210,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
             
             IEnumerable<string> playerIds = room.GetAllPlayerIdsWithoutSelf(player.PlayerId);
 
-            hubContext.Clients.Users(playerIds).PlayerDeleted(player.PlayerId);
+            hubContext.Clients.Users(playerIds).PlayerLeftRoom(player.PlayerId);
         }
 
         public string GenerateJwt(int playerId)
