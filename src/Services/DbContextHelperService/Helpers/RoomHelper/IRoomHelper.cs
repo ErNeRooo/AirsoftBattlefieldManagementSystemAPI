@@ -9,5 +9,7 @@ public interface IRoomHelper
     public Room FindByIdIncludingPlayers(int? id);
     public Room FindByIdIncludingRelated(int? id);
     public Room FindByJoinCodeIncludingRelated(string joinCode);
+    public Room FindByIdIncludingAll(int? id);
+    public Room FindByJoinCodeIncludingAll(string joinCode);
     public Room FindByJoinCode(string joinCode);
 }

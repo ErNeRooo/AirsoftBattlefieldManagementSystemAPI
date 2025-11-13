@@ -14,7 +14,38 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles
                 .ForMember(destinationMember: dest => dest.Players, 
                     source => source.MapFrom(src => src.Players))
                 .ForMember(destinationMember: dest => dest.Teams, 
-                    source => source.MapFrom(src => src.Teams));
+                    source => source.MapFrom(src => src.Teams))
+                
+                .ForMember(destinationMember: dest => dest.Kills, 
+                    source => source.Condition(src => src.Battle is not null))
+                .ForMember(destinationMember: dest => dest.Kills, 
+                    source => source.MapFrom(src => src.Battle!.Kills))
+
+                .ForMember(destinationMember: dest => dest.Deaths, 
+                    source => source.Condition(src => src.Battle is not null))
+                .ForMember(destinationMember: dest => dest.Deaths, 
+                    source => source.MapFrom(src => src.Battle!.Deaths))
+                
+                .ForMember(destinationMember: dest => dest.Locations, 
+                    source => source.Condition(src => src.Battle is not null))
+                .ForMember(destinationMember: dest => dest.Locations, 
+                    source => source.MapFrom(src => src.Battle!.PlayerLocations))
+                
+                .ForMember(destinationMember: dest => dest.MapPings, 
+                    source => source.Condition(src => src.Battle is not null))
+                .ForMember(destinationMember: dest => dest.MapPings, 
+                    source => source.MapFrom(src => src.Battle!.MapPings))
+                
+                .ForMember(destinationMember: dest => dest.Orders, 
+                    source => source.Condition(src => src.Battle is not null))
+                .ForMember(destinationMember: dest => dest.Orders, 
+                    source => source.MapFrom(src => src.Battle!.Orders))
+                
+                .ForMember(destinationMember: dest => dest.Zones, 
+                    source => source.Condition(src => src.Battle is not null))
+                .ForMember(destinationMember: dest => dest.Zones, 
+                    source => source.MapFrom(src => src.Battle!.Zones))
+                ;
 
             CreateMap<PostRoomDto, Room>()
                 .ForMember(

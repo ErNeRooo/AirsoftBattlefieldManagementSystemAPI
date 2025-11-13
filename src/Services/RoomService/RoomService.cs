@@ -126,8 +126,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.RoomService
             string password = roomDto.Password ?? "";
 
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
-
-            Room room = dbHelper.Room.FindByJoinCodeIncludingRelated(joinCode);
+            
+            Room room = dbHelper.Room.FindByJoinCodeIncludingAll(joinCode);
             Player player = dbHelper.Player.FindById(playerId);
             
             if(player.RoomId != 0 && player.RoomId is not null) throw new PlayerAlreadyInsideRoomException("You are already inside a room");

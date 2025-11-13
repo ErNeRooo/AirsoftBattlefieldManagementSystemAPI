@@ -26,4 +26,21 @@ public class BattleHelper(IBattleManagementSystemDbContext dbContext) : IBattleH
             
         return battle;
     }
+
+    public Battle FindByIdIncludingRelated(int? id)
+    {
+        Battle? battle = dbContext.Battle
+            .Include(battle => battle.Room)
+            .Include(battle => battle.PlayerLocations)
+            .Include(battle => battle.Kills)
+            .Include(battle => battle.Deaths)
+            .Include(battle => battle.MapPings)
+            .Include(battle => battle.Orders)
+            .Include(battle => battle.Zones)
+            .FirstOrDefault(t => t.BattleId == id);
+
+        if(battle is null) throw new NotFoundException($"Battle with id {id} not found");
+            
+        return battle;
+    }
 }
