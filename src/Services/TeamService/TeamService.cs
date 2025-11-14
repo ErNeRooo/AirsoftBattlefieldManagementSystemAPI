@@ -142,7 +142,19 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.TeamService
             Player player = dbHelper.Player.FindSelf(user);
             Room room = dbHelper.Room.FindByIdIncludingPlayers(player.RoomId);
 
+            if (player.TeamId is null || player.TeamId == 0) return;
+            
+            Team previousTeam = dbHelper.Team.FindById(player.TeamId);
+        
+            if (previousTeam.OfficerPlayerId == player.PlayerId)
+            {
+                UnassignTeamOfficer(previousTeam);
+            }
             player.Team = null;
+            player.TeamId = null;
+            
+            ClearPlayerOrders(player.PlayerId);
+            ClearPlayerMapPings(player.PlayerId);
             
             dbContext.Player.Update(player);
             dbContext.SaveChanges();
@@ -150,6 +162,24 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.TeamService
             IEnumerable<string> playerIds = room.GetAllPlayerIdsWithoutSelf(player.PlayerId);
 
             hubContext.Clients.Users(playerIds).PlayerLeftTeam(player.PlayerId);
+        }
+        
+        private void UnassignTeamOfficer(Team team)
+        {
+            team.OfficerPlayerId = null;
+            dbContext.Team.Update(team);
+        }
+        
+        private void ClearPlayerMapPings(int playerId)
+        {
+            IQueryable<MapPing> mapPingsToRemove = dbContext.MapPing.Where(ping => ping.PlayerId == playerId);
+            dbContext.MapPing.RemoveRange(mapPingsToRemove);
+        }
+        
+        private void ClearPlayerOrders(int playerId)
+        {
+            IQueryable<Order> ordersToRemove = dbContext.Order.Where(order => order.PlayerId == playerId);
+            dbContext.Order.RemoveRange(ordersToRemove);
         }
     }
 }
