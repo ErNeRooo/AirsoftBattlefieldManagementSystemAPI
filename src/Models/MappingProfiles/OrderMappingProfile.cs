@@ -27,7 +27,11 @@ namespace AirsoftBattlefieldManagementSystemAPI.Models.MappingProfiles
 
                 .ForMember(destinationMember: dest => dest.Time,
                     memberOptions: opt =>
-                        opt.MapFrom(src => src.Location.Time));
+                        opt.MapFrom(src => src.Location.Time))
+            
+                .ForMember(destinationMember: dest => dest.Type,
+                    memberOptions: opt =>
+                        opt.MapFrom(src => src.OrderType));
 
             CreateMap<PostOrderDto, Location>()
                 .ForMember(
