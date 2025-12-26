@@ -184,7 +184,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
             
             PlayerDto responsePlayerDto = mapper.Map<PlayerDto>(targetPlayer);            
             
-            IEnumerable<string> playerIds = room.GetAllPlayerIdsWithoutSelf(targetPlayer.PlayerId);
+            List<string> playerIds = room.GetAllPlayerIdsWithoutSelf(selfPlayerId).ToList();
 
             hubContext.Clients.Users(playerIds).PlayerUpdated(responsePlayerDto);
             
