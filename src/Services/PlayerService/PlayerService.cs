@@ -64,7 +64,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
             Player targetPlayer = dbHelper.Player.FindByIdIncludingAllRelatedEntities(playerId);
             Room room = dbHelper.Room.FindByIdIncludingPlayers(targetPlayer.RoomId);
             
-            IList<string> playerIds = room.Players.Select(p => p.PlayerId.ToString()).ToList();
+            int selfPlayerId = claimsHelper.GetIntegerClaimValue("playerId", user);
+            IList<string> playerIds = room.GetAllPlayerIdsWithoutSelf(selfPlayerId);
             
             authorizationHelper.CheckIfPlayerIsNotSelf(user, targetPlayer.PlayerId);
             authorizationHelper.CheckPlayerOwnsResource(user, targetPlayer.Room.AdminPlayerId);
@@ -112,7 +113,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
             
             PlayerDto responsePlayerDto = mapper.Map<PlayerDto>(targetPlayer);            
             
-            IEnumerable<string> playerIds = room.GetAllPlayerIdsWithoutSelf(targetPlayer.PlayerId);
+            int selfPlayerId = claimsHelper.GetIntegerClaimValue("playerId", user);
+            IList<string> playerIds = room.GetAllPlayerIdsWithoutSelf(selfPlayerId);
 
             hubContext.Clients.Users(playerIds).PlayerLeftTeam(playerId);
             
