@@ -6,6 +6,7 @@ using AirsoftBattlefieldManagementSystemAPI.Models.Entities;
 using AirsoftBattlefieldManagementSystemAPI.Models.Helpers;
 using AirsoftBattlefieldManagementSystemAPI.Realtime;
 using AirsoftBattlefieldManagementSystemAPI.Services.AuthorizationHelperService;
+using AirsoftBattlefieldManagementSystemAPI.Services.ClaimsHelperService;
 using AirsoftBattlefieldManagementSystemAPI.Services.DbContextHelperService;
 using AutoMapper;
 using Microsoft.AspNetCore.SignalR;
@@ -16,6 +17,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.OrderService
         IMapper mapper, 
         IBattleManagementSystemDbContext dbContext, 
         IAuthorizationHelperService authorizationHelper, 
+        IClaimsHelperService claimsHelper,
         IDbContextHelperService dbHelper, 
         IHubContext<RoomNotificationHub, IRoomNotificationClient> hubContext
         ) : IOrderService
@@ -35,6 +37,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.OrderService
 
         public OrderDto Create(PostOrderDto orderDto, ClaimsPrincipal user)
         {
+            int senderPlayerId = claimsHelper.GetIntegerClaimValue("playerId", user);
             Player targetPlayer = dbHelper.Player.FindById(orderDto.PlayerId);
             
             if (targetPlayer.TeamId is null) throw new ForbidException("Can't order a player that is not in a team.");
@@ -63,7 +66,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.OrderService
             
             OrderDto responseOrderDto = mapper.Map<OrderDto>(order);            
             
-            IEnumerable<string> playerIds = room.GetTeamPlayerIdsWithoutSelf(team.TeamId, targetPlayer.PlayerId);
+            IEnumerable<string> playerIds = room.GetTeamPlayerIdsWithoutSelf(team.TeamId, senderPlayerId);
 
             hubContext.Clients.Users(playerIds).OrderCreated(responseOrderDto);
 
@@ -72,6 +75,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.OrderService
         
         public void DeleteById(int id, ClaimsPrincipal user)
         {
+            int senderPlayerId = claimsHelper.GetIntegerClaimValue("playerId", user);
+            
             Order order = dbHelper.Order.FindById(id);
             Player player = dbHelper.Player.FindById(order.PlayerId);
             Team team = dbHelper.Team.FindById(player.TeamId);
@@ -82,7 +87,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.OrderService
             dbContext.Order.Remove(order);
             dbContext.SaveChanges();
             
-            IEnumerable<string> playerIds = room.GetTeamPlayerIdsWithoutSelf(team.TeamId, player.PlayerId);
+            IEnumerable<string> playerIds = room.GetTeamPlayerIdsWithoutSelf(team.TeamId, senderPlayerId);
 
             hubContext.Clients.Users(playerIds).OrderDeleted(id);
         }

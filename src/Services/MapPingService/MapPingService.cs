@@ -49,7 +49,8 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.MapPingService
 
         public MapPingDto Create(PostMapPingDto mapPingDto, ClaimsPrincipal user)
         {
-            Player player = dbHelper.Player.FindById(mapPingDto.PlayerId);
+            int clientPlayerId = claimsHelper.GetIntegerClaimValue("playerId", user);
+            Player player = dbHelper.Player.FindById(clientPlayerId);
             
             if (player.TeamId is null) throw new ForbidException("Can't create map ping when not in a team.");
             
