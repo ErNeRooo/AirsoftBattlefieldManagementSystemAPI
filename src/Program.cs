@@ -60,18 +60,6 @@ namespace AirsoftBattlefieldManagementSystemAPI
         public static void Main(string[] args)
         {   
             var builder = WebApplication.CreateBuilder(args);
-
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("localReactClient", policyBuilder =>
-                {
-                    policyBuilder
-                        .WithOrigins("http://localhost:5173")
-                        .AllowAnyHeader()
-                        .AllowAnyMethod()
-                        .AllowCredentials();
-                });
-            });
             
             builder.Logging.ClearProviders();
             builder.Host.UseNLog();
@@ -221,9 +209,9 @@ namespace AirsoftBattlefieldManagementSystemAPI
             
             var app = builder.Build();
 
-            app.UseMiddleware<ErrorHandlingMiddleware>();
+            AutoMigration.ApplyMigrations(app.Services, app.Logger);
 
-            app.UseCors("localReactClient");
+            app.UseMiddleware<ErrorHandlingMiddleware>();
 
             app.UseAuthentication();
 
