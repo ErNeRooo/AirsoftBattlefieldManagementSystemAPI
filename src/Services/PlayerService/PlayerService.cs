@@ -199,14 +199,18 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.PlayerService
         {
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
             Player player = dbHelper.Player.FindById(playerId);
-            Room room = dbHelper.Room.FindByIdIncludingPlayers(player.RoomId);
-
+            IEnumerable<string> playerIds = new List<string>();
+            
+            if (player.RoomId != null && player.RoomId != 0)
+            {
+                Room room = dbHelper.Room.FindByIdIncludingPlayers(player.RoomId);
+                playerIds = room.GetAllPlayerIdsWithoutSelf(playerId);
+            }
+            
             authorizationHelper.CheckPlayerOwnsResource(user, playerId);
             
             dbContext.Player.Remove(player);
             dbContext.SaveChanges();
-            
-            IEnumerable<string> playerIds = room.GetAllPlayerIdsWithoutSelf(player.PlayerId);
 
             hubContext.Clients.Users(playerIds).PlayerLeftRoom(player.PlayerId);
         }

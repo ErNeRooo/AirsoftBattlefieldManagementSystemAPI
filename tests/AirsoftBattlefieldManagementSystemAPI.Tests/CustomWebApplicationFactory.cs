@@ -21,6 +21,8 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
     
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        builder.UseEnvironment("Testing");
+        
         builder.ConfigureTestServices(services =>
         {
             services.RemoveAll(typeof(IDbContextOptionsConfiguration<BattleManagementSystemDbContext>));

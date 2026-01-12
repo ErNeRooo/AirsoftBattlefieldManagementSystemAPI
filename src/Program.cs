@@ -209,7 +209,10 @@ namespace AirsoftBattlefieldManagementSystemAPI
             
             var app = builder.Build();
 
-            AutoMigration.ApplyMigrations(app.Services, app.Logger);
+            if (!app.Environment.IsEnvironment("Testing"))
+            {
+                AutoMigration.ApplyMigrations(app.Services, app.Logger);
+            }
 
             app.UseMiddleware<ErrorHandlingMiddleware>();
 
