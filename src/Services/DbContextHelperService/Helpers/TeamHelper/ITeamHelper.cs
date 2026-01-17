@@ -6,4 +6,5 @@ public interface ITeamHelper
 {
     public Team FindById(int? id);
     public Team FindByIdIncludingRoom(int? id);
+    public Team FindByIdIncludingRoomAndSpawmZone(int? id);
 }

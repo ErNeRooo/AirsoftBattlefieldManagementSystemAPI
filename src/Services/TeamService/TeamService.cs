@@ -61,7 +61,7 @@ namespace AirsoftBattlefieldManagementSystemAPI.Services.TeamService
         public TeamDto Update(int id, PutTeamDto teamDto, ClaimsPrincipal user)
         {
             int playerId = claimsHelper.GetIntegerClaimValue("playerId", user);
-            Team previousTeam = dbHelper.Team.FindByIdIncludingRoom(id);
+            Team previousTeam = dbHelper.Team.FindByIdIncludingRoomAndSpawmZone(id);
             Room room = dbHelper.Room.FindByIdIncludingPlayers(previousTeam.RoomId);
             
             if(previousTeam.OfficerPlayerId is not null) authorizationHelperService.CheckPlayerIsRoomAdminOrTargetTeamOfficer(user, id);

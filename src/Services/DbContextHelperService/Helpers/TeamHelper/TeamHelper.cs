@@ -26,4 +26,17 @@ public class TeamHelper(IBattleManagementSystemDbContext dbContext) : ITeamHelpe
             
         return team;
     }
+    
+    public Team FindByIdIncludingRoomAndSpawmZone(int? id)
+    {
+        Team? team = dbContext.Team
+            .Include(t => t.Room)
+            .Include(t => t.SpawnZone)
+            .Include(t => t.SpawnZone.Vertices)
+            .FirstOrDefault(t => t.TeamId == id);
+
+        if(team is null) throw new NotFoundException($"Team with id {id} not found");
+            
+        return team;
+    }
 }
